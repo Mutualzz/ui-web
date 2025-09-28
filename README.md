@@ -22,7 +22,7 @@
 
 ### Data Display
 
-- Avatar 🗓️ (Planned)
+- [Avatar](https://mutualzz.com/ui/data-display/avatar) ✅ (Implemented)
 - [Divider](https://mutualzz.com/ui/data-display/divider) ✅ (Implemented)
 - [Markdown Renderer](https://mutualzz.com/ui/data-display/markdown-renderer) ✅ (Implemented) **SIDENOTE:** Same situation as Markdown Input
 - [List](https://mutualzz.com/ui/data-display/list) ✅ (Implemented)
