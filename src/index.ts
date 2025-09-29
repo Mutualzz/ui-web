@@ -12,6 +12,8 @@ export type * from "./Button/Button.types";
 export * from "./ButtonGroup/ButtonGroup";
 export type * from "./ButtonGroup/ButtonGroup.types";
 
+export * from "./CssBaseline/CssBaseline";
+
 export * from "./Drawer/Drawer";
 export type * from "./Drawer/Drawer.types";
 
@@ -97,3 +99,6 @@ export * from "./Textarea/Textarea.types";
 
 export * from "./Typography/Typography";
 export type * from "./Typography/Typography.types";
+
+export * from "./ThemeProvider";
+export * from "./useTheme";

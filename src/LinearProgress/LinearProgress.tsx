@@ -3,9 +3,9 @@ import {
     resolveColor,
     resolveResponsiveMerge,
     styled,
-    useTheme,
 } from "@mutualzz/ui-core";
 import { forwardRef } from "react";
+import { useTheme } from "../useTheme";
 import {
     resolveLinearProgressLength,
     resolveLinearProgressStyles,

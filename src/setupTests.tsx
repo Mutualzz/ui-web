@@ -1,5 +1,4 @@
 import { afterEach } from "@jest/globals";
-import { ThemeProvider } from "@mutualzz/ui-core";
 import type * as DOMTestingLibrary from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { CssBaseline } from "./CssBaseline/CssBaseline";
+import { ThemeProvider } from "./ThemeProvider";
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),

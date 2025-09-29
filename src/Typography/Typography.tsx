@@ -1,6 +1,4 @@
-import styled from "@styled";
-
-import { resolveResponsiveMerge } from "@mutualzz/ui-core";
+import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import { resolveTypographStyles } from "./Typography.helpers";
 import { type TypographyProps } from "./Typography.types";
 

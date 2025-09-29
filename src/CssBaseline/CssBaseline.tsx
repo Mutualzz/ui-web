@@ -1,5 +1,6 @@
 import { Global } from "@emotion/react";
-import { isValidGradient, lighten, useTheme } from "@mutualzz/ui-core";
+import { isValidGradient, lighten } from "@mutualzz/ui-core";
+import { useTheme } from "../useTheme";
 
 interface CssBaselineProps {
     adaptiveScrollbar?: boolean;

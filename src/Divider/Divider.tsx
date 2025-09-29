@@ -1,5 +1,6 @@
-import { styled, useTheme } from "@mutualzz/ui-core";
+import { styled } from "@mutualzz/ui-core";
 import { forwardRef } from "react";
+import { useTheme } from "../useTheme";
 import { resolveDividerColor, resolveDividerStyles } from "./Divider.helpers";
 import type { DividerProps, DividerVariant } from "./Divider.types";
 

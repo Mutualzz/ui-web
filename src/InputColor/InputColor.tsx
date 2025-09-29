@@ -14,8 +14,8 @@ import {
     resolveSize,
     styled,
     useColorInput,
-    useTheme,
 } from "@mutualzz/ui-core";
+import { useTheme } from "../useTheme";
 import { formatHex } from "culori";
 import {
     forwardRef,

@@ -6,10 +6,11 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, styled, useTheme } from "@mutualzz/ui-core";
+import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import { forwardRef, useEffect, useRef } from "react";
 import { resolvePaperStyles } from "../Paper/Paper.helpers";
 import { Portal } from "../Portal/Portal";
+import { useTheme } from "../useTheme";
 import {
     resolveAnchorStyles,
     resolveSwipeAreaStyles,

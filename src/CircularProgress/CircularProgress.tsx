@@ -10,9 +10,9 @@ import {
     resolveResponsiveMerge,
     resolveSize,
     styled,
-    useTheme,
 } from "@mutualzz/ui-core";
 import { forwardRef, useEffect, useRef, useState } from "react";
+import { useTheme } from "../useTheme";
 import {
     baseSizeMap,
     resolveCircularProgressOuterStroke,

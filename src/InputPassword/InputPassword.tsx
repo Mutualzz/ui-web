@@ -1,9 +1,10 @@
 import type { Size, SizeValue } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, useTheme } from "@mutualzz/ui-core";
+import { resolveResponsiveMerge } from "@mutualzz/ui-core";
 import { forwardRef, useCallback, useEffect, useState } from "react";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { InputBase } from "../InputBase/InputBase";
 import { InputRoot } from "../InputRoot/InputRoot";
+import { useTheme } from "../useTheme";
 import { resolvePasswordIconStyles } from "./InputPassword.helpers";
 import type { InputPasswordProps } from "./InputPassword.types";
 

@@ -1,9 +1,4 @@
-import {
-    clamp,
-    resolveResponsiveMerge,
-    resolveSize,
-    useTheme,
-} from "@mutualzz/ui-core";
+import { clamp, resolveResponsiveMerge, resolveSize } from "@mutualzz/ui-core";
 import { formatHex8 } from "culori";
 import {
     forwardRef,
@@ -19,6 +14,7 @@ import { InputBase } from "../InputBase/InputBase";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { baseSizeMap } from "../InputRoot/InputRoot.helpers";
 import { Stack } from "../Stack/Stack";
+import { useTheme } from "../useTheme";
 import type { InputNumberProps } from "./InputNumber.types";
 
 const SpinnerButtons = ({

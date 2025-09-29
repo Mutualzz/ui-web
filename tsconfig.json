@@ -17,15 +17,8 @@
         "jsxImportSource": "@emotion/react",
         "baseUrl": "./src",
         "paths": {
-            "@components/*": ["components/*"],
-            "@utils": ["utils/index"],
-            "@hooks/*": ["hooks/*"],
-            "@utils/*": ["utils/*"],
-            "@styled": ["utils/styled"],
-            "@ui-types": ["types/index.ts"],
-            "@ui-types/*": ["types/*"],
             "@test-utils": ["setupTests.tsx"]
         }
     },
-    "include": ["src/**/*", "../ui-native/src/native.ts"]
+    "include": ["src/**/*"]
 }
