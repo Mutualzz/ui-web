@@ -1,5 +1,5 @@
 import { Global } from "@emotion/react";
-import { isValidGradient, lighten } from "@mutualzz/ui-core";
+import { formatColor, isValidGradient } from "@mutualzz/ui-core";
 import { useTheme } from "../useTheme";
 
 interface CssBaselineProps {
@@ -63,7 +63,10 @@ export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
                         background: theme.colors.primary,
                     },
                     "::-webkit-scrollbar-thumb:hover": {
-                        background: lighten(theme.colors.neutral, 0.2),
+                        background: formatColor(theme.colors.neutral, {
+                            lighten: 20,
+                            format: "hexa",
+                        }),
                     },
                 }),
             }}

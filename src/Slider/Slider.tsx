@@ -6,8 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { darken, resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import { formatColor, resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import {
     forwardRef,
     useCallback,
@@ -118,7 +117,10 @@ const TrackSegment = styled("div")<{
                   }),
         }),
     ),
-    background: formatHex8(darken(theme.colors.neutral, 0.25)),
+    background: formatColor(theme.colors.neutral, {
+        darken: 25,
+        format: "hexa",
+    }),
     position: "absolute",
     borderRadius: 9999,
 }));

@@ -6,8 +6,7 @@ import type {
     Size,
     Variant,
 } from "@mutualzz/ui-core";
-import { darken, resolveColor } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import { formatColor, resolveColor } from "@mutualzz/ui-core";
 
 export const baseSpacingMap: Record<Size, number> = {
     sm: 4,
@@ -26,29 +25,50 @@ export const resolveButtonGroupStyles = (
         ? resolveColor(separatorColor, theme)
         : resolveColor(color, theme);
 
+    const solidBorder = separatorColor
+        ? formatColor(resolvedColor, { format: "hexa" })
+        : formatColor(resolvedColor, {
+              format: "hexa",
+              darken: 50,
+          });
+
+    const plainBorder = separatorColor
+        ? formatColor(resolvedColor, { format: "hexa" })
+        : formatColor(resolvedColor, {
+              format: "hexa",
+              darken: 30,
+          });
+
+    const softBorder = separatorColor
+        ? formatColor(resolvedColor, { format: "hexa" })
+        : formatColor(resolvedColor, {
+              format: "hexa",
+              darken: 10,
+          });
+
     const horizontalBorders: Record<Variant, CSSObject> = {
         solid: {
-            borderLeft: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.5))}`,
+            borderLeft: `1px solid ${solidBorder}`,
         },
         outlined: {},
         plain: {
-            borderLeft: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.3))}`,
+            borderLeft: `1px solid ${plainBorder}`,
         },
         soft: {
-            borderLeft: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.1))}`,
+            borderLeft: `1px solid ${softBorder}`,
         },
     };
 
     const verticalBorders: Record<Variant, CSSObject> = {
         solid: {
-            borderTop: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.5))}`,
+            borderTop: `1px solid ${solidBorder}`,
         },
         outlined: {},
         plain: {
-            borderTop: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.3))}`,
+            borderTop: `1px solid ${plainBorder}`,
         },
         soft: {
-            borderTop: `1px solid ${formatHex8(separatorColor ? resolvedColor : darken(resolvedColor, 0.1))}`,
+            borderTop: `1px solid ${softBorder}`,
         },
     };
 

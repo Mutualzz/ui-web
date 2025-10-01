@@ -6,7 +6,7 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    getLuminance,
+    formatColor,
     isValidGradient,
     randomColor,
     resolveColorFromLuminance,
@@ -15,8 +15,7 @@ import {
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
-import { useTheme } from "../useTheme";
-import { formatHex } from "culori";
+import Color from "color";
 import {
     forwardRef,
     useEffect,
@@ -33,6 +32,7 @@ import { IconButton } from "../IconButton/IconButton";
 import { InputBase } from "../InputBase/InputBase";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { Popover } from "../Popover/Popover";
+import { useTheme } from "../useTheme";
 import {
     resolveColorPickerButtonSize,
     resolveColorPickerButtonStyles,
@@ -66,8 +66,7 @@ const RandomIcon = ({ color, size, variant }: RandomIconProps) => {
 
     let resolvedColor = color;
     if (resolvedVariant === "solid") {
-        const bgLuminance = getLuminance(color);
-        const luminatedColor = resolveColorFromLuminance(bgLuminance, theme);
+        const luminatedColor = resolveColorFromLuminance(Color(color), theme);
         resolvedColor = luminatedColor;
     }
 
@@ -135,7 +134,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
         const currentValue = isControlled ? colorProp : internalValue;
         const [pickerColor, setPickerColor] = useState<string>(() => {
             try {
-                return formatHex(currentValue) ?? "#fff";
+                return formatColor(currentValue) ?? "#fff";
             } catch {
                 // If the color is invalid, fallback to a random color
                 return randomColor("hex");

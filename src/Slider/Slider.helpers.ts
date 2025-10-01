@@ -6,8 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { alpha, lighten, resolveColor, resolveSize } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
 
 const thumbSizeMap: Record<Size, number> = {
     sm: 16,
@@ -74,26 +73,38 @@ export const resolveSliderTrackStyles = (
     return {
         solid: {
             backgroundColor: hovered
-                ? formatHex8(alpha(resolvedColor, 0.9))
-                : formatHex8(resolvedColor),
+                ? formatColor(resolvedColor, { alpha: 90, format: "hexa" })
+                : formatColor(resolvedColor, { format: "hexa" }),
         },
         outlined: {
             border: hovered
-                ? `1px solid ${formatHex8(alpha(resolvedColor, 0.7))}`
-                : `1px solid ${formatHex8(resolvedColor)}`,
+                ? `1px solid ${formatColor(resolvedColor, { format: "hexa", alpha: 70 })}`
+                : `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
             backgroundColor: hovered
-                ? formatHex8(alpha(resolvedColor, 0.1))
+                ? formatColor(resolvedColor, {
+                      alpha: 10,
+                      format: "hexa",
+                  })
                 : "transparent",
         },
         plain: {
             backgroundColor: hovered
-                ? formatHex8(alpha(resolvedColor, 0.2))
+                ? formatColor(resolvedColor, {
+                      alpha: 20,
+                      format: "hexa",
+                  })
                 : "transparent",
         },
         soft: {
             backgroundColor: hovered
-                ? formatHex8(alpha(resolvedColor, 0.2))
-                : formatHex8(alpha(resolvedColor, 0.1)),
+                ? formatColor(resolvedColor, {
+                      alpha: 20,
+                      format: "hexa",
+                  })
+                : formatColor(resolvedColor, {
+                      format: "hexa",
+                      alpha: 10,
+                  }),
         },
     };
 };
@@ -111,23 +122,35 @@ export const resolveSliderThumbStyles = (
         solid: {
             backgroundColor: colors.common.white,
             border: hovered
-                ? `2px solid ${formatHex8(alpha(resolvedColor, 0.9))}`
-                : `2px solid ${formatHex8(resolvedColor)}`,
+                ? `2px solid ${formatColor(resolvedColor, {
+                      format: "hexa",
+                      alpha: 90,
+                  })}`
+                : `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
         },
         outlined: {
             backgroundColor: colors.common.white,
-            border: `2px solid ${formatHex8(resolvedColor)}`,
+            border: `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
         },
         plain: {
-            backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+            backgroundColor: formatColor(resolvedColor, {
+                format: "hexa",
+                alpha: 80,
+            }),
         },
         soft: {
             backgroundColor: hovered
-                ? formatHex8(lighten(resolvedColor, 0.5))
-                : formatHex8(lighten(resolvedColor, 0.7)),
+                ? formatColor(resolvedColor, {
+                      format: "hexa",
+                      lighten: 50,
+                  })
+                : formatColor(resolvedColor, {
+                      format: "hexa",
+                      lighten: 70,
+                  }),
             border: hovered
-                ? `2px solid ${formatHex8(alpha(resolvedColor, 0.85))}`
-                : `2px solid ${formatHex8(resolvedColor)}`,
+                ? `2px solid ${formatColor(resolvedColor, { alpha: 85, format: "hexa" })}`
+                : `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
         },
     };
 };

@@ -1,5 +1,9 @@
-import { clamp, resolveResponsiveMerge, resolveSize } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import {
+    clamp,
+    formatColor,
+    resolveResponsiveMerge,
+    resolveSize,
+} from "@mutualzz/ui-core";
 import {
     forwardRef,
     useImperativeHandle,
@@ -69,7 +73,9 @@ const SpinnerButtons = ({
                     backgroundColor: "transparent",
                     "& svg": { width: 12, height: 12 },
                     "&:hover": {
-                        backgroundColor: formatHex8(theme.colors.surface),
+                        backgroundColor: formatColor(theme.colors.surface, {
+                            format: "hexa",
+                        }),
                     },
                 }}
             >
@@ -104,7 +110,9 @@ const SpinnerButtons = ({
                     backgroundColor: "transparent",
                     "& svg": { width: 12, height: 12 },
                     "&:hover": {
-                        backgroundColor: formatHex8(theme.colors.surface),
+                        backgroundColor: formatColor(theme.colors.surface, {
+                            format: "hexa",
+                        }),
                     },
                 }}
             >

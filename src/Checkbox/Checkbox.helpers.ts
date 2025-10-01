@@ -1,7 +1,6 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import {
-    alpha,
-    getLuminance,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
     resolveSize,
@@ -11,7 +10,7 @@ import {
     type SizeValue,
     type Variant,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -36,9 +35,8 @@ export const resolveCheckboxStyles = (
     checked?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
-    const hexColor = formatHex8(resolvedColor);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
+    const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
@@ -47,52 +45,90 @@ export const resolveCheckboxStyles = (
             border: `1px solid ${hexColor}`,
             "&:hover": {
                 backgroundColor: checked
-                    ? formatHex8(alpha(resolvedColor, 0.8))
-                    : formatHex8(alpha(resolvedColor, 0.1)),
+                    ? formatColor(resolvedColor, {
+                          alpha: 80,
+                          format: "hexa",
+                      })
+                    : formatColor(resolvedColor, {
+                          alpha: 10,
+                          format: "hexa",
+                      }),
                 borderColor: hexColor,
             },
             "&:active": {
                 backgroundColor: checked
-                    ? formatHex8(alpha(resolvedColor, 0.7))
-                    : formatHex8(alpha(resolvedColor, 0.2)),
+                    ? formatColor(resolvedColor, {
+                          alpha: 70,
+                          format: "hexa",
+                      })
+                    : formatColor(resolvedColor, {
+                          alpha: 20,
+                          format: "hexa",
+                      }),
             },
         },
         outlined: {
             backgroundColor: checked
-                ? formatHex8(alpha(resolvedColor, 0.1))
+                ? formatColor(resolvedColor, {
+                      alpha: 10,
+                      format: "hexa",
+                  })
                 : "transparent",
-            color: formatHex8(resolvedColor),
-            border: `1px solid ${formatHex8(resolvedColor)}`,
+            color: formatColor(resolvedColor, { format: "hexa" }),
+            border: `1px solid ${formatColor(resolvedColor, {
+                format: "hexa",
+            })}`,
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.2)),
-                borderColor: formatHex8(resolvedColor),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 20,
+                    format: "hexa",
+                }),
+                borderColor: formatColor(resolvedColor, { format: "hexa" }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 30,
+                }),
             },
         },
         soft: {
-            backgroundColor: formatHex8(
-                alpha(resolvedColor, checked ? 0.3 : 0.1),
-            ),
-            color: formatHex8(resolvedColor),
+            backgroundColor: formatColor(resolvedColor, {
+                alpha: checked ? 30 : 10,
+                format: "hexa",
+            }),
+            color: formatColor(resolvedColor, { format: "hexa" }),
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.4)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 40,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.5)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
             },
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatHex8(resolvedColor),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+            }),
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.2)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 20,
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 30,
+                    format: "hexa",
+                }),
             },
         },
     };

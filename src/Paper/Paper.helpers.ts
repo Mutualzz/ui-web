@@ -1,8 +1,7 @@
 import type { Theme } from "@emotion/react";
 import {
-    alpha,
     dynamicElevation,
-    getLuminance,
+    formatColor,
     isValidGradient,
     resolveColor,
     resolveColorFromLuminance,
@@ -11,7 +10,7 @@ import {
     type ColorLike,
     type TypographyColor,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 
 export const resolvePaperStyles = (
     theme: Theme,
@@ -22,34 +21,43 @@ export const resolvePaperStyles = (
 ) => {
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
 
     const resolvedTextColor =
         textColor === "inherit"
             ? resolvedColor
             : resolveTypographyColor(textColor, theme);
 
-    const solidTextColor = resolveColorFromLuminance(bgLuminance, theme);
+    const solidTextColor = resolveColorFromLuminance(
+        ColorPkg(resolvedColor),
+        theme,
+    );
     const textColorWithFallback =
-        formatHex8(resolvedTextColor) ?? theme.typography.colors.muted;
+        formatColor(resolvedTextColor, {
+            format: "hexa",
+        }) ?? theme.typography.colors.muted;
 
     return {
         elevation: {
             background: isValidGradient(colors.surface)
                 ? nonTranslucent
                     ? colors.surface
-                    : alpha(colors.surface, 0.2)
+                    : formatColor(colors.surface, {
+                          alpha: 20,
+                          format: "hexa",
+                      })
                 : dynamicElevation(colors.surface, elevation),
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
             backdropFilter: `blur(${6 + elevation * 2}px)`,
         },
         solid: {
-            background: formatHex8(resolvedColor) ?? colors.primary,
+            background:
+                formatColor(resolvedColor, { format: "hexa" }) ??
+                theme.colors.primary,
             color: solidTextColor,
             border: "none",
         },
         outlined: {
-            border: `1px solid ${formatHex8(alpha(resolvedColor, 0.3))}`,
+            border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
             color: textColorWithFallback,
         },
         plain: {
@@ -58,7 +66,10 @@ export const resolvePaperStyles = (
             color: textColorWithFallback,
         },
         soft: {
-            background: formatHex8(alpha(resolvedColor, 0.1)),
+            background: formatColor(resolvedColor, {
+                alpha: 10,
+                format: "hexa",
+            }),
             border: "none",
             color: textColorWithFallback,
         },

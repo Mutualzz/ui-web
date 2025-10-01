@@ -1,21 +1,19 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
 import {
-    alpha,
-    getLuminance,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 
 export const resolveButtonContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
-    const hexColor = formatHex8(resolvedColor);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
+    const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
@@ -23,59 +21,111 @@ export const resolveButtonContainerStyles = (
             color: textColor,
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.7)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 70,
+                    format: "hexa",
+                }),
             },
             "&:disabled": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.5)),
-                color: formatHex8(alpha(textColor, 0.6)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
+                color: formatColor(textColor, {
+                    alpha: 60,
+                    format: "hexa",
+                }),
             },
         },
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatHex8(resolvedColor)}`,
-            color: formatHex8(resolvedColor),
+            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            color: formatColor(resolvedColor, { format: "hexa" }),
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.2)),
-                borderColor: formatHex8(resolvedColor),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 20,
+                    format: "hexa",
+                }),
+                borderColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 30,
+                    format: "hexa",
+                }),
             },
             "&:disabled": {
-                color: formatHex8(alpha(resolvedColor, 0.5)),
-                borderColor: formatHex8(alpha(resolvedColor, 0.3)),
+                color: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 50,
+                }),
+                borderColor: formatColor(resolvedColor, {
+                    alpha: 30,
+                    format: "hexa",
+                }),
             },
         },
         plain: {
             backgroundColor: "transparent",
             border: "none",
-            color: formatHex8(resolvedColor),
+            color: formatColor(resolvedColor, { format: "hexa" }),
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.2)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 20,
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 30,
+                }),
             },
             "&:disabled": {
-                color: formatHex8(alpha(resolvedColor, 0.5)),
+                color: formatColor(resolvedColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
             },
         },
         soft: {
-            backgroundColor: formatHex8(alpha(resolvedColor, 0.15)),
-            color: formatHex8(resolvedColor),
+            backgroundColor: formatColor(resolvedColor, {
+                alpha: 15,
+                format: "hexa",
+            }),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+            }),
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 30,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.4)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    alpha: 40,
+                }),
             },
             "&:disabled": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.05)),
-                color: formatHex8(alpha(resolvedColor, 0.5)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 5,
+                    format: "hexa",
+                }),
+                color: formatColor(resolvedColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
             },
         },
     };
@@ -86,21 +136,21 @@ export const resolveButtonTextStyles = (
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
+    const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
             color: textColor,
         },
         outlined: {
-            color: formatHex8(resolvedColor),
+            color: hexColor,
         },
         plain: {
-            color: formatHex8(resolvedColor),
+            color: hexColor,
         },
         soft: {
-            color: formatHex8(resolvedColor),
+            color: hexColor,
         },
     };
 };

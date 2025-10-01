@@ -1,7 +1,6 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
-import { alpha, resolveColor } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import { formatColor, resolveColor } from "@mutualzz/ui-core";
 
 export const resolveListStyles = (
     theme: Theme,
@@ -11,15 +10,20 @@ export const resolveListStyles = (
 
     return {
         solid: {
-            backgroundColor: formatHex8(resolvedColor),
+            backgroundColor: formatColor(resolvedColor, {
+                format: "hexa",
+            }),
             border: "none",
         },
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatHex8(alpha(resolvedColor, 0.3))}`,
+            border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
         },
         soft: {
-            backgroundColor: formatHex8(alpha(resolvedColor, 0.1)),
+            backgroundColor: formatColor(resolvedColor, {
+                alpha: 10,
+                format: "hexa",
+            }),
             border: "none",
         },
         plain: {

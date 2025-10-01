@@ -1,13 +1,12 @@
 import type { Theme } from "@emotion/react";
 import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
 import {
-    alpha,
-    getLuminance,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
     resolveSize,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 16,
@@ -36,52 +35,93 @@ export const resolveColorPickerButtonStyles = (
     color: Color | ColorLike,
 ) => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const contrastColor = resolveColorFromLuminance(bgLuminance, theme);
+    const contrastColor = resolveColorFromLuminance(
+        ColorPkg(resolvedColor),
+        theme,
+    );
 
     return {
         solid: {
             background: resolvedColor,
             border: `2px solid ${contrastColor}`,
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.9)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 90,
+                    format: "hexa",
+                }),
                 borderColor: contrastColor,
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
         },
         outlined: {
             background: resolvedColor,
-            border: `2px solid ${formatHex8(alpha(resolvedColor, 0.6))}`,
+            border: `2px solid ${formatColor(resolvedColor, {
+                format: "hexa",
+                alpha: 60,
+            })}`,
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.9)),
-                borderColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 90,
+                    format: "hexa",
+                }),
+                borderColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
         },
         soft: {
             background: resolvedColor,
-            border: `2px solid ${formatHex8(alpha(contrastColor, 0.3))}`,
+            border: `2px solid ${formatColor(contrastColor, {
+                format: "hexa",
+                alpha: 30,
+            })}`,
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.9)),
-                borderColor: formatHex8(alpha(contrastColor, 0.5)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 90,
+                    format: "hexa",
+                }),
+                borderColor: formatColor(contrastColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
         },
         plain: {
             background: resolvedColor,
             border: "2px solid transparent",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.9)),
-                borderColor: formatHex8(alpha(contrastColor, 0.2)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 90,
+                    format: "hexa",
+                }),
+                borderColor: formatColor(contrastColor, {
+                    alpha: 20,
+                    format: "hexa",
+                }),
             },
             "&:active": {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.8)),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 80,
+                    format: "hexa",
+                }),
             },
         },
     };

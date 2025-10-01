@@ -6,8 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { alpha, resolveColor, resolveSize } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -32,10 +31,16 @@ export const resolveCircularProgressOuterStroke = (
             stroke: "transparent",
         },
         solid: {
-            stroke: formatHex8(alpha(resolvedColor, 0.5))!,
+            stroke: formatColor(resolvedColor, {
+                alpha: 50,
+                format: "hexa",
+            }),
         },
         soft: {
-            stroke: formatHex8(alpha(resolvedColor, 0.1))!,
+            stroke: formatColor(resolvedColor, {
+                alpha: 10,
+                format: "hexa",
+            }),
         },
         outlined: {
             stroke: "transparent",

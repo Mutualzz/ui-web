@@ -1,12 +1,12 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import type { Color, ColorLike, TypographyColor } from "@mutualzz/ui-core";
 import {
+    formatColor,
     isThemeColor,
     isTypographyColor,
     resolveColor,
     resolveTypographyColor,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
 import type { DividerVariant } from "./Divider.types";
 
 export const resolveDividerColor = (
@@ -19,10 +19,7 @@ export const resolveDividerColor = (
           ? resolveTypographyColor(color, theme)
           : resolveColor(color, theme);
 
-    const hexColor = formatHex8(resolvedColor);
-    if (!hexColor) return color;
-
-    return hexColor;
+    return formatColor(resolvedColor, { format: "hexa" });
 };
 
 export const resolveDividerStyles = (

@@ -7,14 +7,12 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    darken,
-    getLuminance,
-    lighten,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
     resolveSize,
 } from "@mutualzz/ui-core";
-import { formatHex } from "culori";
+import ColorPkg from "color";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -43,36 +41,59 @@ export const resolveSelectStyles = (
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
 
     return {
         solid: {
-            backgroundColor: formatHex(resolvedColor),
-            color: formatHex(textColor),
+            backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
+            color: formatColor(textColor, { format: "hexa" }),
             "&:hover": {
-                backgroundColor: formatHex(darken(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    darken: 30,
+                    format: "hexa",
+                }),
             },
         },
         outlined: {
-            border: `1px solid ${formatHex(resolvedColor)}`,
-            color: formatHex(lighten(resolvedColor, 0.75)),
+            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+                lighten: 75,
+            }),
             "&:hover": {
-                backgroundColor: formatHex(darken(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    darken: 30,
+                }),
             },
         },
         soft: {
-            backgroundColor: formatHex(darken(resolvedColor, 0.5)),
-            color: formatHex(lighten(resolvedColor, 0.75)),
+            backgroundColor: formatColor(resolvedColor, {
+                format: "hexa",
+                darken: 50,
+            }),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+                lighten: 75,
+            }),
             "&:hover": {
-                backgroundColor: formatHex(lighten(resolvedColor, 0.05)),
+                backgroundColor: formatColor(resolvedColor, {
+                    format: "hexa",
+                    lighten: 5,
+                }),
             },
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatHex(lighten(resolvedColor, 0.75)),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+                lighten: 75,
+            }),
             "&:hover": {
-                backgroundColor: formatHex(darken(resolvedColor, 0.3)),
+                backgroundColor: formatColor(resolvedColor, {
+                    darken: 30,
+                    format: "hexa",
+                }),
             },
         },
     };
@@ -84,26 +105,28 @@ export const resolveSelectContentStyles = (
 ): Record<Variant, CSSObject> => {
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
 
     return {
         solid: {
-            backgroundColor: formatHex(resolvedColor),
-            color: formatHex(textColor),
+            backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
+            color: formatColor(textColor, { format: "hexa" }),
         },
         outlined: {
             backgroundColor: colors.background,
-            border: `1px solid ${formatHex(resolvedColor)}`,
-            color: formatHex(lighten(resolvedColor, 0.2)),
+            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            color: formatColor(resolvedColor, { format: "hexa", lighten: 20 }),
         },
         soft: {
-            backgroundColor: formatHex(darken(resolvedColor, 0.5)),
-            color: formatHex(lighten(resolvedColor, 0.2)),
+            backgroundColor: formatColor(resolvedColor, {
+                format: "hexa",
+                darken: 50,
+            }),
+            color: formatColor(resolvedColor, { format: "hexa", lighten: 20 }),
         },
         plain: {
             backgroundColor: colors.background,
-            color: formatHex(resolvedColor),
+            color: formatColor(resolvedColor, { format: "hexa" }),
         },
     };
 };

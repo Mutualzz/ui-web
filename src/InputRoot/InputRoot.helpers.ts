@@ -8,15 +8,13 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    alpha,
-    darken,
-    getLuminance,
+    formatColor,
     isValidColorInput,
     resolveColor,
     resolveSize,
     resolveTypographyColor,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -59,53 +57,100 @@ export const resolveInputRootStyles = (
     const activeColor = error ? errorColor : resolvedColor;
     const isColorLike = isValidColorInput(parsedTextColor);
 
-    const luminance = getLuminance(activeColor) ?? 0;
+    const luminance = ColorPkg(activeColor).luminosity();
     const solidTextColor =
         luminance < 0.5
-            ? formatHex8(colors.common.white)
-            : formatHex8(darken(activeColor, 0.7));
+            ? formatColor(colors.common.white, {
+                  format: "hexa",
+              })
+            : formatColor(activeColor, {
+                  darken: 70,
+                  format: "hexa",
+              });
 
-    const textColorFinal = formatHex8(
+    const textColorFinal = formatColor(
         isColorLike ? parsedTextColor : theme.typography.colors.primary,
+        {
+            format: "hexa",
+        },
     );
 
     return {
         outlined: {
             backgroundColor: "transparent",
             color: textColorFinal,
-            border: `1px solid ${formatHex8(activeColor)}`,
+            border: `1px solid ${formatColor(activeColor, {
+                format: "hexa",
+            })}`,
             "&:hover": {
-                borderColor: formatHex8(alpha(activeColor, 0.5)),
-                backgroundColor: formatHex8(alpha(activeColor, 0.05)),
+                borderColor: formatColor(activeColor, {
+                    alpha: 50,
+                    format: "hexa",
+                }),
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 5,
+                    format: "hexa",
+                }),
             },
             "&:focus-within": {
-                borderColor: formatHex8(activeColor),
-                backgroundColor: formatHex8(alpha(activeColor, 0.05)),
-                boxShadow: `0 0 0 2px ${formatHex8(alpha(activeColor, 0.2))}`,
+                borderColor: formatColor(activeColor, { format: "hexa" }),
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 5,
+                    format: "hexa",
+                }),
+                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                    alpha: 20,
+                    format: "hexa",
+                })}`,
             },
         },
         solid: {
-            backgroundColor: formatHex8(activeColor),
-            color: solidTextColor, // Use the contrast-adjusted text color
+            backgroundColor: formatColor(activeColor, {
+                format: "hexa",
+            }),
+            color: solidTextColor,
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.9)),
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 90,
+                    format: "hexa",
+                }),
             },
             "&:focus-within": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.8)),
-                boxShadow: `0 0 0 2px ${formatHex8(alpha(activeColor, 0.3))}`,
+                backgroundColor: formatColor(activeColor, {
+                    format: "hexa",
+                    alpha: 80,
+                }),
+                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                    alpha: 30,
+                    format: "hexa",
+                })}`,
             },
         },
         soft: {
-            backgroundColor: formatHex8(alpha(activeColor, 0.1)),
-            color: formatHex8(activeColor),
+            backgroundColor: formatColor(activeColor, {
+                alpha: 10,
+                format: "hexa",
+            }),
+            color: formatColor(activeColor, {
+                format: "hexa",
+            }),
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.15)),
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 15,
+                    format: "hexa",
+                }),
             },
             "&:focus-within": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.2)),
-                boxShadow: `0 0 0 2px ${formatHex8(alpha(activeColor, 0.2))}`,
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 20,
+                    format: "hexa",
+                }),
+                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                    format: "hexa",
+                    alpha: 20,
+                })}`,
             },
         },
         plain: {
@@ -113,11 +158,17 @@ export const resolveInputRootStyles = (
             color: textColorFinal,
             border: "none",
             "&:hover": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.05)),
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 5,
+                    format: "hexa",
+                }),
             },
             "&:focus-within": {
-                backgroundColor: formatHex8(alpha(activeColor, 0.1)),
-                boxShadow: `0 0 0 2px ${formatHex8(alpha(activeColor, 0.2))}`,
+                backgroundColor: formatColor(activeColor, {
+                    alpha: 10,
+                    format: "hexa",
+                }),
+                boxShadow: `0 0 0 2px ${formatColor(activeColor, { alpha: 20, format: "hexa" })}`,
             },
         },
     };

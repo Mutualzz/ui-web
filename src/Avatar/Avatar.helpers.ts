@@ -1,13 +1,12 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
 import {
-    alpha,
-    getLuminance,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
     resolveSize,
 } from "@mutualzz/ui-core";
-import { formatHex8 } from "culori";
+import ColorPkg from "color";
 import type { AvatarShape } from "./Avatar.types";
 
 const baseSizeMap: Record<Size, number> = {
@@ -67,9 +66,8 @@ export const resolveAvatarStyles = (
     hasText: boolean,
 ) => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
-    const hexColor = formatHex8(resolvedColor);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
+    const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         ...(hasText && {
@@ -81,18 +79,21 @@ export const resolveAvatarStyles = (
             plain: {
                 backgroundColor: "transparent",
                 border: "none",
-                color: formatHex8(resolvedColor),
+                color: formatColor(resolvedColor, { format: "hexa" }),
             },
             soft: {
-                backgroundColor: formatHex8(alpha(resolvedColor, 0.15)),
-                color: formatHex8(resolvedColor),
+                backgroundColor: formatColor(resolvedColor, {
+                    alpha: 15,
+                    format: "hexa",
+                }),
+                color: formatColor(resolvedColor, { format: "hexa" }),
                 border: "none",
             },
         }),
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatHex8(resolvedColor)}`,
-            color: formatHex8(resolvedColor),
+            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            color: formatColor(resolvedColor, { format: "hexa" }),
         },
     };
 };

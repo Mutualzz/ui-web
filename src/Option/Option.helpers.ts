@@ -7,14 +7,12 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    alpha,
-    getLuminance,
-    lighten,
+    formatColor,
     resolveColor,
     resolveColorFromLuminance,
     resolveSize,
 } from "@mutualzz/ui-core";
-import { formatHex, formatHex8 } from "culori";
+import ColorPkg from "color";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -41,58 +39,98 @@ export const resolveOptionStyles = (
     isSelected: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const bgLuminance = getLuminance(resolvedColor);
-    const textColor = resolveColorFromLuminance(bgLuminance, theme);
+    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
 
     return {
         solid: {
             backgroundColor: isSelected
-                ? formatHex(lighten(resolvedColor, 0.18)) // lighter when selected
-                : formatHex(resolvedColor),
-            color: formatHex(textColor),
+                ? formatColor(resolvedColor, {
+                      lighten: 18,
+                      format: "hexa",
+                  })
+                : formatColor(resolvedColor, {
+                      format: "hexa",
+                  }),
+            color: formatColor(textColor, {
+                format: "hexa",
+            }),
             ...(!isSelected && {
                 "&:hover": {
-                    backgroundColor: formatHex(lighten(resolvedColor, 0.28)), // even lighter on hover
+                    backgroundColor: formatColor(resolvedColor, {
+                        lighten: 28,
+                        format: "hexa",
+                    }),
                 },
             }),
         },
         outlined: {
             "&:not(:first-of-type)": {
-                borderTop: `1px solid ${formatHex(resolvedColor)}`,
+                borderTop: `1px solid ${formatColor(resolvedColor, {
+                    format: "hexa",
+                })}`,
             },
             backgroundColor: isSelected
-                ? formatHex8(alpha(lighten(resolvedColor, 0.15), 0.7))
+                ? formatColor(resolvedColor, {
+                      alpha: 70,
+                      lighten: 15,
+                      format: "hexa",
+                  })
                 : "transparent",
-            color: formatHex(lighten(resolvedColor, 0.8)),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+                lighten: 80,
+            }),
             ...(!isSelected && {
                 "&:hover": {
-                    backgroundColor: formatHex8(
-                        alpha(lighten(resolvedColor, 0.22), 0.5),
-                    ),
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 50,
+                        lighten: 22,
+                        format: "hexa",
+                    }),
                 },
             }),
         },
         soft: {
             backgroundColor: isSelected
-                ? formatHex8(alpha(lighten(resolvedColor, 0.15), 0.7))
-                : formatHex(lighten(resolvedColor, 0.08)),
-            color: formatHex(lighten(resolvedColor, 0.8)),
+                ? formatColor(resolvedColor, {
+                      format: "hexa",
+                      alpha: 70,
+                      lighten: 15,
+                  })
+                : formatColor(resolvedColor, {
+                      format: "hexa",
+                      lighten: 8,
+                  }),
+            color: formatColor(resolvedColor, {
+                format: "hexa",
+                lighten: 80,
+            }),
             ...(!isSelected && {
                 "&:hover": {
-                    backgroundColor: formatHex(lighten(resolvedColor, 0.18)),
+                    backgroundColor: formatColor(resolvedColor, {
+                        format: "hexa",
+                        lighten: 18,
+                    }),
                 },
             }),
         },
         plain: {
             backgroundColor: isSelected
-                ? formatHex8(alpha(lighten(resolvedColor, 0.15), 0.7))
+                ? formatColor(resolvedColor, {
+                      alpha: 70,
+                      lighten: 15,
+                  })
                 : "transparent",
-            color: formatHex(lighten(resolvedColor, 0.8)),
+            color: formatColor(resolvedColor, {
+                lighten: 80,
+                format: "hexa",
+            }),
             ...(!isSelected && {
                 "&:hover": {
-                    backgroundColor: formatHex8(
-                        alpha(lighten(resolvedColor, 0.22), 0.5),
-                    ),
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 50,
+                        lighten: 22,
+                    }),
                 },
             }),
         },
