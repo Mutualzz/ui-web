@@ -2,7 +2,6 @@ import { type CSSObject, type Theme } from "@emotion/react";
 import {
     formatColor,
     resolveColor,
-    resolveColorFromLuminance,
     resolveSize,
     type Color,
     type ColorLike,
@@ -10,7 +9,6 @@ import {
     type SizeValue,
     type Variant,
 } from "@mutualzz/ui-core";
-import ColorPkg from "color";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -35,13 +33,12 @@ export const resolveCheckboxStyles = (
     checked?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
             backgroundColor: hexColor,
-            color: textColor,
+            color: theme.typography.colors.primary,
             border: `1px solid ${hexColor}`,
             "&:hover": {
                 backgroundColor: checked

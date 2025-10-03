@@ -1,12 +1,6 @@
 import type { Theme } from "@emotion/react";
 import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
-import {
-    formatColor,
-    resolveColor,
-    resolveColorFromLuminance,
-    resolveSize,
-} from "@mutualzz/ui-core";
-import ColorPkg from "color";
+import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 16,
@@ -35,21 +29,17 @@ export const resolveColorPickerButtonStyles = (
     color: Color | ColorLike,
 ) => {
     const resolvedColor = resolveColor(color, theme);
-    const contrastColor = resolveColorFromLuminance(
-        ColorPkg(resolvedColor),
-        theme,
-    );
 
     return {
         solid: {
             background: resolvedColor,
-            border: `2px solid ${contrastColor}`,
+            border: `2px solid ${theme.typography.colors.primary}`,
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 90,
                     format: "hexa",
                 }),
-                borderColor: contrastColor,
+                borderColor: theme.typography.colors.primary,
             },
             "&:active": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -83,7 +73,7 @@ export const resolveColorPickerButtonStyles = (
         },
         soft: {
             background: resolvedColor,
-            border: `2px solid ${formatColor(contrastColor, {
+            border: `2px solid ${formatColor(theme.typography.colors.primary, {
                 format: "hexa",
                 alpha: 30,
             })}`,
@@ -92,7 +82,7 @@ export const resolveColorPickerButtonStyles = (
                     alpha: 90,
                     format: "hexa",
                 }),
-                borderColor: formatColor(contrastColor, {
+                borderColor: formatColor(theme.typography.colors.primary, {
                     alpha: 50,
                     format: "hexa",
                 }),
@@ -112,7 +102,7 @@ export const resolveColorPickerButtonStyles = (
                     alpha: 90,
                     format: "hexa",
                 }),
-                borderColor: formatColor(contrastColor, {
+                borderColor: formatColor(theme.typography.colors.primary, {
                     alpha: 20,
                     format: "hexa",
                 }),

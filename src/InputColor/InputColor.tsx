@@ -9,13 +9,11 @@ import {
     formatColor,
     isValidGradient,
     randomColor,
-    resolveColorFromLuminance,
     resolveResponsiveMerge,
     resolveSize,
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
-import Color from "color";
 import {
     forwardRef,
     useEffect,
@@ -65,10 +63,8 @@ const RandomIcon = ({ color, size, variant }: RandomIconProps) => {
         );
 
     let resolvedColor = color;
-    if (resolvedVariant === "solid") {
-        const luminatedColor = resolveColorFromLuminance(Color(color), theme);
-        resolvedColor = luminatedColor;
-    }
+    if (resolvedVariant === "solid")
+        resolvedColor = theme.typography.colors.primary;
 
     return (
         <svg

@@ -10,11 +10,9 @@ import type {
 import {
     formatColor,
     resolveColor,
-    resolveColorFromLuminance,
     resolveSize,
     resolveTypographyColor,
 } from "@mutualzz/ui-core";
-import ColorPkg from "color";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -59,11 +57,6 @@ export const resolveTextareaStyles = (
             ? resolvedColor
             : resolveTypographyColor(textColor, theme);
 
-    const solidTextColor = resolveColorFromLuminance(
-        ColorPkg(resolvedColor),
-        theme,
-    );
-
     const textColorWithFallback =
         formatColor(resolvedTextColor, {
             format: "hexa",
@@ -74,7 +67,7 @@ export const resolveTextareaStyles = (
             backgroundColor: formatColor(resolvedColor, {
                 format: "hexa",
             }),
-            color: solidTextColor,
+            color: theme.typography.colors.primary,
             border: "none",
             "&:focus-within": {
                 backgroundColor: formatColor(resolvedColor, {

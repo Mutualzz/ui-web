@@ -6,13 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import {
-    formatColor,
-    resolveColor,
-    resolveColorFromLuminance,
-    resolveSize,
-} from "@mutualzz/ui-core";
-import ColorPkg from "color";
+import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -39,7 +33,6 @@ export const resolveOptionStyles = (
     isSelected: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
 
     return {
         solid: {
@@ -51,7 +44,7 @@ export const resolveOptionStyles = (
                 : formatColor(resolvedColor, {
                       format: "hexa",
                   }),
-            color: formatColor(textColor, {
+            color: formatColor(theme.typography.colors.primary, {
                 format: "hexa",
             }),
             ...(!isSelected && {

@@ -57,16 +57,15 @@ export const resolveInputRootStyles = (
     const activeColor = error ? errorColor : resolvedColor;
     const isColorLike = isValidColorInput(parsedTextColor);
 
-    const luminance = ColorPkg(activeColor).luminosity();
-    const solidTextColor =
-        luminance < 0.5
-            ? formatColor(colors.common.white, {
-                  format: "hexa",
-              })
-            : formatColor(activeColor, {
-                  darken: 70,
-                  format: "hexa",
-              });
+    const isDark = ColorPkg(activeColor).isDark();
+    const solidTextColor = isDark
+        ? formatColor(theme.typography.colors.primary, {
+              format: "hexa",
+          })
+        : formatColor(activeColor, {
+              darken: 70,
+              format: "hexa",
+          });
 
     const textColorFinal = formatColor(
         isColorLike ? parsedTextColor : theme.typography.colors.primary,

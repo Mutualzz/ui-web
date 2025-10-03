@@ -1,24 +1,18 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
-import {
-    formatColor,
-    resolveColor,
-    resolveColorFromLuminance,
-} from "@mutualzz/ui-core";
-import ColorPkg from "color";
+import { formatColor, resolveColor } from "@mutualzz/ui-core";
 
 export const resolveButtonContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
             backgroundColor: hexColor,
-            color: textColor,
+            color: theme.typography.colors.primary,
             border: "none",
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -37,7 +31,7 @@ export const resolveButtonContainerStyles = (
                     alpha: 50,
                     format: "hexa",
                 }),
-                color: formatColor(textColor, {
+                color: formatColor(theme.typography.colors.primary, {
                     alpha: 60,
                     format: "hexa",
                 }),
@@ -136,12 +130,11 @@ export const resolveButtonTextStyles = (
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const textColor = resolveColorFromLuminance(ColorPkg(resolvedColor), theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
     return {
         solid: {
-            color: textColor,
+            color: theme.typography.colors.primary,
         },
         outlined: {
             color: hexColor,

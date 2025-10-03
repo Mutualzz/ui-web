@@ -4,7 +4,6 @@ import {
     formatColor,
     isValidGradient,
     resolveColor,
-    resolveColorFromLuminance,
     resolveTypographyColor,
     type Color,
     type ColorLike,
@@ -27,10 +26,7 @@ export const resolvePaperStyles = (
             ? resolvedColor
             : resolveTypographyColor(textColor, theme);
 
-    const solidTextColor = resolveColorFromLuminance(
-        ColorPkg(resolvedColor),
-        theme,
-    );
+
     const textColorWithFallback =
         formatColor(resolvedTextColor, {
             format: "hexa",
@@ -53,7 +49,7 @@ export const resolvePaperStyles = (
             background:
                 formatColor(resolvedColor, { format: "hexa" }) ??
                 theme.colors.primary,
-            color: solidTextColor,
+            color: theme.typography.colors.primary,
             border: "none",
         },
         outlined: {
