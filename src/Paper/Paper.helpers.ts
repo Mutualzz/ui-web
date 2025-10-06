@@ -9,7 +9,6 @@ import {
     type ColorLike,
     type TypographyColor,
 } from "@mutualzz/ui-core";
-import ColorPkg from "color";
 
 export const resolvePaperStyles = (
     theme: Theme,
@@ -26,11 +25,23 @@ export const resolvePaperStyles = (
             ? resolvedColor
             : resolveTypographyColor(textColor, theme);
 
-
     const textColorWithFallback =
         formatColor(resolvedTextColor, {
             format: "hexa",
         }) ?? theme.typography.colors.muted;
+
+    console.log(
+        "nonTranslucent",
+        nonTranslucent,
+        isValidGradient(colors.surface)
+            ? nonTranslucent
+                ? colors.surface
+                : formatColor(colors.surface, {
+                      alpha: 20,
+                      format: "rgba",
+                  })
+            : dynamicElevation(colors.surface, elevation),
+    );
 
     return {
         elevation: {
@@ -38,7 +49,7 @@ export const resolvePaperStyles = (
                 ? nonTranslucent
                     ? colors.surface
                     : formatColor(colors.surface, {
-                          alpha: 20,
+                          alpha: 10,
                           format: "hexa",
                       })
                 : dynamicElevation(colors.surface, elevation),
