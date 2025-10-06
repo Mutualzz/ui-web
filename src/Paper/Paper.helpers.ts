@@ -30,19 +30,6 @@ export const resolvePaperStyles = (
             format: "hexa",
         }) ?? theme.typography.colors.muted;
 
-    console.log(
-        "nonTranslucent",
-        nonTranslucent,
-        isValidGradient(colors.surface)
-            ? nonTranslucent
-                ? colors.surface
-                : formatColor(colors.surface, {
-                      alpha: 20,
-                      format: "rgba",
-                  })
-            : dynamicElevation(colors.surface, elevation),
-    );
-
     return {
         elevation: {
             background: isValidGradient(colors.surface)
