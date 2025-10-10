@@ -41,7 +41,6 @@ const InputRoot = styled("div")<InputRootProps>(
         boxSizing: "border-box",
         overflow: "hidden",
 
-        paddingInline: "0.5em",
         gap: "0.375em",
         borderRadius: 8,
         transition: "all 0.3s ease",
