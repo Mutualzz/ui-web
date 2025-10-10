@@ -112,6 +112,7 @@ export const resolveOptionStyles = (
                 ? formatColor(resolvedColor, {
                       alpha: 70,
                       lighten: 15,
+                      format: "hexa",
                   })
                 : "transparent",
             color: formatColor(resolvedColor, {
@@ -123,6 +124,7 @@ export const resolveOptionStyles = (
                     backgroundColor: formatColor(resolvedColor, {
                         alpha: 50,
                         lighten: 22,
+                        format: "hexa",
                     }),
                 },
             }),
