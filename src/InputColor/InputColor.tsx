@@ -98,6 +98,7 @@ const ColorPickerButton = styled(Button)(
     }),
 );
 
+// TODO: Fix invalid color stuff and create a helper where "color" package never throws an error but returns that invalid string of color or etc
 const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
     (
         {
@@ -196,80 +197,82 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
         }, [currentValue]);
 
         return (
-            <>
-                <InputRoot
-                    color={validatedColor}
-                    textColor={isInvalid ? theme.colors.danger : validatedColor}
-                    variant={variant}
-                    size={size}
-                    fullWidth={fullWidth}
-                    error={isInvalid}
-                    disabled={disabled}
-                >
-                    <DecoratorWrapper>
-                        {startDecorator ??
-                            (showColorPicker && !isInvalid && (
-                                <Popover
-                                    trigger={
-                                        <ColorPickerButton
-                                            size={size}
-                                            color={validatedColor}
-                                            variant={variant}
-                                        />
-                                    }
-                                    color={validatedColor}
-                                    size={size}
-                                    variant={variant}
-                                >
-                                    <Box ref={popoverRef}>
-                                        <ColorPicker
-                                            hidePresets
-                                            hideInputs
-                                            hideInputType
-                                            hideEyeDrop
-                                            hideOpacity={!allowAlpha}
-                                            hideAdvancedSliders
-                                            hideColorTypeBtns={!allowGradient}
-                                            hideColorGuide
-                                            value={pickerColor}
-                                            onChange={handleNewColor}
-                                            idSuffix={id}
-                                        />
-                                    </Box>
-                                </Popover>
-                            ))}
-                    </DecoratorWrapper>
-
-                    <InputBase
-                        {...(props as any)}
-                        type="text"
-                        value={inputValue}
-                        onChange={handleOnChange}
-                        onBlur={validate}
-                        ref={ref}
-                    />
-
-                    <DecoratorWrapper>
-                        {endDecorator ??
-                            (showRandom && (
-                                <IconButton
-                                    color={validatedColor}
-                                    variant={variant}
-                                    onClick={handleRandomColor}
-                                    css={{
-                                        padding: 4,
-                                    }}
-                                >
-                                    <RandomIcon
-                                        color={validatedColor}
+            <InputRoot
+                color={isInvalid ? "danger" : validatedColor}
+                textColor={isInvalid ? theme.colors.danger : validatedColor}
+                variant={variant}
+                size={size}
+                fullWidth={fullWidth}
+                error={isInvalid}
+                disabled={disabled}
+            >
+                <DecoratorWrapper>
+                    {startDecorator ??
+                        (showColorPicker && !isInvalid && (
+                            <Popover
+                                trigger={
+                                    <ColorPickerButton
                                         size={size}
+                                        color={validatedColor}
                                         variant={variant}
                                     />
-                                </IconButton>
-                            ))}
-                    </DecoratorWrapper>
-                </InputRoot>
-            </>
+                                }
+                                color={validatedColor}
+                                size={size}
+                                variant={variant}
+                            >
+                                <Box ref={popoverRef}>
+                                    <ColorPicker
+                                        hidePresets
+                                        hideInputs
+                                        hideInputType
+                                        hideEyeDrop
+                                        hideOpacity={!allowAlpha}
+                                        hideAdvancedSliders
+                                        hideColorTypeBtns={!allowGradient}
+                                        hideColorGuide
+                                        value={pickerColor}
+                                        onChange={handleNewColor}
+                                        idSuffix={id}
+                                    />
+                                </Box>
+                            </Popover>
+                        ))}
+                </DecoratorWrapper>
+
+                <InputBase
+                    {...(props as any)}
+                    type="text"
+                    value={inputValue}
+                    onChange={handleOnChange}
+                    onBlur={validate}
+                    ref={ref}
+                />
+
+                <DecoratorWrapper>
+                    {endDecorator ??
+                        (showRandom && (
+                            <IconButton
+                                color={isInvalid ? "danger" : validatedColor}
+                                variant={variant}
+                                onClick={handleRandomColor}
+                                css={{
+                                    padding: 4,
+                                }}
+                            >
+                                <RandomIcon
+                                    color={
+                                        isInvalid
+                                            ? theme.colors.danger
+                                            : validatedColor
+                                    }
+                                    size={size}
+                                    variant={variant}
+                                />
+                            </IconButton>
+                        ))}
+                </DecoratorWrapper>
+            </InputRoot>
         );
     },
 );

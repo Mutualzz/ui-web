@@ -8,13 +8,13 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
+    createColor,
     formatColor,
     isValidColorInput,
     resolveColor,
     resolveSize,
     resolveTypographyColor,
 } from "@mutualzz/ui-core";
-import ColorPkg from "color";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -57,7 +57,7 @@ export const resolveInputRootStyles = (
     const activeColor = error ? errorColor : resolvedColor;
     const isColorLike = isValidColorInput(parsedTextColor);
 
-    const isDark = ColorPkg(activeColor).isDark();
+    const isDark = createColor(activeColor).isDark();
     const solidTextColor = isDark
         ? formatColor(theme.typography.colors.primary, {
               format: "hexa",

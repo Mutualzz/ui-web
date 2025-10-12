@@ -24,29 +24,27 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
             ...props
         }: InputRootProps,
         ref,
-    ) => {
-        return (
-            <InputRoot
-                color={color as string}
-                textColor={textColor}
-                variant={variant}
-                size={size as number}
-                fullWidth={fullWidth}
-                error={error}
-                disabled={disabled}
-            >
-                {startDecorator && (
-                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
-                )}
+    ) => (
+        <InputRoot
+            color={color as string}
+            textColor={textColor}
+            variant={variant}
+            size={size as number}
+            fullWidth={fullWidth}
+            error={error}
+            disabled={disabled}
+        >
+            {startDecorator && (
+                <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+            )}
 
-                <InputBase {...props} ref={ref} type={type} />
+            <InputBase {...props} ref={ref} type={type} />
 
-                {endDecorator && (
-                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
-                )}
-            </InputRoot>
-        );
-    },
+            {endDecorator && (
+                <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
+            )}
+        </InputRoot>
+    ),
 );
 
 InputDefault.displayName = "InputDefault";
