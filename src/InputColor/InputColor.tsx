@@ -98,7 +98,6 @@ const ColorPickerButton = styled(Button)(
     }),
 );
 
-// TODO: Fix invalid color stuff and create a helper where "color" package never throws an error but returns that invalid string of color or etc
 const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
     (
         {
