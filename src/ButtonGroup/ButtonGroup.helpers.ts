@@ -91,20 +91,20 @@ export const resolveButtonGroupStyles = (
               "&:not(:first-of-type)": horizontalBorders[variant],
           }
         : {
-              "&:first-child": {
+              "&:first-of-type": {
                   borderBottomLeftRadius: 0,
                   borderBottomRightRadius: 0,
               },
-              "&:not(:first-child):not(:last-child)": {
+              "&:not(:first-of-type):not(:last-of-type)": {
                   borderTopLeftRadius: 0,
                   borderTopRightRadius: 0,
                   borderBottomLeftRadius: 0,
                   borderBottomRightRadius: 0,
               },
-              "&:last-child": {
+              "&:last-of-type": {
                   borderTopLeftRadius: 0,
                   borderTopRightRadius: 0,
               },
-              "&:not(:first-child)": verticalBorders[variant],
+              "&:not(:first-of-type)": verticalBorders[variant],
           };
 };
