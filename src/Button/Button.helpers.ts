@@ -1,6 +1,6 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
-import { formatColor, resolveColor } from "@mutualzz/ui-core";
+import { createColor, formatColor, resolveColor } from "@mutualzz/ui-core";
 
 export const resolveButtonContainerStyles = (
     theme: Theme,
@@ -9,10 +9,15 @@ export const resolveButtonContainerStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
+    const isLight = createColor(resolvedColor).isLight();
+
     return {
         solid: {
             backgroundColor: hexColor,
-            color: theme.typography.colors.primary,
+            color: formatColor(theme.typography.colors.primary, {
+                format: "hexa",
+                negate: isLight,
+            }),
             border: "none",
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -132,9 +137,14 @@ export const resolveButtonTextStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
+    const isLight = createColor(resolvedColor).isLight();
+
     return {
         solid: {
-            color: theme.typography.colors.primary,
+            color: formatColor(theme.typography.colors.primary, {
+                format: "hexa",
+                negate: isLight,
+            }),
         },
         outlined: {
             color: hexColor,
