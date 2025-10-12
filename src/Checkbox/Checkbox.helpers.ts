@@ -1,5 +1,6 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import {
+    createColor,
     formatColor,
     resolveColor,
     resolveSize,
@@ -35,10 +36,15 @@ export const resolveCheckboxStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
+
     return {
         solid: {
             backgroundColor: hexColor,
-            color: theme.typography.colors.primary,
+            color: solidTextColor,
             border: `1px solid ${hexColor}`,
             "&:hover": {
                 backgroundColor: checked

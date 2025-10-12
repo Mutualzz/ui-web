@@ -16,7 +16,6 @@ export const resolveTypographStyles = (
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
 ): Record<TypographyVariant, CSSObject> => {
-    const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
 
     const parsedTextColor =
@@ -27,7 +26,7 @@ export const resolveTypographStyles = (
     const isColorLike = isValidColorInput(parsedTextColor);
     const isDark = createColor(resolvedColor).isDark();
     const solidTextColor = isDark
-        ? formatColor(colors.common.white, { format: "hexa" })
+        ? formatColor(theme.typography.colors.primary, { format: "hexa" })
         : formatColor(resolvedColor, {
               format: "hexa",
               darken: 70,

@@ -8,7 +8,9 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
+    createColor,
     formatColor,
+    isValidColorInput,
     resolveColor,
     resolveSize,
     resolveTypographyColor,
@@ -52,22 +54,37 @@ export const resolveTextareaStyles = (
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
 
-    const resolvedTextColor =
+    const parsedTextColor =
         textColor === "inherit"
-            ? resolvedColor
+            ? theme.typography.colors.primary
             : resolveTypographyColor(textColor, theme);
 
-    const textColorWithFallback =
-        formatColor(resolvedTextColor, {
+    const errorColor = colors.danger;
+    const isColorLike = isValidColorInput(parsedTextColor);
+
+    const isDark = createColor(resolvedColor).isDark();
+    const solidTextColor = isDark
+        ? formatColor(theme.typography.colors.primary, {
+              format: "hexa",
+          })
+        : formatColor(resolvedColor, {
+              darken: 70,
+              format: "hexa",
+          });
+
+    const textColorFinal = formatColor(
+        isColorLike ? parsedTextColor : theme.typography.colors.primary,
+        {
             format: "hexa",
-        }) ?? theme.typography.colors.primary;
+        },
+    );
 
     return {
         solid: {
             backgroundColor: formatColor(resolvedColor, {
                 format: "hexa",
             }),
-            color: theme.typography.colors.primary,
+            color: solidTextColor,
             border: "none",
             "&:focus-within": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -79,7 +96,7 @@ export const resolveTextareaStyles = (
         outlined: {
             backgroundColor: colors.background,
             border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
-            color: textColorWithFallback,
+            color: textColorFinal,
             "&:focus-within": {
                 borderColor: formatColor(resolvedColor, {
                     format: "hexa",
@@ -96,7 +113,7 @@ export const resolveTextareaStyles = (
                 format: "hexa",
             }),
             border: "none",
-            color: textColorWithFallback,
+            color: textColorFinal,
             "&:focus-within": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 15,
@@ -107,7 +124,7 @@ export const resolveTextareaStyles = (
         plain: {
             backgroundColor: "transparent",
             border: "none",
-            color: textColorWithFallback,
+            color: textColorFinal,
             "&:focus-within": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 5,

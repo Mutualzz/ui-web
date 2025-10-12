@@ -9,15 +9,15 @@ export const resolveButtonContainerStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
-    const isLight = createColor(resolvedColor).isLight();
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
 
     return {
         solid: {
             backgroundColor: hexColor,
-            color: formatColor(theme.typography.colors.primary, {
-                format: "hexa",
-                negate: isLight,
-            }),
+            color: solidTextColor,
             border: "none",
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -137,14 +137,14 @@ export const resolveButtonTextStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
-    const isLight = createColor(resolvedColor).isLight();
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
 
     return {
         solid: {
-            color: formatColor(theme.typography.colors.primary, {
-                format: "hexa",
-                negate: isLight,
-            }),
+            color: solidTextColor,
         },
         outlined: {
             color: hexColor,

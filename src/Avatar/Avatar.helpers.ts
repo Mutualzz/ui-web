@@ -1,6 +1,11 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import {
+    createColor,
+    formatColor,
+    resolveColor,
+    resolveSize,
+} from "@mutualzz/ui-core";
 import type { AvatarShape } from "./Avatar.types";
 
 const baseSizeMap: Record<Size, number> = {
@@ -62,11 +67,16 @@ export const resolveAvatarStyles = (
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
+
     return {
         ...(hasText && {
             solid: {
                 backgroundColor: hexColor,
-                color: theme.typography.colors.primary,
+                color: solidTextColor,
                 border: "none",
             },
             plain: {

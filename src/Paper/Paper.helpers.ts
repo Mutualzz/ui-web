@@ -1,5 +1,6 @@
 import type { Theme } from "@emotion/react";
 import {
+    createColor,
     dynamicElevation,
     formatColor,
     isValidGradient,
@@ -30,6 +31,11 @@ export const resolvePaperStyles = (
             format: "hexa",
         }) ?? theme.typography.colors.muted;
 
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
+
     return {
         elevation: {
             background: isValidGradient(colors.surface)
@@ -47,7 +53,7 @@ export const resolvePaperStyles = (
             background:
                 formatColor(resolvedColor, { format: "hexa" }) ??
                 theme.colors.primary,
-            color: theme.typography.colors.primary,
+            color: solidTextColor,
             border: "none",
         },
         outlined: {

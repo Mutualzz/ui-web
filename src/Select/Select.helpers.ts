@@ -6,7 +6,12 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import {
+    createColor,
+    formatColor,
+    resolveColor,
+    resolveSize,
+} from "@mutualzz/ui-core";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -36,12 +41,15 @@ export const resolveSelectStyles = (
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
 
+    const solidTextColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+        negate: createColor(resolvedColor).isLight(),
+    });
+
     return {
         solid: {
             backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
-            color: formatColor(theme.typography.colors.primary, {
-                format: "hexa",
-            }),
+            color: solidTextColor,
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     darken: 30,
