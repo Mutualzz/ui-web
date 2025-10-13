@@ -2,7 +2,7 @@ import {
     ThemeProvider as EmotionThemeProvder,
     type Theme,
 } from "@emotion/react";
-import type { ThemeMode } from "@mutualzz/ui-core";
+import type { ThemeStyle, ThemeType } from "@mutualzz/ui-core";
 import {
     baseDarkTheme,
     baseLightTheme,
@@ -23,36 +23,46 @@ export const ThemeContext = createContext({
     changeTheme: (_theme: Theme) => {
         return;
     },
-    mode: "system" as ThemeMode,
-    changeMode: (_mode: ThemeMode) => {
+    type: "system" as ThemeType,
+    changeType: (_type: ThemeType) => {
+        return;
+    },
+    style: "normal" as ThemeStyle,
+    changeStyle: (_style: ThemeStyle) => {
         return;
     },
 });
 
 export interface ThemeProviderRef {
     changeTheme: (theme: Theme) => void;
-    changeMode: (mode: ThemeMode) => void;
+    changeType: (type: ThemeType) => void;
+    changeStyle: (style: ThemeStyle) => void;
 }
 
 const ThemeProvider = forwardRef<
     ThemeProviderRef,
     PropsWithChildren & {
         onThemeChange?: (theme: Theme) => void;
-        onModeChange?: (mode: ThemeMode) => void;
-        disableDefaultThemeOnModeChange?: boolean;
+        onTypeChange?: (type: ThemeType) => void;
+        onStyleChange?: (style: ThemeStyle) => void;
+        disableDefaultThemeOnTypeChange?: boolean;
+        disableDefaultThemeOnStyleChange?: boolean;
     }
 >(
     (
         {
             children,
             onThemeChange,
-            onModeChange,
-            disableDefaultThemeOnModeChange = false,
+            onTypeChange,
+            onStyleChange,
+            disableDefaultThemeOnTypeChange = false,
+            disableDefaultThemeOnStyleChange = false,
         },
         ref,
     ) => {
         const [theme, setTheme] = useState<Theme | null>(null);
-        const [mode, setMode] = useState<ThemeMode>("system");
+        const [type, setType] = useState<ThemeType>("system");
+        const [style, setStyle] = useState<ThemeStyle>("normal");
         const [prefersDark, setPrefersDark] = useState<boolean | null>(null);
         const [mounted, setMounted] = useState(false);
 
@@ -66,7 +76,7 @@ const ThemeProvider = forwardRef<
             const updatePrefersDark = () => {
                 const isDark = mediaQuery.matches;
                 setPrefersDark(isDark);
-                if (mode === "system") {
+                if (type === "system") {
                     setTheme(isDark ? baseDarkTheme : baseLightTheme);
                 }
             };
@@ -75,29 +85,47 @@ const ThemeProvider = forwardRef<
             mediaQuery.addEventListener("change", updatePrefersDark);
             return () =>
                 mediaQuery.removeEventListener("change", updatePrefersDark);
-        }, [mode]);
+        }, [type]);
 
-        const changeMode = (mode: ThemeMode) => {
-            setMode(mode);
+        const changeType = (type: ThemeType) => {
+            setType(type);
 
-            if (!disableDefaultThemeOnModeChange) {
-                if (mode === "system" && prefersDark !== null)
+            if (!disableDefaultThemeOnTypeChange) {
+                if (type === "system" && prefersDark !== null)
                     setTheme(prefersDark ? baseDarkTheme : baseLightTheme);
-                else if (mode === "dark") setTheme(baseDarkTheme);
+                else if (type === "dark") setTheme(baseDarkTheme);
                 else setTheme(baseLightTheme);
+                setStyle("normal");
             }
 
-            onModeChange?.(mode);
+            onTypeChange?.(type);
+            onStyleChange?.("normal");
         };
 
         const changeTheme = (theme: Theme) => {
             setTheme(theme);
+            setStyle(theme.style);
+
             onThemeChange?.(theme);
+            onStyleChange?.(theme.style);
+        };
+
+        const changeStyle = (style: ThemeStyle) => {
+            if (!disableDefaultThemeOnStyleChange && style === "normal") {
+                if (type === "system" && prefersDark !== null)
+                    setTheme(prefersDark ? baseDarkTheme : baseLightTheme);
+                else if (type === "dark") setTheme(baseDarkTheme);
+                else setTheme(baseLightTheme);
+            }
+
+            setStyle(style);
+            onStyleChange?.(style);
         };
 
         useImperativeHandle(ref, () => ({
             changeTheme,
-            changeMode,
+            changeType,
+            changeStyle,
         }));
 
         const themeObject =
@@ -112,10 +140,12 @@ const ThemeProvider = forwardRef<
             () => ({
                 theme: themeObject,
                 changeTheme,
-                mode,
-                changeMode,
+                type,
+                changeType,
+                style,
+                changeStyle,
             }),
-            [mode, themeObject],
+            [type, style, themeObject],
         );
 
         if (!mounted) return null;
