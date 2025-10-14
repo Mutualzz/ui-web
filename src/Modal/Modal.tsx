@@ -1,3 +1,4 @@
+import type { CSSObject } from "@emotion/react";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import {
     forwardRef,
@@ -69,40 +70,42 @@ const ModalCloseButton = styled(Button)<
     ButtonProps & {
         layout: "center" | "fullscreen";
     }
->(({ theme, color = "neutral", variant = "outlined", layout }) => ({
-    ...resolveResponsiveMerge(
-        theme,
-        { color, variant },
-        ({ color: c, variant: v }) => ({
-            ...resolveButtonContainerStyles(theme, c)[v],
-        }),
-    ),
+>(
+    ({ theme, color = "neutral", variant = "outlined", layout }) =>
+        ({
+            ...resolveResponsiveMerge(
+                theme,
+                { color, variant },
+                ({ color: c, variant: v }) => ({
+                    ...resolveButtonContainerStyles(theme, c)[v],
+                }),
+            ),
 
-    position: "absolute",
-    top: layout === "fullscreen" ? "24px" : "1.5em",
-    right: layout === "fullscreen" ? "24px" : "1.5em",
-    zIndex: 1,
+            position: "absolute",
+            top: layout === "fullscreen" ? "3em" : "1.5em",
+            right: layout === "fullscreen" ? "3em" : "1.5em",
+            zIndex: 1,
 
-    // Make it perfectly circular
-    borderRadius: "50%",
-    aspectRatio: "1", // Ensures perfect circle
-    minWidth: layout === "fullscreen" ? "44px" : "40px",
-    width: layout === "fullscreen" ? "44px" : "40px",
-    height: layout === "fullscreen" ? "44px" : "40px",
-    padding: 0,
+            borderRadius: "50%",
+            aspectRatio: "1",
+            minWidth: layout === "fullscreen" ? "44px" : "40px",
+            width: layout === "fullscreen" ? "44px" : "40px",
+            height: layout === "fullscreen" ? "44px" : "40px",
+            padding: 0,
 
-    // Center the X
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+            // Center the X
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
 
-    "&::before": {
-        content: '"✕"',
-        fontSize: layout === "fullscreen" ? "18px" : "16px",
-        lineHeight: 1,
-        fontWeight: "bold",
-    },
-}));
+            "&::before": {
+                content: '"✕"',
+                fontSize: layout === "fullscreen" ? "18px" : "16px",
+                lineHeight: 1,
+                fontWeight: "bold",
+            },
+        }) as CSSObject,
+);
 
 ModalCloseButton.displayName = "ModalCloseButton";
 
@@ -264,7 +267,8 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         ))}
                     <ModalContainer layout={layout}>
                         {showCloseButton &&
-                            onClose &&
+                            disableBackdropClick &&
+                            (onClose || layout !== "center") &&
                             (closeButton ? (
                                 closeButton
                             ) : (
