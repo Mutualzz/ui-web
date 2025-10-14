@@ -5,6 +5,7 @@ import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import {
+    resolveButtonContainerSize,
     resolveButtonContainerStyles,
     resolveButtonTextStyles,
 } from "./Button.helpers";
@@ -42,14 +43,10 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         ...resolveResponsiveMerge(
             theme,
             { size, color, variant },
-            ({ size: s, color: c, variant: v }) => {
-                const resolvedSize = resolveSize(theme, s, baseSizeMap);
-                return {
-                    fontSize: resolvedSize,
-                    padding: resolvedSize * 0.6,
-                    ...resolveButtonContainerStyles(theme, c)[v],
-                };
-            },
+            ({ size: s, color: c, variant: v }) => ({
+                ...resolveButtonContainerSize(theme, s),
+                ...resolveButtonContainerStyles(theme, c)[v],
+            }),
         ),
     }),
 );

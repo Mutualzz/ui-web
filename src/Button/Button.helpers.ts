@@ -1,6 +1,34 @@
 import { type CSSObject, type Theme } from "@emotion/react";
-import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
-import { createColor, formatColor, resolveColor } from "@mutualzz/ui-core";
+import type {
+    Color,
+    ColorLike,
+    Size,
+    SizeValue,
+    Variant,
+} from "@mutualzz/ui-core";
+import {
+    createColor,
+    formatColor,
+    resolveColor,
+    resolveSize,
+} from "@mutualzz/ui-core";
+
+const baseSizeMap: Record<Size, number> = {
+    sm: 12,
+    md: 14,
+    lg: 16,
+};
+
+export const resolveButtonContainerSize = (
+    theme: Theme,
+    size: Size | SizeValue | number,
+) => {
+    const resolvedSize = resolveSize(theme, size, baseSizeMap);
+    return {
+        fontSize: resolvedSize,
+        padding: resolvedSize * 0.6,
+    };
+};
 
 export const resolveButtonContainerStyles = (
     theme: Theme,
