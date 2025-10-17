@@ -12,9 +12,9 @@ import {
 } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
-    sm: 11,
+    sm: 10,
     md: 12,
-    lg: 13,
+    lg: 16,
 };
 
 export const resolveTooltipContainerSize = (
