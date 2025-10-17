@@ -79,7 +79,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             title,
             content,
             children,
-            placement: placementProp = "top-start",
+            placement: placementProp = "top",
             open: openProp = true,
             defaultOpen,
             onOpenChange,
@@ -116,13 +116,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             ({ placement, size }) => ({ placement, size }),
         );
 
-        const {
-            refs,
-            floatingStyles,
-            context,
-            placement: actualPlacement,
-            middlewareData,
-        } = useFloating({
+        const { refs, floatingStyles, context } = useFloating({
             open,
             onOpenChange: setOpen,
             placement,
