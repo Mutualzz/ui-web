@@ -38,8 +38,6 @@ export interface TooltipProps
 
     onOpenChange?: (open: boolean) => void;
 
-    arrow?: boolean;
-
     variant?: Responsive<Variant>;
     size?: Responsive<Size | SizeValue | number>;
     color?: Responsive<Color | ColorLike>;

@@ -1,5 +1,4 @@
 import {
-    arrow as arrowMw,
     autoUpdate,
     flip,
     offset,
@@ -21,7 +20,6 @@ import {
     forwardRef,
     useEffect,
     useId,
-    useRef,
     useState,
 } from "react";
 import { useTheme } from "../useTheme";
@@ -30,7 +28,7 @@ import {
     resolveTooltipContainerStyles,
     resolveTooltipTextStyles,
 } from "./Tooltip.helpers";
-import type { TooltipPlacement, TooltipProps } from "./Tooltip.types";
+import type { TooltipProps } from "./Tooltip.types";
 
 const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
     ({ theme, color = "neutral", variant = "soft", size = "md" }) => ({
@@ -74,34 +72,6 @@ const TooltipContent = styled("span")<Omit<TooltipProps, "children">>(
 
 TooltipContent.displayName = "TooltipContent";
 
-const TooltipArrow = styled("span")<TooltipProps>(
-    ({ theme, color = "neutral", variant = "soft", size = "md" }) => ({
-        position: "absolute",
-        transform: "rotate(45deg)",
-        borderLeft: "1px solid rgba(255,255,255,0.08)",
-        borderTop: "1px solid rgba(255,255,255,0.08)",
-        ...resolveResponsiveMerge(
-            theme,
-            { color, variant, size },
-            ({ color: c, variant: v, size: s }) => {
-                const resolvedSize = resolveTooltipContainerSize(
-                    theme,
-                    s,
-                ).arrow;
-
-                return {
-                    background: resolveTooltipContainerStyles(theme, c)[v]
-                        .background,
-                    width: resolvedSize,
-                    height: resolvedSize,
-                };
-            },
-        ),
-    }),
-);
-
-TooltipArrow.displayName = "TooltipArrow";
-
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     (
         {
@@ -109,11 +79,10 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             title,
             content,
             children,
-            placement: placementProp = "top",
-            open: openProp,
+            placement: placementProp = "top-start",
+            open: openProp = true,
             defaultOpen,
             onOpenChange,
-            arrow = true,
             variant = "soft",
             size: sizeProp = "md",
             color = "neutral",
@@ -133,7 +102,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         const [uncontrolled, setUncontrolled] = useState(!!defaultOpen);
         const open = isControlled ? !!openProp : uncontrolled;
 
-        const arrowRef = useRef<HTMLSpanElement | null>(null);
         const [mounted, setMounted] = useState(false);
         const label = content ?? title;
 
@@ -163,7 +131,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 offset(() => resolveTooltipContainerSize(theme, size).gap),
                 flip({ padding: 8 }),
                 shift({ padding: 8 }),
-                arrowMw({ element: arrowRef }),
             ],
         });
 
@@ -191,11 +158,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         useEffect(() => setMounted(true), []);
 
         const child = children ? Children.only<any>(children) : null;
-
-        const staticSide =
-            (actualPlacement.split("-")[0] as TooltipPlacement) || "top";
-        const ax = middlewareData.arrow?.x != null ? middlewareData.arrow.x : 0;
-        const ay = middlewareData.arrow?.y != null ? middlewareData.arrow.y : 0;
 
         return (
             <div ref={ref} {...props}>
@@ -225,21 +187,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                             >
                                 {label ?? title}
                             </TooltipContent>
-                            {arrow && (
-                                <TooltipArrow
-                                    ref={arrowRef as any}
-                                    color={color as string}
-                                    variant={variant}
-                                    size={size}
-                                    style={{
-                                        left: ax != null ? `${ax}px` : "",
-                                        top: ay != null ? `${ay}px` : "",
-                                        [staticSide]: `-${resolveTooltipContainerSize(theme, size).arrow / 2}px`,
-                                    }}
-                                />
-                            )}
                         </TooltipRoot>
-                        ,
                     </Portal>
                 )}
             </div>
