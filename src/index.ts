@@ -95,7 +95,10 @@ export type * from "./Option/Option.types";
 export * from "./Stack/Stack";
 
 export * from "./Textarea/Textarea";
-export * from "./Textarea/Textarea.types";
+export type * from "./Textarea/Textarea.types";
+
+export * from "./Tooltip/Tooltip";
+export type * from "./Tooltip/Tooltip.types";
 
 export * from "./Typography/Typography";
 export type * from "./Typography/Typography.types";
