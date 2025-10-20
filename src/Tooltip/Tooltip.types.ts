@@ -22,6 +22,8 @@ export type TooltipPlacement =
     | "right-start"
     | "right-end";
 
+export type TooltipVariant = Variant | "none";
+
 export interface TooltipProps
     extends Omit<
         HTMLAttributes<HTMLDivElement>,
@@ -31,6 +33,8 @@ export interface TooltipProps
     content?: ReactNode;
     children?: ReactElement;
 
+    elevation?: Responsive<number>;
+
     placement?: Responsive<TooltipPlacement>;
 
     open?: boolean;
@@ -38,7 +42,7 @@ export interface TooltipProps
 
     onOpenChange?: (open: boolean) => void;
 
-    variant?: Responsive<Variant>;
+    variant?: Responsive<TooltipVariant>;
     size?: Responsive<Size | SizeValue | number>;
     color?: Responsive<Color | ColorLike>;
 

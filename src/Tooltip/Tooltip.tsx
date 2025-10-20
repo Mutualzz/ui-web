@@ -31,7 +31,13 @@ import {
 import type { TooltipProps } from "./Tooltip.types";
 
 const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
-    ({ theme, color = "neutral", variant = "soft", size = "md" }) => ({
+    ({
+        theme,
+        color = "neutral",
+        variant = "none",
+        size = "md",
+        elevation = 1,
+    }) => ({
         position: "absolute",
         zIndex: theme.zIndex.tooltip,
         display: "inline-flex",
@@ -43,12 +49,12 @@ const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
         pointerEvents: "none",
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant },
-            ({ size: s, color: c, variant: v }) => ({
+            { size, color, variant, elevation },
+            ({ size: s, color: c, variant: v, elevation: e }) => ({
                 borderRadius: resolveTooltipContainerSize(theme, s)
                     .borderRadius,
                 padding: resolveTooltipContainerSize(theme, s).padding,
-                ...resolveTooltipContainerStyles(theme, c)[v],
+                ...resolveTooltipContainerStyles(theme, c, e)[v],
             }),
         ),
     }),
@@ -57,11 +63,17 @@ const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
 TooltipRoot.displayName = "TooltipRoot";
 
 const TooltipContent = styled("span")<Omit<TooltipProps, "children">>(
-    ({ theme, color = "neutral", variant = "soft", size = "md" }) => ({
+    ({
+        theme,
+        color = "neutral",
+        variant = "none",
+        size = "md",
+        elevation = 1,
+    }) => ({
         lineHeight: 1.2,
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant },
+            { size, color, variant, elevation },
             ({ color: c, variant: v, size: s }) => ({
                 ...resolveTooltipTextStyles(theme, c)[v],
                 fontSize: resolveTooltipContainerSize(theme, s).fontSize,
@@ -83,9 +95,10 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             open: openProp,
             defaultOpen,
             onOpenChange,
-            variant = "soft",
+            variant = "none",
             size: sizeProp = "md",
             color = "neutral",
+            elevation = 5,
             enterDelay = 100,
             leaveDelay = 100,
             disableFocusListener,
@@ -165,6 +178,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 {mounted && open && label && (
                     <Portal>
                         <TooltipRoot
+                            elevation={elevation}
                             ref={refs.setFloating}
                             id={tipId}
                             role="tooltip"
@@ -178,6 +192,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                                 color={color as string}
                                 variant={variant}
                                 size={size}
+                                elevation={1}
                             >
                                 {label ?? title}
                             </TooltipContent>

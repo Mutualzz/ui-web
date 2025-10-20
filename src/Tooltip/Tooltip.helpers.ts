@@ -1,6 +1,7 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import {
     createColor,
+    dynamicElevation,
     formatColor,
     resolveColor,
     resolveSize,
@@ -8,8 +9,8 @@ import {
     type ColorLike,
     type Size,
     type SizeValue,
-    type Variant,
 } from "@mutualzz/ui-core";
+import type { TooltipVariant } from "./Tooltip.types";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 10,
@@ -34,7 +35,8 @@ export const resolveTooltipContainerSize = (
 export const resolveTooltipContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
-): Record<Variant, CSSObject> => {
+    elevation: number,
+): Record<TooltipVariant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
@@ -44,6 +46,10 @@ export const resolveTooltipContainerStyles = (
     });
 
     return {
+        none: {
+            background: dynamicElevation(theme.colors.surface, elevation),
+            color: theme.typography.colors.primary,
+        },
         solid: {
             background: hexColor,
             color: solidTextColor,
@@ -83,7 +89,7 @@ export const resolveTooltipContainerStyles = (
 export const resolveTooltipTextStyles = (
     theme: Theme,
     color: Color | ColorLike,
-): Record<Variant, CSSObject> => {
+): Record<TooltipVariant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
@@ -93,6 +99,9 @@ export const resolveTooltipTextStyles = (
     });
 
     return {
+        none: {
+            color: theme.typography.colors.primary,
+        },
         solid: {
             color: solidTextColor,
         },
