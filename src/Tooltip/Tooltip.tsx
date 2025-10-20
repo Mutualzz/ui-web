@@ -80,7 +80,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             content,
             children,
             placement: placementProp = "top",
-            open: openProp = true,
+            open: openProp,
             defaultOpen,
             onOpenChange,
             variant = "soft",
