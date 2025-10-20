@@ -14,7 +14,7 @@ const Paper = styled("div")<PaperProps>(
         theme,
         display = "flex",
         variant = "elevation",
-        elevation = 0,
+        elevation = 1,
         color = "neutral",
         textColor = "inherit",
         nonTranslucent = false,
