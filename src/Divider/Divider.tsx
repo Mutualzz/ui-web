@@ -21,8 +21,6 @@ const DividerWrapper = styled("div")<{ isVertical?: boolean }>(
                   width: "100%",
                   height: "1px",
               }),
-
-        margin: isVertical ? "0 8px" : "8px 0",
     }),
 );
 
