@@ -11,16 +11,11 @@ const DividerWrapper = styled("div")<{ isVertical?: boolean }>(
         flexDirection: isVertical ? "column" : "row",
         alignItems: "center",
 
-        ...(isVertical
-            ? {
-                  width: "auto",
-                  height: "100%",
-                  flex: "0 0 auto",
-              }
-            : {
-                  width: "100%",
-                  height: "1px",
-              }),
+        width: isVertical ? "auto" : "100%",
+        height: isVertical ? "100%" : "auto",
+
+        alignSelf: "stretch",
+        minWidth: isVertical ? "auto" : 0,
     }),
 );
 
@@ -32,9 +27,18 @@ const DividerLine = styled("span")<{
     variant: DividerVariant;
     grow?: boolean;
 }>(({ isVertical, variant, lineColor, grow }) => ({
-    flexGrow: grow ? 1 : 0,
-
-    ...(isVertical ? { minHeight: "1rem" } : { minWidth: "1rem" }),
+    alignItems: "center",
+    ...(isVertical
+        ? {
+              width: "1px",
+              flexGrow: grow ? 1 : 0,
+              minHeight: "1rem",
+          }
+        : {
+              height: "1px",
+              flex: grow ? "1 1 0%" : "0 0 auto",
+              minWidth: "1rem",
+          }),
     ...resolveDividerStyles(isVertical, lineColor)[variant],
 }));
 
