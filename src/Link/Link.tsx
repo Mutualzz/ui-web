@@ -44,7 +44,7 @@ const LinkWrapper = styled("a")<LinkProps>(
                     textDecoration: "underline",
                 }),
                 ...(u === "hover" && {
-                    "::hover": {
+                    ":hover": {
                         textDecoration: "underline",
                     },
                 }),
