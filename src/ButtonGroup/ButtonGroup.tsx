@@ -92,6 +92,8 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
             color,
             size,
             variant,
+            verticalAlign,
+            horizontalAlign,
             disabled,
             loading,
             separatorColor,
@@ -105,6 +107,8 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     color,
                     variant,
                     size,
+                    verticalAlign,
+                    horizontalAlign,
                     disabled,
                     loading,
                 }}

@@ -8,6 +8,10 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import type { ReactNode } from "react";
+import type {
+    HorizontalButtonAlign,
+    VerticalButtonAlign,
+} from "../Button/Button.types";
 
 export interface ButtonGroupProps {
     /**
@@ -31,6 +35,9 @@ export interface ButtonGroupProps {
      * @example "sm", "md", "lg", 20
      */
     size?: Responsive<Size | SizeValue | number>;
+
+    verticalAlign?: Responsive<VerticalButtonAlign>;
+    horizontalAlign?: Responsive<HorizontalButtonAlign>;
 
     /**
      * Indicates whether all buttons in the group should be disabled.

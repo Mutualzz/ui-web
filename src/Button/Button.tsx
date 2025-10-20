@@ -24,11 +24,11 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         theme,
         color = "primary",
         variant = "solid",
+        verticalAlign = "center",
+        horizontalAlign = "center",
     }) => ({
         position: "relative",
         display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
         boxSizing: "border-box",
         borderRadius: "6px",
         cursor: disabled ? "not-allowed" : "pointer",
@@ -42,10 +42,28 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         }),
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant },
-            ({ size: s, color: c, variant: v }) => ({
+            { size, color, variant, verticalAlign, horizontalAlign },
+            ({
+                size: s,
+                color: c,
+                variant: v,
+                verticalAlign: va,
+                horizontalAlign: ha,
+            }) => ({
                 ...resolveButtonContainerSize(theme, s),
                 ...resolveButtonContainerStyles(theme, c)[v],
+                alignItems:
+                    va === "top"
+                        ? "flex-start"
+                        : va === "bottom"
+                          ? "flex-end"
+                          : "center",
+                justifyContent:
+                    ha === "left"
+                        ? "flex-start"
+                        : ha === "right"
+                          ? "flex-end"
+                          : "center",
             }),
         ),
     }),
@@ -109,6 +127,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             color: propColor,
             size: propSize,
             loading: propLoading,
+            verticalAlign: propVerticalAlign,
+            horizontalAlign: propHorizontalAlign,
             loadingIndicator,
             startDecorator,
             endDecorator,
@@ -124,6 +144,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const variant = propVariant ?? group?.variant ?? "solid";
         const color = propColor ?? group?.color ?? "primary";
         const size = propSize ?? group?.size ?? "md";
+        const verticalAlign =
+            propVerticalAlign ?? group?.verticalAlign ?? "center";
+        const horizontalAlign =
+            propHorizontalAlign ?? group?.horizontalAlign ?? "center";
         const loading = propLoading ?? group?.loading ?? false;
         const disabled = propDisabled ?? group?.disabled ?? false;
 
@@ -135,6 +159,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 variant={variant}
                 color={color as string}
                 size={size}
+                verticalAlign={verticalAlign}
+                horizontalAlign={horizontalAlign}
                 disabled={loading || disabled}
                 loading={loading}
             >

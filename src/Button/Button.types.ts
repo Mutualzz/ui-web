@@ -8,6 +8,9 @@ import {
 } from "@mutualzz/ui-core";
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
 
+export type VerticalButtonAlign = "top" | "center" | "bottom";
+export type HorizontalButtonAlign = "left" | "center" | "right";
+
 export interface ButtonProps
     extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color" | "size"> {
     /**
@@ -28,6 +31,9 @@ export interface ButtonProps
      * @example "sm", "md", "lg", 20
      */
     size?: Responsive<Size | SizeValue | number>;
+
+    verticalAlign?: Responsive<VerticalButtonAlign>;
+    horizontalAlign?: Responsive<HorizontalButtonAlign>;
 
     /**
      * Indicates whether the button is in a loading state.
