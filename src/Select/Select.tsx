@@ -168,7 +168,7 @@ const SelectContent = styled("div")<
         fontSize: "inherit",
 
         display: "flex",
-        flexDirection: placement === "top" ? "column-reverse" : "column",
+        flexDirection: "column",
 
         opacity: isOpen ? 1 : 0,
         visibility: isOpen ? "visible" : "hidden",
