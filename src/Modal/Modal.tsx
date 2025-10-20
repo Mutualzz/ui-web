@@ -267,8 +267,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         ))}
                     <ModalContainer layout={layout}>
                         {showCloseButton &&
-                            disableBackdropClick &&
-                            (onClose || layout !== "center") &&
+                            (disableBackdropClick ||
+                                onClose ||
+                                layout !== "center") &&
                             (closeButton ? (
                                 closeButton
                             ) : (
