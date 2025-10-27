@@ -6,6 +6,7 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
+    extractColors,
     formatColor,
     isValidGradient,
     randomColor,
@@ -14,6 +15,8 @@ import {
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
+import { Box } from "Box/Box";
+import type { ColorPickerOnChangePayload } from "ColorPicker/ColorPicker.props";
 import {
     forwardRef,
     useEffect,
@@ -22,9 +25,8 @@ import {
     useState,
     type ChangeEvent,
 } from "react";
-import ColorPicker from "react-best-gradient-color-picker";
-import { Box } from "../Box/Box";
 import { Button } from "../Button/Button";
+import { ColorPicker } from "../ColorPicker/ColorPicker";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { IconButton } from "../IconButton/IconButton";
 import { InputBase } from "../InputBase/InputBase";
@@ -62,9 +64,9 @@ const RandomIcon = ({ color, size, variant }: RandomIconProps) => {
             }),
         );
 
-    let resolvedColor = color;
-    if (resolvedVariant === "solid")
-        resolvedColor = theme.typography.colors.primary;
+    const resolvedColor = formatColor(theme.typography.colors.primary, {
+        format: "hexa",
+    });
 
     return (
         <svg
@@ -165,13 +167,29 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             onChange?.(newValue);
         };
 
-        const handleNewColor = (newColor: string) => {
-            setColorDirectly(newColor as ColorLike);
+        // const handleNewColor = (newColor: string) => {
+        //     setColorDirectly(newColor as ColorLike);
+        //     setPickerColor(newColor);
+
+        //     if (!isControlled) setInternalValue(newColor as ColorLike);
+
+        //     onChange?.(newColor as ColorLike);
+        // };
+
+        const handleNewColor = ({
+            color,
+            alpha,
+        }: ColorPickerOnChangePayload) => {
+            const newColor =
+                (alpha ?? 100) === 100
+                    ? (color.hex() as ColorLike)
+                    : (color.hexa() as ColorLike);
+            setColorDirectly(newColor);
             setPickerColor(newColor);
 
-            if (!isControlled) setInternalValue(newColor as ColorLike);
+            if (!isControlled) setInternalValue(newColor);
 
-            onChange?.(newColor as ColorLike);
+            onChange?.(newColor);
         };
 
         const handleRandomColor = () => {
@@ -195,10 +213,26 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             }
         }, [currentValue]);
 
+        const showValidatedColor = () => {
+            let color = validatedColor;
+            if (isValidGradient(color)) {
+                const extracted = extractColors(validatedColor);
+                if (extracted)
+                    color =
+                        extracted[
+                            Math.floor(Math.random() * extracted?.length)
+                        ];
+            }
+
+            return color;
+        };
+
         return (
             <InputRoot
-                color={isInvalid ? "danger" : validatedColor}
-                textColor={isInvalid ? theme.colors.danger : validatedColor}
+                color={isInvalid ? "danger" : showValidatedColor()}
+                textColor={
+                    isInvalid ? theme.colors.danger : showValidatedColor()
+                }
                 variant={variant}
                 size={size}
                 fullWidth={fullWidth}
@@ -212,16 +246,16 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                 trigger={
                                     <ColorPickerButton
                                         size={size}
-                                        color={validatedColor}
+                                        color={showValidatedColor()}
                                         variant={variant}
                                     />
                                 }
-                                color={validatedColor}
+                                color={showValidatedColor()}
                                 size={size}
                                 variant={variant}
                             >
                                 <Box ref={popoverRef}>
-                                    <ColorPicker
+                                    {/* <ColorPicker
                                         hidePresets
                                         hideInputs
                                         hideInputType
@@ -233,6 +267,11 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                         value={pickerColor}
                                         onChange={handleNewColor}
                                         idSuffix={id}
+                                    /> */}
+                                    <ColorPicker
+                                        value={pickerColor as ColorLike}
+                                        onChange={handleNewColor}
+                                        allowAlpha
                                     />
                                 </Box>
                             </Popover>
@@ -252,7 +291,9 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                     {endDecorator ??
                         (showRandom && (
                             <IconButton
-                                color={isInvalid ? "danger" : validatedColor}
+                                color={
+                                    isInvalid ? "danger" : showValidatedColor()
+                                }
                                 variant={variant}
                                 onClick={handleRandomColor}
                                 css={{
@@ -263,7 +304,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                     color={
                                         isInvalid
                                             ? theme.colors.danger
-                                            : validatedColor
+                                            : showValidatedColor()
                                     }
                                     size={size}
                                     variant={variant}
