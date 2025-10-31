@@ -36,12 +36,6 @@ export type * from "./IconButton/IconButton.types";
 export * from "./Input/Input";
 export type * from "./Input/Input.types";
 
-export * from "./InputRoot/InputRoot";
-export type * from "./InputRoot/InputRoot.types";
-
-export * from "./Link/Link";
-export type * from "./Link/Link.types";
-
 export * from "./InputColor/InputColor";
 export type * from "./InputColor/InputColor.types";
 
@@ -53,8 +47,14 @@ export type * from "./InputNumber/InputNumber.types";
 export * from "./InputPassword/InputPassword";
 export type * from "./InputPassword/InputPassword.types";
 
+export * from "./InputRoot/InputRoot";
+export type * from "./InputRoot/InputRoot.types";
+
 export * from "./LinearProgress/LinearProgress";
 export type * from "./LinearProgress/LinearProgress.types";
+
+export * from "./Link/Link";
+export type * from "./Link/Link.types";
 
 export * from "./List/List";
 export type * from "./List/List.types";
