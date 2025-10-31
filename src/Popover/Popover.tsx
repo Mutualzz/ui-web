@@ -29,8 +29,6 @@ const PopoverRoot = styled("div")({
     display: "inline-block",
 });
 
-const PopoverTrigger = styled(Stack)();
-
 const PopoverContent = styled(Paper)<{
     disablePortal?: boolean;
     top?: number;
@@ -52,7 +50,7 @@ const PopoverContent = styled(Paper)<{
     nonTranslucent = false,
 }) => {
     const baseStyles: CSSObject = {
-        position: "absolute",
+        position: disablePortal ? "absolute" : "fixed",
         transition:
             "opacity 0.2s ease, transform 0.2s cubic-bezier(0.4,0,0.2,1)",
         borderRadius: 4,
@@ -175,12 +173,15 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             );
             setInternalPlacement(bestPlacement);
 
+            const scrollTopForPosition = disablePortal ? scrollTop : 0;
+            const scrollLeftForPosition = disablePortal ? scrollLeft : 0;
+
             const bestPosition = getPopoverPosition(
                 bestPlacement,
                 triggerRect,
                 popoverRect,
-                scrollTop,
-                scrollLeft,
+                scrollTopForPosition,
+                scrollLeftForPosition,
             );
 
             const clampedPosition = {
@@ -256,7 +257,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
                 elevation={elevation}
                 left={position.left}
                 placement={placement}
-                onClick={handleContentClick}
+                onClick={() => closeOnInteract && handleContentClick()}
                 css={{ visibility: measured ? "visible" : "hidden" }}
             >
                 {children}
@@ -265,9 +266,9 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
         return (
             <PopoverRoot ref={ref}>
-                <PopoverTrigger ref={triggerRef} onClick={toggleVisibility}>
+                <Stack ref={triggerRef} onClick={toggleVisibility}>
                     {trigger}
-                </PopoverTrigger>
+                </Stack>
 
                 {!disablePortal ? (
                     <Portal>{popoverContent}</Portal>
