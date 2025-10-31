@@ -28,10 +28,12 @@ const ModalRoot = styled("div")<{
     bottom: 0,
     top: 0,
     left: 0,
-    display: open ? (layout === "center" ? "flex" : "block") : "none",
+    display: open ? "block" : "none",
     ...(layout === "center" && {
-        alignItems: "center",
-        justifyContent: "center",
+        display: "grid",
+        placeItems: "center",
+        paddingBlock: "2rem",
+        overscrollBehavior: "contain",
     }),
     ...(layout === "fullscreen" && {
         alignItems: "flex-start",
@@ -59,9 +61,28 @@ ModalBackdrop.displayName = "ModalBackdrop";
 const ModalContainer = styled("div")<{ layout: "center" | "fullscreen" }>(
     ({ layout }) => ({
         position: "relative",
+        ...(layout === "center" && {
+            maxHeight: "calc(100dvh - 4rem)",
+            overflow: "hidden",
+        }),
         ...(layout === "fullscreen" && {
             width: "100%",
             height: "100%",
+        }),
+    }),
+);
+
+const ModalContent = styled("div")<{ layout: "center" | "fullscreen" }>(
+    ({ layout }) => ({
+        width: "100%",
+        minHeight: 0,
+        ...(layout === "center" && {
+            height: "calc(100dvh - 4rem)",
+            overflow: "hidden",
+        }),
+        ...(layout === "fullscreen" && {
+            height: "100%",
+            overflowY: "auto",
         }),
     }),
 );
@@ -109,17 +130,6 @@ const ModalCloseButton = styled(Button)<
 
 ModalCloseButton.displayName = "ModalCloseButton";
 
-const ScrollLock = () => {
-    useEffect(() => {
-        const originalStyle = window.getComputedStyle(document.body).overflow;
-        document.body.style.overflow = "hidden";
-        return () => {
-            document.body.style.overflow = originalStyle;
-        };
-    }, []);
-    return null;
-};
-
 const FocusTrap = ({
     active,
     children,
@@ -150,20 +160,17 @@ const FocusTrap = ({
             if (e.shiftKey) {
                 if (document.activeElement === firstElement) {
                     e.preventDefault();
-                    lastElement.focus();
+                    (lastElement ?? node).focus();
                 }
             } else {
                 if (document.activeElement === lastElement) {
                     e.preventDefault();
-                    firstElement.focus();
+                    (firstElement ?? node).focus();
                 }
             }
         };
 
         node.addEventListener("keydown", handleKeyDown);
-
-        // We need this rule cuz its a falsy
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         (firstElement ?? node).focus();
 
         return () => {
@@ -171,7 +178,11 @@ const FocusTrap = ({
         };
     }, [active, disableEnforceFocus]);
 
-    return <div ref={rootRef}>{children}</div>;
+    return (
+        <div ref={rootRef} tabIndex={-1}>
+            {children}
+        </div>
+    );
 };
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
@@ -180,7 +191,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
             children,
             container,
             disableAutoFocus = false,
-            disableEnforceFocus = false,
+            disableEnforceFocus = true,
             disableEscapeKeyDown = false,
             disablePortal = false,
             disableRestoreFocus = false,
@@ -194,6 +205,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
             onClose,
             onKeyDown,
             open,
+            css,
             ...props
         }: ModalProps,
         ref,
@@ -265,11 +277,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         ) : (
                             <ModalBackdrop onClick={onClose} />
                         ))}
-                    <ModalContainer layout={layout}>
+                    <ModalContainer layout={layout} css={css}>
                         {showCloseButton &&
-                            (disableBackdropClick ||
-                                onClose ||
-                                layout !== "center") &&
+                            (disableBackdropClick || onClose) &&
                             (closeButton ? (
                                 closeButton
                             ) : (
@@ -281,7 +291,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                                     aria-label="Close modal"
                                 />
                             ))}
-                        {children}
+                        <ModalContent layout={layout}>{children}</ModalContent>
                     </ModalContainer>
                 </ModalRoot>
             </FocusTrap>
@@ -289,7 +299,6 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
         return (
             <>
-                {!disableScrollLock && open && <ScrollLock />}
                 <Portal container={container} disablePortal={disablePortal}>
                     {modalContent}
                 </Portal>
