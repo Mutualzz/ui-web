@@ -1,3 +1,4 @@
+import type { CSSObject } from "@emotion/react";
 import {
     autoUpdate,
     flip,
@@ -185,7 +186,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                             color={color as string}
                             variant={variant}
                             size={size}
-                            style={floatingStyles as React.CSSProperties}
+                            css={floatingStyles as CSSObject}
                             {...getFloatingProps({})}
                         >
                             <TooltipContent
