@@ -1,4 +1,4 @@
-import type { ColorLike } from "@mutualzz/ui-core";
+import type { ColorLike, ColorResult } from "@mutualzz/ui-core";
 import type { InputRootProps } from "../InputRoot/InputRoot.types";
 
 export interface InputColorProps
@@ -45,5 +45,5 @@ export interface InputColorProps
 
     defaultValue?: ColorLike;
 
-    onChange?: (color: ColorLike) => void;
+    onChange?: (color: ColorResult) => void;
 }
