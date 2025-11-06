@@ -26,9 +26,6 @@ export type * from "./CheckboxGroup/CheckboxGroup.types";
 export * from "./CircularProgress/CircularProgress";
 export type * from "./CircularProgress/CircularProgress.types";
 
-export * from "./ColorPicker/ColorPicker";
-export type * from "./ColorPicker/ColorPicker.types";
-
 export * from "./Divider/Divider";
 export type * from "./Divider/Divider.types";
 
