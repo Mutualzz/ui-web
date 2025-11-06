@@ -3,11 +3,10 @@ import type { ColorLike, ColorResult, HsvaColor } from "@mutualzz/ui-core";
 
 export interface ColorPickerProps
     extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "color"> {
-    onChange?: (color: ColorResult) => void;
+    color?: ColorLike | HsvaColor | (ColorLike | HsvaColor)[];
 
-    onChangeGradient?: (results: ColorResult[]) => void;
-
-    color?: ColorLike | HsvaColor;
+    onChange?: (color: ColorResult | ColorResult[], stop?: number) => void;
+    onStopChange?: (stop: number) => void;
 
     allowGradient?: boolean;
     allowAlpha?: boolean;

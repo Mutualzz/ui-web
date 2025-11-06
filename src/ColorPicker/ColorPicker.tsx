@@ -8,26 +8,29 @@ import {
 } from "@mutualzz/color-picker";
 import {
     constructLinearGradient,
+    createColor,
     handleColor,
     randomColor,
     type ColorLike,
     type HsvaColor,
 } from "@mutualzz/ui-core";
-import { Box } from "Box/Box";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { Stack } from "Stack/Stack";
+import { FaPlus } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
+import { Box } from "../Box/Box";
 import { Button } from "../Button/Button";
+import { IconButton } from "../IconButton/IconButton";
+import { toGradientStops } from "../InputColor/InputColor.helpers";
+import { Stack } from "../Stack/Stack";
 import { useTheme } from "../useTheme";
-import { toStops } from "./ColorPicker.helpers";
 import type { ColorPickerProps } from "./ColorPicker.types";
 import { Pointer } from "./Pointer";
 
-// TODO: make sure that the color picker reflects the InputColor for controlled beahvior with gradients
 const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
     (
         {
             onChange,
-            onChangeGradient,
+            onStopChange,
             color,
             allowGradient,
             allowAlpha,
@@ -38,7 +41,11 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
     ) => {
         const { theme } = useTheme();
 
-        const [stops, setStops] = useState<HsvaColor[]>(() => toStops(color));
+        const [stops, setStops] = useState<HsvaColor[]>(() =>
+            Array.isArray(color)
+                ? color.map((c) => handleColor(c).hsva)
+                : toGradientStops(color),
+        );
         const [currentStop, setCurrentStop] = useState(0);
 
         const lastSyncedColor = useRef<typeof color>(color);
@@ -48,7 +55,9 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
 
             if (lastSyncedColor.current === color) return;
 
-            const next = toStops(color);
+            const next = Array.isArray(color)
+                ? color.map((c) => handleColor(c).hsva)
+                : toGradientStops(color);
             setStops(next);
             setCurrentStop((i) => Math.min(i, next.length - 1));
             lastSyncedColor.current = color;
@@ -63,11 +72,14 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         }, [stops, currentStop]);
 
         const emitSingleOrGradient = (nextStops: HsvaColor[]) => {
-            if (nextStops.length > 1) {
-                onChangeGradient?.(nextStops.map((s) => handleColor(s)));
-            } else {
-                onChange?.(handleColor(nextStops[0]));
+            if (allowGradient) {
+                onChange?.(
+                    nextStops.map((s) => handleColor(s)),
+                    currentStop,
+                );
+                return;
             }
+            onChange?.(handleColor(nextStops[0]));
         };
 
         const handleChange = (value: HsvaColor) => {
@@ -90,10 +102,37 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             setStops((prev) => {
                 const next = [...prev, newStop];
                 // After add, we’re definitely a gradient—emit gradient only
-                onChangeGradient?.(next.map((s) => handleColor(s)));
+                onChange?.(
+                    next.map((s) => handleColor(s)),
+                    stops.length,
+                );
                 return next;
             });
             setCurrentStop(() => stops.length); // focus the new stop
+        };
+
+        const removeStop = () => {
+            if (stops.length <= 1) return;
+            setStops((prev) => {
+                const next = prev.filter((_, i) => i !== currentStop);
+                onChange?.(
+                    next.map((s) => handleColor(s)),
+                    Math.min(currentStop, next.length - 1),
+                );
+                return next;
+            });
+            setCurrentStop((i) =>
+                Math.max(0, Math.min(i - 1, stops.length - 2)),
+            );
+        };
+
+        const changeStop = (stop: number) => {
+            setCurrentStop(stop);
+            onStopChange?.(stop);
+            onChange?.(
+                stops.map((s) => handleColor(s)),
+                stop,
+            );
         };
 
         const previewColor =
@@ -103,6 +142,11 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                       stops.map((stop) => handleColor(stop).hex),
                   )
                 : hsvaToHex(hsva);
+
+        const getBorderColor = (stop: HsvaColor) =>
+            createColor(handleColor(hsva).hex).isLight()
+                ? theme.colors.common.black
+                : theme.colors.common.white;
 
         return (
             <Stack
@@ -119,7 +163,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         width="100%"
                         height="2rem"
                         borderRadius={10}
-                        p="1rem"
+                        p="1.25rem"
                         justifyContent="space-between"
                         alignItems="center"
                         css={{
@@ -154,17 +198,17 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                                                     "4px solid transparent",
                                                 borderRight:
                                                     "4px solid transparent",
-                                                borderTop: `4px solid ${theme.colors.common.white}`,
+                                                borderTop: `4px solid ${getBorderColor(stop)}`,
                                                 pointerEvents: "none",
                                                 zIndex: 1,
                                             },
                                         }),
                                     }}
                                     borderRadius={5}
-                                    border={`1px solid ${theme.colors.common.white}`}
+                                    border={`1px solid ${getBorderColor(stop)}`}
                                     height={24}
                                     onClick={() =>
-                                        currentStop !== i && setCurrentStop(i)
+                                        currentStop !== i && changeStop(i)
                                     }
                                 />
                             ))}
@@ -186,28 +230,56 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         handleChange({ ...hsva, ...newColor })
                     }
                 />
-                <Hue
-                    hue={hsva.h}
-                    height={24}
-                    radius={!allowAlpha ? "0 0 8px 8px" : 0}
-                    onChange={(newHue) => handleChange({ ...hsva, ...newHue })}
-                    pointer={({ left }) => (
-                        <Pointer
+                <Stack
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    direction="row"
+                    spacing={10}
+                >
+                    <Hue
+                        hue={hsva.h}
+                        height={24}
+                        css={{
+                            flex: 1,
+                        }}
+                        radius={!allowAlpha ? "0 0 8px 8px" : 0}
+                        onChange={(newHue) =>
+                            handleChange({ ...hsva, ...newHue })
+                        }
+                        pointer={({ left }) => (
+                            <Pointer
+                                css={{
+                                    left,
+                                    transform: "translate(-16px, -3px)",
+                                }}
+                                color={
+                                    `hsl(${hsva.h || 0}deg 100% 50%)` as ColorLike
+                                }
+                            />
+                        )}
+                    />
+                    {allowGradient && stops.length > 1 && (
+                        <IconButton
+                            size="lg"
+                            variant="plain"
+                            color="danger"
+                            onClick={() => removeStop()}
                             css={{
-                                left,
-                                transform: "translate(-16px, -3px)",
+                                padding: 0,
                             }}
-                            color={
-                                `hsl(${hsva.h || 0}deg 100% 50%)` as ColorLike
-                            }
-                        />
+                        >
+                            <MdClose />
+                        </IconButton>
                     )}
-                />
+                </Stack>
                 {allowGradient && (
                     <Button
                         color="primary"
                         disabled={stops.length === 5}
                         onClick={() => addStop()}
+                        startDecorator={<FaPlus />}
+                        size="lg"
                     >
                         Add Color
                     </Button>
@@ -235,7 +307,5 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         );
     },
 );
-
-ColorPicker.displayName = "ColorPicker";
 
 export { ColorPicker };
