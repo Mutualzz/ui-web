@@ -105,6 +105,7 @@ const ThemeProvider = forwardRef<
         const changeTheme = (theme: Theme) => {
             setTheme(theme);
             setStyle(theme.style);
+            setType(theme.type as ThemeType);
 
             onThemeChange?.(theme);
             onStyleChange?.(theme.style);
