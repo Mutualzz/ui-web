@@ -2,7 +2,7 @@ import type { CSSObject } from "@emotion/react";
 import type { ReactNode } from "react";
 import type { PaperProps } from "../Paper/Paper.types";
 
-export interface ModalProps extends PaperProps {
+export interface ModalProps extends Omit<PaperProps, "height"> {
     open: boolean;
 
     container?: HTMLDivElement | (() => HTMLDivElement);
@@ -23,6 +23,8 @@ export interface ModalProps extends PaperProps {
     layout?: "center" | "fullscreen";
 
     onClose?: () => void;
+
+    height?: string | number;
 
     css?: CSSObject;
 }

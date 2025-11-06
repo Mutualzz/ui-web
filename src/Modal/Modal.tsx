@@ -22,6 +22,10 @@ const ModalRoot = styled("div")<{
         // target all the listbox (Autocomplete, Menu, Select, etc.) that uses portal
         zIndex: `calc(${theme.zIndex.modal} + 1)`,
     },
+    '& ~ [role="tooltip"]': {
+        // target all the tooltips that uses portal
+        zIndex: `calc(${theme.zIndex.modal} + 2)`,
+    },
     position: "fixed",
     zIndex: theme.zIndex.modal,
     right: 0,
@@ -58,34 +62,44 @@ const ModalBackdrop = styled("div")({
 
 ModalBackdrop.displayName = "ModalBackdrop";
 
-const ModalContainer = styled("div")<{ layout: "center" | "fullscreen" }>(
-    ({ layout }) => ({
-        position: "relative",
-        ...(layout === "center" && {
-            maxHeight: "calc(100dvh - 4rem)",
-            overflow: "hidden",
-        }),
-        ...(layout === "fullscreen" && {
-            width: "100%",
-            height: "100%",
-        }),
+const ModalContainer = styled("div")<{
+    layout: "center" | "fullscreen";
+    height?: string | number;
+}>(({ layout, height }) => ({
+    position: "relative",
+    ...(layout === "center" && {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        maxHeight: "calc(100dvh - 4rem)",
+        overflow: "hidden",
+        height,
     }),
-);
-
-const ModalContent = styled("div")<{ layout: "center" | "fullscreen" }>(
-    ({ layout }) => ({
+    ...(layout === "fullscreen" && {
         width: "100%",
-        minHeight: 0,
-        ...(layout === "center" && {
-            height: "calc(100dvh - 4rem)",
-            overflow: "hidden",
-        }),
-        ...(layout === "fullscreen" && {
-            height: "100%",
-            overflowY: "auto",
-        }),
+        height: "100%",
     }),
-);
+}));
+
+const ModalContent = styled("div")<{
+    layout: "center" | "fullscreen";
+    height?: string | number;
+}>(({ layout, height }) => ({
+    width: "100%",
+    minHeight: 0,
+    position: "relative",
+    ...(layout === "center" && {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
+        height,
+    }),
+    ...(layout === "fullscreen" && {
+        height: "100%",
+        overflowY: "auto",
+    }),
+}));
 
 const ModalCloseButton = styled(Button)<
     ButtonProps & {
@@ -191,7 +205,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
             children,
             container,
             disableAutoFocus = false,
-            disableEnforceFocus = true,
+            disableEnforceFocus = false,
             disableEscapeKeyDown = false,
             disablePortal = false,
             disableRestoreFocus = false,
@@ -205,9 +219,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
             onClose,
             onKeyDown,
             open,
-            css,
+            height,
             ...props
-        }: ModalProps,
+        },
         ref,
     ) => {
         const modalRef = useRef<HTMLDivElement>(null);
@@ -277,7 +291,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         ) : (
                             <ModalBackdrop onClick={onClose} />
                         ))}
-                    <ModalContainer layout={layout} css={css}>
+                    <ModalContainer height={height} layout={layout}>
                         {showCloseButton &&
                             (disableBackdropClick || onClose) &&
                             (closeButton ? (
@@ -291,7 +305,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                                     aria-label="Close modal"
                                 />
                             ))}
-                        <ModalContent layout={layout}>{children}</ModalContent>
+                        <ModalContent height={height} layout={layout}>
+                            {children}
+                        </ModalContent>
                     </ModalContainer>
                 </ModalRoot>
             </FocusTrap>
@@ -306,7 +322,5 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         );
     },
 );
-
-Modal.displayName = "Modal";
 
 export { Modal, ModalBackdrop, ModalRoot };
