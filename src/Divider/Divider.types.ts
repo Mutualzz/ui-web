@@ -1,12 +1,15 @@
 import {
     type Color,
     type ColorLike,
+    type Size,
+    type SizeValue,
     type TypographyColor,
+    type TypographyLevel,
 } from "@mutualzz/ui-core";
 import type { HTMLAttributes, ReactNode } from "react";
 
 export type DividerOrientation = "horizontal" | "vertical";
-export type DividerInset = "none" | "start" | "end";
+export type DividerInset = "none" | "half-start" | "half-end" | "start" | "end";
 
 export type DividerVariant = "solid" | "dashed" | "dotted" | "double";
 
@@ -51,6 +54,17 @@ export interface DividerProps extends HTMLAttributes<HTMLHRElement> {
      * @example "solid", "dashed", "dotted", "double"
      */
     variant?: DividerVariant;
+
+    /**
+     * The padding around the divider text.
+     * Can be a predefined size, a custom size value, or a number representing pixels.
+     *
+     * @example "sm", "md", "lg", 8, 16
+     * @default 0
+     */
+    textPadding?: Size | SizeValue | number;
+
+    textLevel?: TypographyLevel | "inherit";
 
     /**
      * Optional children to render inside the divider.

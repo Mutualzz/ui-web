@@ -1,4 +1,10 @@
-import { styled } from "@mutualzz/ui-core";
+import {
+    resolveSize,
+    styled,
+    type Size,
+    type SizeValue,
+    type TypographyLevel,
+} from "@mutualzz/ui-core";
 import { forwardRef } from "react";
 import { useTheme } from "../useTheme";
 import { resolveDividerColor, resolveDividerStyles } from "./Divider.helpers";
@@ -10,6 +16,7 @@ const DividerWrapper = styled("div")<{ isVertical?: boolean }>(
         display: "flex",
         flexDirection: isVertical ? "column" : "row",
         alignItems: "center",
+        justifyContent: "center",
 
         width: isVertical ? "auto" : "100%",
         height: isVertical ? "100%" : "auto",
@@ -27,7 +34,10 @@ const DividerLine = styled("span")<{
     variant: DividerVariant;
     grow?: boolean;
 }>(({ isVertical, variant, lineColor, grow }) => ({
+    display: "flex",
     alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     ...(isVertical
         ? {
               width: "1px",
@@ -47,12 +57,36 @@ DividerLine.displayName = "DividerLine";
 const DividerText = styled("span")<{
     textColor: string;
     isVertical: boolean;
-}>(({ theme, isVertical, textColor }) => ({
-    color: textColor,
-    padding: isVertical ? "8px 0" : "0 8px",
-    whiteSpace: "nowrap",
-    fontSize: theme.typography.levels["body-md"].fontSize,
-}));
+    textPadding?: Size | SizeValue | number;
+    textLevel?: TypographyLevel | "inherit";
+}>(({
+    theme,
+    isVertical,
+    textColor,
+    textLevel = "body-md",
+    textPadding = 0,
+}) => {
+    const paddingValue = resolveSize(theme, textPadding, {
+        sm: 4,
+        md: 6,
+        lg: 12,
+    });
+
+    return {
+        color: textColor,
+        padding: isVertical ? `${paddingValue}px 0` : `0 ${paddingValue}px`,
+        whiteSpace: "nowrap",
+        verticalAlign: "middle",
+        display: "inline-flex",
+        justifyContent: "center",
+        alignItems: "center",
+        lineHeight: 1,
+        fontSize:
+            textLevel !== "inherit"
+                ? theme.typography.levels[textLevel].fontSize
+                : "inherit",
+    };
+});
 
 DividerText.displayName = "DividerText";
 
@@ -74,6 +108,8 @@ const Divider = forwardRef<HTMLDivElement, DividerProps>(
             lineColor = "neutral",
             textColor = "neutral",
             variant = "solid",
+            textPadding = 0,
+            textLevel = "body-md",
             children,
         },
         ref,
@@ -85,6 +121,11 @@ const Divider = forwardRef<HTMLDivElement, DividerProps>(
         const resolvedLineColor = resolveDividerColor(theme, lineColor);
         const resolvedTextColor = resolveDividerColor(theme, textColor);
 
+        const showFirstLine = inset !== "start";
+        const showSecondLine = inset !== "end";
+        const firstLineGrow = inset !== "half-start";
+        const secondLineGrow = inset !== "half-end";
+
         return (
             <DividerWrapper
                 ref={ref}
@@ -93,28 +134,34 @@ const Divider = forwardRef<HTMLDivElement, DividerProps>(
                 aria-orientation={isVertical ? "vertical" : "horizontal"}
                 css={{ color: resolvedLineColor }}
             >
-                <DividerLine
-                    isVertical={isVertical}
-                    lineColor={resolvedLineColor}
-                    variant={variant}
-                    grow={inset !== "start"}
-                />
+                {showFirstLine && (
+                    <DividerLine
+                        isVertical={isVertical}
+                        lineColor={resolvedLineColor}
+                        variant={variant}
+                        grow={firstLineGrow}
+                    />
+                )}
 
                 {children && (
                     <DividerText
                         textColor={resolvedTextColor}
                         isVertical={isVertical}
+                        textLevel={textLevel}
+                        textPadding={textPadding}
                     >
                         {children}
                     </DividerText>
                 )}
 
-                <DividerLine
-                    isVertical={isVertical}
-                    lineColor={resolvedLineColor}
-                    variant={variant}
-                    grow={inset !== "end"}
-                />
+                {showSecondLine && (
+                    <DividerLine
+                        isVertical={isVertical}
+                        lineColor={resolvedLineColor}
+                        variant={variant}
+                        grow={secondLineGrow}
+                    />
+                )}
             </DividerWrapper>
         );
     },
