@@ -1,11 +1,43 @@
 import type { Theme } from "@emotion/react";
-import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import { hexToHsva } from "@mutualzz/color-picker";
+import {
+    extractColors,
+    formatColor,
+    randomColor,
+    resolveColor,
+    resolveSize,
+    type Color,
+    type ColorLike,
+    type HsvaColor,
+    type Size,
+    type SizeValue,
+} from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 16,
     md: 20,
     lg: 24,
+};
+
+export const toGradientStops = (color?: ColorLike | HsvaColor): HsvaColor[] => {
+    if (!color) return [hexToHsva(randomColor("hex"))];
+
+    if (typeof color !== "string") return [color];
+
+    const extracted = extractColors(color);
+    if (extracted?.length) {
+        return extracted.map((c) =>
+            hexToHsva(formatColor(c, { format: "hex" })),
+        );
+    }
+
+    return [
+        hexToHsva(
+            formatColor(color, {
+                format: "hex",
+            }),
+        ),
+    ];
 };
 
 export const resolveColorPickerButtonSize = (

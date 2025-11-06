@@ -8,6 +8,7 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
+    constructLinearGradient,
     createColor,
     extractColors,
     formatColor,
@@ -32,6 +33,7 @@ import { useTheme } from "../useTheme";
 import {
     resolveColorPickerButtonSize,
     resolveColorPickerButtonStyles,
+    toGradientStops,
 } from "./InputColor.helpers";
 import type { InputColorProps } from "./InputColor.types";
 
@@ -111,6 +113,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             allowGradient = false,
             allowAlpha = false,
             onChange,
+            onChangeResult,
             defaultValue,
             ...props
         },
@@ -124,18 +127,24 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             defaultValue ?? randomColor("hex"),
         );
 
-        const currentValue = isControlled ? colorProp : internalValue;
-        const [pickerColor, setPickerColor] = useState<HsvaColor>(() => {
-            try {
-                return (
-                    handleColor(currentValue).hsva ??
-                    handleColor(randomColor("hsv")).hsva
-                );
-            } catch {
-                // If the color is invalid, fallback to a random color
-                return handleColor(randomColor("hsv")).hsva as HsvaColor;
-            }
-        });
+        const currentValue = isControlled
+            ? isValidGradient(colorProp)
+                ? toGradientStops(colorProp)
+                : colorProp
+            : internalValue;
+        const [pickerColor, setPickerColor] = useState<HsvaColor | HsvaColor[]>(
+            () => {
+                try {
+                    return Array.isArray(currentValue)
+                        ? currentValue
+                        : (handleColor(currentValue).hsva ??
+                              handleColor(randomColor("hsv")).hsva);
+                } catch {
+                    // If the color is invalid, fallback to a random color
+                    return handleColor(randomColor("hsv")).hsva;
+                }
+            },
+        );
 
         const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -146,7 +155,45 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             handleChange,
             validate,
             setColorDirectly,
-        } = useColorInput(currentValue, 100, "hex", allowGradient);
+        } = useColorInput(
+            Array.isArray(currentValue)
+                ? handleColor(currentValue[0]).hex
+                : currentValue,
+            100,
+            "hex",
+            allowGradient,
+        );
+
+        const handleNewColor = (
+            newColor: ColorResult | ColorResult[],
+            stop?: number,
+        ) => {
+            if (Array.isArray(newColor)) {
+                const finalStop = stop ?? 0;
+                setColorDirectly(newColor[finalStop].hex);
+
+                setPickerColor(newColor.map((c) => c.hsva));
+
+                if (!isControlled) setInternalValue(newColor[finalStop].hex);
+
+                onChangeResult?.(newColor[finalStop]);
+                onChange?.(
+                    constructLinearGradient(
+                        90,
+                        newColor.map((c) => c.hex),
+                    ),
+                );
+                return;
+            }
+
+            setColorDirectly(newColor.hex);
+            setPickerColor(newColor.hsva);
+
+            if (!isControlled) setInternalValue(newColor.hex);
+
+            onChangeResult?.(newColor);
+            onChange?.(newColor.hex);
+        };
 
         const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value as ColorLike;
@@ -164,17 +211,8 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             }
             if (!isControlled) setInternalValue(color.hex);
 
-            onChange?.(color);
-        };
-
-        const handleNewColor = (newColor: ColorResult) => {
-            console.log(newColor);
-            setColorDirectly(newColor.hex);
-            setPickerColor(newColor.hsva);
-
-            if (!isControlled) setInternalValue(newColor.hex);
-
-            onChange?.(newColor);
+            onChangeResult?.(color);
+            onChange?.(newValue);
         };
 
         const handleRandomColor = () => {
@@ -187,7 +225,8 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
             setPickerColor(colorResult.hsva);
             if (!isControlled) setInternalValue(newColor);
-            onChange?.(colorResult);
+            onChangeResult?.(colorResult);
+            onChange?.(newColor);
         };
 
         const colorToShow = useMemo(() => {
@@ -313,7 +352,5 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
         );
     },
 );
-
-InputColor.displayName = "InputColor";
 
 export { InputColor };

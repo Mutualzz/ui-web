@@ -45,5 +45,6 @@ export interface InputColorProps
 
     defaultValue?: ColorLike;
 
-    onChange?: (color: ColorResult) => void;
+    onChangeResult?: (color: ColorResult) => void;
+    onChange?: (color: ColorLike) => void;
 }
