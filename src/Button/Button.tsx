@@ -26,6 +26,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         variant = "solid",
         verticalAlign = "center",
         horizontalAlign = "center",
+        padding,
     }) => ({
         position: "relative",
         display: "inline-flex",
@@ -42,15 +43,16 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         }),
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant, verticalAlign, horizontalAlign },
+            { size, color, variant, verticalAlign, horizontalAlign, padding },
             ({
                 size: s,
                 color: c,
                 variant: v,
                 verticalAlign: va,
                 horizontalAlign: ha,
+                padding: p,
             }) => ({
-                ...resolveButtonContainerSize(theme, s),
+                ...resolveButtonContainerSize(theme, s, p),
                 ...resolveButtonContainerStyles(theme, c)[v],
                 alignItems:
                     va === "top"
@@ -133,6 +135,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             startDecorator,
             endDecorator,
             disabled: propDisabled,
+            padding,
             children,
             type = "button",
             ...props
@@ -161,8 +164,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 size={size}
                 verticalAlign={verticalAlign}
                 horizontalAlign={horizontalAlign}
-                disabled={loading || disabled}
-                loading={loading}
+                disabled={Boolean(loading || disabled)}
+                loading={Boolean(loading)}
+                padding={padding}
             >
                 {loading && (
                     <SpinnerOverlay>
@@ -191,7 +195,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     color={color as string}
                     variant={variant}
                     size={size}
-                    loading={loading}
+                    loading={Boolean(loading)}
                 >
                     {children}
                 </ButtonContent>

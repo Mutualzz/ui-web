@@ -60,4 +60,10 @@ export interface ButtonProps
      * Content to display inside the button.
      */
     children?: ReactNode;
+
+    /**
+     * If true, the button will have no padding.
+     * @default false
+     */
+    padding?: Size | SizeValue | number;
 }

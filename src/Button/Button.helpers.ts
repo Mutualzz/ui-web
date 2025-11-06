@@ -22,11 +22,12 @@ const baseSizeMap: Record<Size, number> = {
 export const resolveButtonContainerSize = (
     theme: Theme,
     size: Size | SizeValue | number,
+    padding?: Size | SizeValue | number,
 ) => {
     const resolvedSize = resolveSize(theme, size, baseSizeMap);
     return {
         fontSize: resolvedSize,
-        padding: resolvedSize * 0.6,
+        padding: padding ?? resolvedSize * 0.6,
     };
 };
 
