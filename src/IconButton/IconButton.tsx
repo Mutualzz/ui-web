@@ -138,8 +138,8 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
                 variant={variant}
                 color={color as string}
                 size={size}
-                disabled={loading || disabled}
-                loading={loading}
+                disabled={Boolean(loading || disabled)}
+                loading={Boolean(loading)}
             >
                 {loading && (
                     <SpinnerOverlay>
@@ -162,7 +162,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
                     color={color as string}
                     variant={variant}
                     size={size}
-                    loading={loading}
+                    loading={Boolean(loading)}
                 >
                     {children}
                 </IconButtonContent>
