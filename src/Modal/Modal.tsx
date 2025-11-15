@@ -1,5 +1,6 @@
 import type { CSSObject } from "@emotion/react";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import { IconButton } from "IconButton/IconButton";
 import {
     forwardRef,
     useCallback,
@@ -8,7 +9,6 @@ import {
     type KeyboardEvent as ReactKeyboardEvent,
     type ReactNode,
 } from "react";
-import { Button } from "../Button/Button";
 import { resolveButtonContainerStyles } from "../Button/Button.helpers";
 import type { ButtonProps } from "../Button/Button.types";
 import { Portal } from "../Portal/Portal";
@@ -69,6 +69,7 @@ const ModalContainer = styled("div")<{
     position: "relative",
     ...(layout === "center" && {
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         maxHeight: "calc(100dvh - 4rem)",
@@ -78,6 +79,8 @@ const ModalContainer = styled("div")<{
     ...(layout === "fullscreen" && {
         width: "100%",
         height: "100%",
+        display: "flex",
+        flexDirection: "column",
     }),
 }));
 
@@ -101,12 +104,12 @@ const ModalContent = styled("div")<{
     }),
 }));
 
-const ModalCloseButton = styled(Button)<
+const ModalCloseButton = styled(IconButton)<
     ButtonProps & {
         layout: "center" | "fullscreen";
     }
 >(
-    ({ theme, color = "neutral", variant = "outlined", layout }) =>
+    ({ theme, color = "neutral", variant = "plain", layout }) =>
         ({
             ...resolveResponsiveMerge(
                 theme,
@@ -116,9 +119,11 @@ const ModalCloseButton = styled(Button)<
                 }),
             ),
 
-            position: "absolute",
-            top: layout === "fullscreen" ? "3em" : "1.5em",
-            right: layout === "fullscreen" ? "3em" : "1.5em",
+            position: "relative",
+            alignSelf: "flex-end",
+            marginTop: layout === "fullscreen" ? "3em" : "1.5em",
+            marginRight: layout === "fullscreen" ? "3em" : "1.5em",
+            marginBottom: layout === "fullscreen" ? "-3em" : "-3em",
             zIndex: 1,
 
             borderRadius: "50%",
@@ -299,7 +304,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                             ) : (
                                 <ModalCloseButton
                                     color="neutral"
-                                    variant="outlined"
+                                    variant="plain"
                                     layout={layout}
                                     onClick={onClose}
                                     aria-label="Close modal"
