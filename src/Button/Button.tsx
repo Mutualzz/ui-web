@@ -31,7 +31,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         padding,
     }) => ({
         position: "relative",
-        display: "inline-flex",
+        display: "flex",
         boxSizing: "border-box",
         borderRadius: "6px",
         cursor: disabled ? "not-allowed" : "pointer",
@@ -68,7 +68,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                         ? "flex-start"
                         : ha === "right"
                           ? "flex-end"
-                          : "center",
+                          : "space-between",
             }),
         ),
     }),
@@ -84,12 +84,11 @@ const ButtonContent = styled("span")<ButtonProps>(
         size = "md",
         loading,
     }) => ({
-        display: "inline",
+        flex: "1 1 0%",
+        display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexGrow: 0,
-        flexShrink: 0,
-        width: "auto",
+        minWidth: 0,
         opacity: loading ? 0 : 1,
         boxSizing: "border-box",
         ...resolveResponsiveMerge(
@@ -226,7 +225,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 )}
 
                 {startDecorator && (
-                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+                    <DecoratorWrapper position="start">
+                        {startDecorator}
+                    </DecoratorWrapper>
                 )}
                 <ButtonContent
                     color={color as string}
@@ -237,7 +238,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     {children}
                 </ButtonContent>
                 {endDecorator && (
-                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
+                    <DecoratorWrapper position="end">
+                        {endDecorator}
+                    </DecoratorWrapper>
                 )}
             </ButtonWrapper>
         );

@@ -82,13 +82,13 @@ const ListItemButton = forwardRef<HTMLButtonElement, ListItemButtonProps>(
                 {...rest}
             >
                 {startDecorator && (
-                    <DecoratorWrapper>
+                    <DecoratorWrapper position="start">
                         {startDecorator}
                     </DecoratorWrapper>
                 )}
                 <ListItemButtonContent>{children}</ListItemButtonContent>
                 {endDecorator && (
-                    <DecoratorWrapper>
+                    <DecoratorWrapper position="end">
                         {endDecorator}
                     </DecoratorWrapper>
                 )}

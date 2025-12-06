@@ -537,7 +537,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         {...props}
                     />
                     {startDecorator && (
-                        <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+                        <DecoratorWrapper position="start">
+                            {startDecorator}
+                        </DecoratorWrapper>
                     )}
 
                     <SelectPlaceholder
@@ -547,7 +549,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         {hasValue ? displayValue : placeholder}
                     </SelectPlaceholder>
 
-                    <DecoratorWrapper>
+                    <DecoratorWrapper position="end">
                         {endDecorator ?? (
                             <DropdownIcon
                                 fill="currentColor"
