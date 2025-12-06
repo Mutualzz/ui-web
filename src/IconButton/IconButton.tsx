@@ -23,7 +23,6 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         color = "primary",
         variant = "solid",
     }) => ({
-        position: "relative",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
