@@ -86,5 +86,5 @@ export interface RadioProps
      */
     rtl?: boolean;
 
-    value?: string;
+    value?: any;
 }
