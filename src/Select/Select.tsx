@@ -471,7 +471,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         const displayValue = getSelectedOptionContent() ?? placeholder;
         const hasValue = multiple
             ? Array.isArray(currentValue) && currentValue.length > 0
-            : Boolean(currentValue);
+            : currentValue !== undefined &&
+              currentValue !== null &&
+              currentValue !== "";
 
         const handleOptionSelect = useCallback(
             (optionValue: string | number) => {
