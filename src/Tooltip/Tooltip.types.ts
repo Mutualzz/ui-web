@@ -1,12 +1,10 @@
 import type {
-    Color,
-    ColorLike,
-    Responsive,
-    Size,
-    SizeValue,
-    Variant,
-} from "@mutualzz/ui-core";
-import type { HTMLAttributes, ReactElement, ReactNode } from "react";
+    FlipOptions,
+    OffsetOptions,
+    ShiftOptions,
+} from "@floating-ui/react";
+import type { Responsive, Variant } from "@mutualzz/ui-core";
+import type { HTMLAttributes, ReactNode } from "react";
 
 export type TooltipPlacement =
     | "top"
@@ -31,20 +29,19 @@ export interface TooltipProps
     > {
     title?: ReactNode;
     content?: ReactNode;
-    children?: ReactElement;
+    children?: ReactNode;
 
-    elevation?: Responsive<number>;
+    flip?: FlipOptions;
+    shift?: ShiftOptions;
+
+    offset?: OffsetOptions;
 
     placement?: Responsive<TooltipPlacement>;
 
     open?: boolean;
     defaultOpen?: boolean;
 
-    onOpenChange?: (open: boolean) => void;
-
-    variant?: Responsive<TooltipVariant>;
-    size?: Responsive<Size | SizeValue | number>;
-    color?: Responsive<Color | ColorLike>;
+    onHover?: (open: boolean) => void;
 
     enterDelay?: number; // ms
     leaveDelay?: number; // ms

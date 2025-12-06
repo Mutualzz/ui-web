@@ -24,64 +24,24 @@ import {
     useState,
 } from "react";
 import { useTheme } from "../useTheme";
-import {
-    resolveTooltipContainerSize,
-    resolveTooltipContainerStyles,
-    resolveTooltipTextStyles,
-} from "./Tooltip.helpers";
 import type { TooltipProps } from "./Tooltip.types";
 
 const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
-    ({
-        theme,
-        color = "neutral",
-        variant = "none",
-        size = "md",
-        elevation = 1,
-    }) => ({
+    ({ theme }) => ({
         position: "absolute",
         zIndex: theme.zIndex.tooltip,
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
-        boxShadow: theme.shadows[4],
-        whiteSpace: "nowrap",
-        pointerEvents: "none",
-        ...resolveResponsiveMerge(
-            theme,
-            { size, color, variant, elevation },
-            ({ size: s, color: c, variant: v, elevation: e }) => ({
-                borderRadius: resolveTooltipContainerSize(theme, s)
-                    .borderRadius,
-                padding: resolveTooltipContainerSize(theme, s).padding,
-                ...resolveTooltipContainerStyles(theme, c, e)[v],
-            }),
-        ),
     }),
 );
 
 TooltipRoot.displayName = "TooltipRoot";
 
-const TooltipContent = styled("span")<Omit<TooltipProps, "children">>(
-    ({
-        theme,
-        color = "neutral",
-        variant = "none",
-        size = "md",
-        elevation = 1,
-    }) => ({
-        lineHeight: 1.2,
-        ...resolveResponsiveMerge(
-            theme,
-            { size, color, variant, elevation },
-            ({ color: c, variant: v, size: s }) => ({
-                ...resolveTooltipTextStyles(theme, c)[v],
-                fontSize: resolveTooltipContainerSize(theme, s).fontSize,
-            }),
-        ),
-    }),
-);
+const TooltipContent = styled("span")<Omit<TooltipProps, "children">>({
+    lineHeight: 1.2,
+});
 
 TooltipContent.displayName = "TooltipContent";
 
@@ -95,12 +55,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             placement: placementProp = "top",
             open: openProp,
             defaultOpen,
-            onOpenChange,
-            variant = "none",
-            size: sizeProp = "md",
-            color = "neutral",
-            elevation = 5,
+            onHover,
             enterDelay = 100,
+            flip: flipProp,
+            shift: shiftProp,
+            offset: offsetProp,
             leaveDelay = 100,
             disableFocusListener,
             disableHoverListener,
@@ -121,24 +80,27 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
         const setOpen = (value: boolean) => {
             if (!isControlled) setUncontrolled(value);
-            onOpenChange?.(value);
+            onHover?.(value);
         };
 
-        const { placement, size } = resolveResponsiveMerge(
+        const { placement } = resolveResponsiveMerge(
             theme,
-            { placement: placementProp, size: sizeProp },
-            ({ placement, size }) => ({ placement, size }),
+            { placement: placementProp },
+            ({ placement }) => ({ placement }),
         );
 
         const { refs, floatingStyles, context } = useFloating({
             open,
             onOpenChange: setOpen,
             placement,
-            whileElementsMounted: autoUpdate,
+            whileElementsMounted: (r, f, u) =>
+                autoUpdate(r, f, u, {
+                    animationFrame: true,
+                }),
             middleware: [
-                offset(() => resolveTooltipContainerSize(theme, size).gap),
-                flip({ padding: 8 }),
-                shift({ padding: 8 }),
+                offset(offsetProp ?? 8),
+                shift(shiftProp),
+                flip(flipProp),
             ],
         });
 
@@ -179,24 +141,13 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 {mounted && open && label && (
                     <Portal>
                         <TooltipRoot
-                            elevation={elevation}
                             ref={refs.setFloating}
                             id={tipId}
                             role="tooltip"
-                            color={color as string}
-                            variant={variant}
-                            size={size}
                             css={floatingStyles as CSSObject}
                             {...getFloatingProps({})}
                         >
-                            <TooltipContent
-                                color={color as string}
-                                variant={variant}
-                                size={size}
-                                elevation={1}
-                            >
-                                {label ?? title}
-                            </TooltipContent>
+                            <TooltipContent>{label ?? title}</TooltipContent>
                         </TooltipRoot>
                     </Portal>
                 )}
