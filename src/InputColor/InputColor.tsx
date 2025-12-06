@@ -24,9 +24,9 @@ import { Box } from "Box/Box";
 import { forwardRef, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../Button/Button";
 import { ColorPicker } from "../ColorPicker/ColorPicker";
-import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { IconButton } from "../IconButton/IconButton";
 import { InputBase } from "../InputBase/InputBase";
+import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { Popover } from "../Popover/Popover";
 import { useTheme } from "../useTheme";
@@ -274,7 +274,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                 error={isInvalid}
                 disabled={disabled}
             >
-                <DecoratorWrapper>
+                <InputDecoratorWrapper position="start">
                     {startDecorator ??
                         (showColorPicker && !isInvalid && (
                             <Popover
@@ -293,19 +293,6 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                 }}
                             >
                                 <Box ref={popoverRef}>
-                                    {/* <ColorPicker
-                                        hidePresets
-                                        hideInputs
-                                        hideInputType
-                                        hideEyeDrop
-                                        hideOpacity={!allowAlpha}
-                                        hideAdvancedSliders
-                                        hideColorTypeBtns={!allowGradient}
-                                        hideColorGuide
-                                        value={pickerColor}
-                                        onChange={handleNewColor}
-                                        idSuffix={id}
-                                    /> */}
                                     <ColorPicker
                                         color={pickerColor}
                                         onChange={handleNewColor}
@@ -314,7 +301,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                 </Box>
                             </Popover>
                         ))}
-                </DecoratorWrapper>
+                </InputDecoratorWrapper>
 
                 <InputBase
                     {...(props as any)}
@@ -322,10 +309,13 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                     value={inputValue}
                     onChange={handleOnChange}
                     onBlur={validate}
+                    size={size as any}
+                    fullWidth={fullWidth}
+                    disabled={disabled}
                     ref={ref}
                 />
 
-                <DecoratorWrapper>
+                <InputDecoratorWrapper position="end">
                     {endDecorator ??
                         (showRandom && (
                             <IconButton
@@ -347,7 +337,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                 />
                             </IconButton>
                         ))}
-                </DecoratorWrapper>
+                </InputDecoratorWrapper>
             </InputRoot>
         );
     },
