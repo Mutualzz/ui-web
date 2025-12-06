@@ -35,6 +35,8 @@ export interface ButtonProps
     verticalAlign?: Responsive<VerticalButtonAlign>;
     horizontalAlign?: Responsive<HorizontalButtonAlign>;
 
+    fullWidth?: boolean;
+
     /**
      * Indicates whether the button is in a loading state.
      * If true, the button will show a loading indicator and be disabled.
@@ -66,4 +68,6 @@ export interface ButtonProps
      * @default false
      */
     padding?: Size | SizeValue | number;
+
+    selected?: boolean;
 }

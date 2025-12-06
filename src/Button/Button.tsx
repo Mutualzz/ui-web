@@ -26,6 +26,8 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         variant = "solid",
         verticalAlign = "center",
         horizontalAlign = "center",
+        fullWidth,
+        selected,
         padding,
     }) => ({
         position: "relative",
@@ -36,7 +38,8 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         transition: "all 0.3s ease",
         whiteSpace: "nowrap",
         flexShrink: 0,
-        lineHeight: 1.2,
+        lineHeight: 1,
+        flexGrow: fullWidth ? 1 : 0,
         ...(disabled && {
             opacity: 0.5,
             pointerEvents: "none",
@@ -53,7 +56,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                 padding: p,
             }) => ({
                 ...resolveButtonContainerSize(theme, s, p),
-                ...resolveButtonContainerStyles(theme, c)[v],
+                ...resolveButtonContainerStyles(theme, c, selected)[v],
                 alignItems:
                     va === "top"
                         ? "flex-start"
@@ -81,13 +84,12 @@ const ButtonContent = styled("span")<ButtonProps>(
         size = "md",
         loading,
     }) => ({
-        display: "flex",
+        display: "inline",
         alignItems: "center",
         justifyContent: "center",
         flexGrow: 0,
         flexShrink: 0,
         width: "auto",
-        height: "100%",
         opacity: loading ? 0 : 1,
         boxSizing: "border-box",
         ...resolveResponsiveMerge(
@@ -136,7 +138,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             endDecorator,
             disabled: propDisabled,
             padding,
+            fullWidth: propFullWidth,
             children,
+            selected: selectedProp,
+            onClick: onClickProp,
             type = "button",
             ...props
         },
@@ -153,6 +158,37 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             propHorizontalAlign ?? group?.horizontalAlign ?? "center";
         const loading = propLoading ?? group?.loading ?? false;
         const disabled = propDisabled ?? group?.disabled ?? false;
+        const fullWidth = propFullWidth ?? group?.fullWidth ?? false;
+
+        const selected =
+            selectedProp !== undefined
+                ? selectedProp
+                : group?.exclusive
+                  ? group?.value === props.value
+                  : Array.isArray(group?.value) &&
+                    group?.value.includes(props.value);
+
+        const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (
+                group?.toggleable &&
+                group?.onChange &&
+                props.value !== undefined
+            ) {
+                if (group.exclusive) {
+                    group.onChange(props.value);
+                } else {
+                    // For multi-select, toggle value in array
+                    const arr = Array.isArray(group.value) ? group.value : [];
+                    const exists = arr.includes(props.value);
+                    const newArr = exists
+                        ? arr.filter((v: any) => v !== props.value)
+                        : [...arr, props.value];
+                    group.onChange(newArr);
+                }
+            }
+
+            onClickProp?.(e);
+        };
 
         return (
             <ButtonWrapper
@@ -162,11 +198,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 variant={variant}
                 color={color as string}
                 size={size}
+                fullWidth={fullWidth}
                 verticalAlign={verticalAlign}
                 horizontalAlign={horizontalAlign}
                 disabled={Boolean(loading || disabled)}
                 loading={Boolean(loading)}
+                onClick={handleClick}
                 padding={padding}
+                selected={selected}
             >
                 {loading && (
                     <SpinnerOverlay>
@@ -187,9 +226,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 )}
 
                 {startDecorator && (
-                    <DecoratorWrapper position="start">
-                        {startDecorator}
-                    </DecoratorWrapper>
+                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
                 )}
                 <ButtonContent
                     color={color as string}
@@ -200,9 +237,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     {children}
                 </ButtonContent>
                 {endDecorator && (
-                    <DecoratorWrapper position="end">
-                        {endDecorator}
-                    </DecoratorWrapper>
+                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
                 )}
             </ButtonWrapper>
         );

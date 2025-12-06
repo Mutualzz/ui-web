@@ -25,15 +25,18 @@ export const resolveButtonContainerSize = (
     padding?: Size | SizeValue | number,
 ) => {
     const resolvedSize = resolveSize(theme, size, baseSizeMap);
+
     return {
         fontSize: resolvedSize,
         padding: padding ?? resolvedSize * 0.6,
+        gap: resolvedSize * 0.5,
     };
 };
 
 export const resolveButtonContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
+    selected?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
@@ -45,7 +48,12 @@ export const resolveButtonContainerStyles = (
 
     return {
         solid: {
-            backgroundColor: hexColor,
+            backgroundColor: selected
+                ? formatColor(resolvedColor, {
+                      alpha: 70,
+                      format: "hexa",
+                  })
+                : hexColor,
             color: solidTextColor,
             border: "none",
             "&:hover": {
@@ -72,7 +80,12 @@ export const resolveButtonContainerStyles = (
             },
         },
         outlined: {
-            backgroundColor: "transparent",
+            backgroundColor: selected
+                ? formatColor(resolvedColor, {
+                      alpha: 30,
+                      format: "hexa",
+                  })
+                : "transparent",
             border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
             color: formatColor(resolvedColor, { format: "hexa" }),
             "&:hover": {
@@ -102,7 +115,12 @@ export const resolveButtonContainerStyles = (
             },
         },
         plain: {
-            backgroundColor: "transparent",
+            backgroundColor: selected
+                ? formatColor(resolvedColor, {
+                      format: "hexa",
+                      alpha: 30,
+                  })
+                : "transparent",
             border: "none",
             color: formatColor(resolvedColor, { format: "hexa" }),
             "&:hover": {
@@ -125,10 +143,15 @@ export const resolveButtonContainerStyles = (
             },
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                alpha: 15,
-                format: "hexa",
-            }),
+            backgroundColor: selected
+                ? formatColor(resolvedColor, {
+                      format: "hexa",
+                      alpha: 40,
+                  })
+                : formatColor(resolvedColor, {
+                      alpha: 15,
+                      format: "hexa",
+                  }),
             color: formatColor(resolvedColor, {
                 format: "hexa",
             }),
