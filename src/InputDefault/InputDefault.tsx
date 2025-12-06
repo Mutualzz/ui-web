@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
-import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { InputBase } from "../InputBase/InputBase";
 import { InputRoot } from "../InputRoot/InputRoot";
 import type { InputRootProps } from "../InputRoot/InputRoot.types";
+import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 
 /**
  * Input component for entering non-custom inputs.
@@ -35,13 +35,19 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
             disabled={disabled}
         >
             {startDecorator && (
-                <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+                <InputDecoratorWrapper position="start">{startDecorator}</InputDecoratorWrapper>
             )}
 
-            <InputBase {...props} ref={ref} type={type} />
+            <InputBase
+                {...props}
+                size={size as any}
+                fullWidth={fullWidth}
+                ref={ref}
+                type={type}
+            />
 
             {endDecorator && (
-                <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
+                <InputDecoratorWrapper position="end">{endDecorator}</InputDecoratorWrapper>
             )}
         </InputRoot>
     ),
