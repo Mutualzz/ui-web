@@ -17,6 +17,8 @@ export * from "./CssBaseline/CssBaseline";
 export * from "./Drawer/Drawer";
 export type * from "./Drawer/Drawer.types";
 
+export * from "./DecoratorWrapper/DecoratorWrapper";
+
 export * from "./Checkbox/Checkbox";
 export type * from "./Checkbox/Checkbox.types";
 
@@ -40,6 +42,8 @@ export * from "./InputColor/InputColor";
 export type * from "./InputColor/InputColor.types";
 
 export * from "./InputDefault/InputDefault";
+
+export * from "./InputDecoratorWrapper/InputDecoratorWrapper";
 
 export * from "./InputNumber/InputNumber";
 export type * from "./InputNumber/InputNumber.types";
