@@ -13,14 +13,13 @@ import {
     type FocusEvent,
     type KeyboardEvent,
 } from "react";
-import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { InputBase } from "../InputBase/InputBase";
 import { baseSizeMap } from "../InputBase/InputBase.helpers";
+import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { Stack } from "../Stack/Stack";
 import { useTheme } from "../useTheme";
 import type { InputNumberProps } from "./InputNumber.types";
-import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 
 const SpinnerButtons = ({
     onIncrement,
@@ -299,7 +298,9 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
                 disabled={disabled}
             >
                 {startDecorator && (
-                    <InputDecoratorWrapper position="start">{startDecorator}</InputDecoratorWrapper>
+                    <InputDecoratorWrapper position="start">
+                        {startDecorator}
+                    </InputDecoratorWrapper>
                 )}
 
                 <InputBase
