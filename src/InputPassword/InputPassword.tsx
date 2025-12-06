@@ -1,8 +1,8 @@
 import type { Size, SizeValue } from "@mutualzz/ui-core";
 import { resolveResponsiveMerge } from "@mutualzz/ui-core";
 import { forwardRef, useCallback, useEffect, useState } from "react";
-import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { InputBase } from "../InputBase/InputBase";
+import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { useTheme } from "../useTheme";
 import { resolvePasswordIconStyles } from "./InputPassword.helpers";
@@ -129,19 +129,26 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                 disabled={disabled}
             >
                 {startDecorator && (
-                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+                    <InputDecoratorWrapper position="start">
+                        {startDecorator}
+                    </InputDecoratorWrapper>
                 )}
 
                 <InputBase
                     {...props}
                     ref={ref}
                     type={visible ? "text" : "password"}
+                    size={size as any}
+                    fullWidth={fullWidth}
                 />
 
                 {endDecorator ? (
-                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
+                    <InputDecoratorWrapper position="end">
+                        {endDecorator}
+                    </InputDecoratorWrapper>
                 ) : showToggleIcon ? (
-                    <DecoratorWrapper
+                    <InputDecoratorWrapper
+                        position="end"
                         onClick={togglePassword}
                         css={{ cursor: "pointer", userSelect: "none" }}
                     >
@@ -158,7 +165,7 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                                       strokeColor={strokeColor}
                                   />
                               ))}
-                    </DecoratorWrapper>
+                    </InputDecoratorWrapper>
                 ) : null}
             </InputRoot>
         );
