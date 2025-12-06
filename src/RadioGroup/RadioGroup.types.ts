@@ -23,16 +23,16 @@ export interface RadioGroupProps {
     /**
      * The value of the currently selected radio button.
      */
-    value?: string;
+    value?: any;
     /**
      * The default value of the radio group when it is first rendered.
      */
-    defaultValue?: string;
+    defaultValue?: any;
     /**
      * Callback function called when the selected radio button changes.
      * It receives the change event and the new value as arguments.
      */
-    onChange?: (event: ChangeEvent<HTMLInputElement>, value: string) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>, value: any) => void;
     /**
      * Whether the radio group is disabled.
      * When true, all radio buttons in the group will be unclickable and visually styled as disabled.

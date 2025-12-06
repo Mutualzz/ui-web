@@ -67,7 +67,7 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
             defaultValue,
             onChange,
             disabled,
-            spacing = 0,
+            spacing,
             children,
         },
         ref,
