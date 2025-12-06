@@ -235,7 +235,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                     justifyContent="center"
                     position="relative"
                     direction="row"
-                    spacing={10}
+                    spacing={2.5}
                 >
                     <Hue
                         hue={hsva.h}
