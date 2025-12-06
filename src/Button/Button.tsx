@@ -82,6 +82,8 @@ const ButtonContent = styled("span")<ButtonProps>(
         color = "primary",
         variant = "solid",
         size = "md",
+        horizontalAlign = "center",
+        verticalAlign = "center",
         loading,
     }) => ({
         flex: "1 1 0%",
@@ -93,11 +95,29 @@ const ButtonContent = styled("span")<ButtonProps>(
         boxSizing: "border-box",
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant },
-            ({ size: s, color: c, variant: v }) => {
+            { size, color, variant, horizontalAlign, verticalAlign },
+            ({
+                size: s,
+                color: c,
+                variant: v,
+                horizontalAlign: ha,
+                verticalAlign: va,
+            }) => {
                 const resolvedSize = resolveSize(theme, s, baseSizeMap);
                 return {
                     fontSize: resolvedSize,
+                    justifyContent:
+                        ha === "left"
+                            ? "flex-start"
+                            : horizontalAlign === "right"
+                              ? "flex-end"
+                              : "center",
+                    alignItems:
+                        va === "top"
+                            ? "flex-start"
+                            : verticalAlign === "bottom"
+                              ? "flex-end"
+                              : "center",
                     ...resolveButtonTextStyles(theme, c)[v],
                 };
             },
@@ -234,6 +254,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     variant={variant}
                     size={size}
                     loading={Boolean(loading)}
+                    horizontalAlign={horizontalAlign}
+                    verticalAlign={verticalAlign}
                 >
                     {children}
                 </ButtonContent>
