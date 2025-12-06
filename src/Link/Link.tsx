@@ -50,10 +50,12 @@ const LinkWrapper = styled("a")<LinkProps>(
                 }),
             }),
         ),
+        cursor: "pointer",
         transition: "all 0.3s ease",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
+        gap: 4,
     }),
 );
 
@@ -81,15 +83,11 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                 underline={underline}
             >
                 {startDecorator && (
-                    <DecoratorWrapper position="start">
-                        {startDecorator}
-                    </DecoratorWrapper>
+                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
                 )}
                 {children}
                 {endDecorator && (
-                    <DecoratorWrapper position="end">
-                        {endDecorator}
-                    </DecoratorWrapper>
+                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
                 )}
             </LinkWrapper>
         );
