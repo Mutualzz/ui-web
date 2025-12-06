@@ -83,11 +83,15 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                 underline={underline}
             >
                 {startDecorator && (
-                    <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
+                    <DecoratorWrapper position="start">
+                        {startDecorator}
+                    </DecoratorWrapper>
                 )}
                 {children}
                 {endDecorator && (
-                    <DecoratorWrapper>{endDecorator}</DecoratorWrapper>
+                    <DecoratorWrapper position="end">
+                        {endDecorator}
+                    </DecoratorWrapper>
                 )}
             </LinkWrapper>
         );
