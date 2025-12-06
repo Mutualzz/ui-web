@@ -1,8 +1,5 @@
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import {
-    resolveInputRootSize,
-    resolveInputRootStyles,
-} from "./InputRoot.helpers";
+import { resolveInputRootStyles } from "./InputRoot.helpers";
 import type { InputRootProps } from "./InputRoot.types";
 
 const InputRoot = styled("div")<InputRootProps>(
@@ -19,14 +16,7 @@ const InputRoot = styled("div")<InputRootProps>(
         ...resolveResponsiveMerge(
             theme,
             { color, textColor, size, variant, fullWidth },
-            ({
-                color: c,
-                textColor: tc,
-                variant: v,
-                size: s,
-                fullWidth: fw,
-            }) => ({
-                ...resolveInputRootSize(theme, s, fw),
+            ({ color: c, textColor: tc, variant: v }) => ({
                 ...resolveInputRootStyles(theme, c, tc, error)[v],
             }),
         ),
@@ -34,14 +24,16 @@ const InputRoot = styled("div")<InputRootProps>(
 
         display: "flex",
         alignItems: "center",
+        gap: 4,
 
+        width: fullWidth ? "100%" : "auto",
         minWidth: 0,
         flexShrink: 1,
         flexGrow: fullWidth ? 1 : 0,
         boxSizing: "border-box",
         overflow: "hidden",
+        lineHeight: 1,
 
-        gap: "0.375em",
         borderRadius: 8,
         transition: "all 0.3s ease",
     }),

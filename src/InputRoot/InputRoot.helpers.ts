@@ -2,8 +2,6 @@ import type { CSSObject, Theme } from "@emotion/react";
 import type {
     Color,
     ColorLike,
-    Size,
-    SizeValue,
     TypographyColor,
     Variant,
 } from "@mutualzz/ui-core";
@@ -12,32 +10,8 @@ import {
     formatColor,
     isValidColorInput,
     resolveColor,
-    resolveSize,
     resolveTypographyColor,
 } from "@mutualzz/ui-core";
-
-export const baseSizeMap: Record<Size, number> = {
-    sm: 12,
-    md: 14,
-    lg: 16,
-};
-
-export const resolveInputRootSize = (
-    theme: Theme,
-    size: Size | SizeValue | number,
-    fullWidth?: boolean,
-) => {
-    const resolvedSize = resolveSize(theme, size, baseSizeMap);
-
-    return {
-        width: fullWidth ? "100%" : resolvedSize * 16,
-        maxWidth: "100%",
-        fontSize: resolvedSize,
-        lineHeight: 1.2,
-        minHeight: resolvedSize * 2.2,
-        padding: `${resolvedSize * 0.4}px ${resolvedSize * 0.6}px`,
-    };
-};
 
 export const resolveInputRootStyles = (
     theme: Theme,

@@ -2,12 +2,11 @@ import type {
     Color,
     ColorLike,
     Responsive,
-    Size,
-    SizeValue,
     TypographyColor,
     Variant,
 } from "@mutualzz/ui-core";
-import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
+import type { InputBaseProps } from "InputBase/InputBase.props";
+import type { ChangeEvent, ReactNode } from "react";
 
 export type InputType =
     | "date"
@@ -34,11 +33,7 @@ export type InputMode =
     | "decimal"
     | "search";
 
-export interface InputRootProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        "onChange" | "size" | "type" | "color"
-    > {
+export interface InputRootProps extends InputBaseProps {
     /**
      * The color of the input element.
      * Can be a predefined color or a custom color.
@@ -63,17 +58,6 @@ export interface InputRootProps
      * @example "outlined", "solid", "plain", "soft"
      */
     variant?: Responsive<Variant>;
-    /**
-     * The size of the input element.
-     * Can be a predefined size ("sm", "md", "lg") or a custom size in pixels.
-     * If a number is provided, it will be used as the font size.
-     *
-     * @default "md"
-     * @min 6
-     * @max 32
-     * @example "sm", "md", "lg", 16
-     */
-    size?: Responsive<Size | SizeValue | number>;
 
     /**
      * Optional start decorator to render before the input element.
@@ -86,11 +70,6 @@ export interface InputRootProps
      */
     endDecorator?: ReactNode;
 
-    /**
-     * If true, the input will take the full width of its container.
-     * @default false
-     */
-    fullWidth?: boolean;
     /**
      * If true, the input will be displayed in an error state.
      * This can be used to indicate validation errors or issues with the input.
