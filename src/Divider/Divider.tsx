@@ -1,3 +1,4 @@
+import type { CSSObject } from "@emotion/react";
 import {
     resolveSize,
     styled,
@@ -64,7 +65,7 @@ const DividerText = styled("span")<{
     isVertical,
     textColor,
     textLevel = "body-md",
-    textPadding = 0,
+    textPadding = 5,
 }) => {
     const paddingValue = resolveSize(theme, textPadding, {
         sm: 4,
@@ -100,7 +101,7 @@ DividerText.displayName = "DividerText";
  * The `lineColor` and `textColor` props allow for customizing the colors of the divider line and text, respectively.
  * The `variant` prop allows for different visual styles of the divider.
  */
-const Divider = forwardRef<HTMLDivElement, DividerProps>(
+const Divider = forwardRef<HTMLDivElement, DividerProps & { css?: CSSObject }>(
     (
         {
             orientation = "horizontal",
@@ -108,9 +109,10 @@ const Divider = forwardRef<HTMLDivElement, DividerProps>(
             lineColor = "neutral",
             textColor = "neutral",
             variant = "solid",
-            textPadding = 0,
+            textPadding = 5,
             textLevel = "body-md",
             children,
+            ...props
         },
         ref,
     ) => {
@@ -132,7 +134,8 @@ const Divider = forwardRef<HTMLDivElement, DividerProps>(
                 isVertical={isVertical}
                 role="separator"
                 aria-orientation={isVertical ? "vertical" : "horizontal"}
-                css={{ color: resolvedLineColor }}
+                css={{ color: resolvedLineColor, ...props.css }}
+                {...props}
             >
                 {showFirstLine && (
                     <DividerLine
