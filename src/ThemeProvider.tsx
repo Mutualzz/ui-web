@@ -2,12 +2,8 @@ import {
     ThemeProvider as EmotionThemeProvder,
     type Theme,
 } from "@emotion/react";
-import type { ThemeStyle, ThemeType } from "@mutualzz/ui-core";
-import {
-    baseDarkTheme,
-    baseLightTheme,
-    themes as baseThemes,
-} from "@mutualzz/ui-core";
+import type { ThemeType } from "@mutualzz/ui-core";
+import { baseDarkTheme, baseLightTheme } from "@mutualzz/ui-core";
 import {
     createContext,
     forwardRef,
@@ -19,148 +15,89 @@ import {
 } from "react";
 
 export const ThemeContext = createContext({
-    theme: baseThemes.find((theme) => theme.id === "baseDark") ?? baseThemes[0],
-    changeTheme: (_theme: Theme) => {
+    theme: baseDarkTheme as Theme,
+    changeTheme: (_theme: Theme | null) => {
         return;
     },
-    type: "system" as ThemeType,
-    changeType: (_type: ThemeType) => {
-        return;
-    },
-    style: "normal" as ThemeStyle,
-    changeStyle: (_style: ThemeStyle) => {
-        return;
-    },
+    type: null as ThemeType | null,
 });
 
 export interface ThemeProviderRef {
-    changeTheme: (theme: Theme) => void;
-    changeType: (type: ThemeType) => void;
-    changeStyle: (style: ThemeStyle) => void;
+    theme: Theme;
+    type: ThemeType | null;
+    changeTheme: (theme: Theme | null) => void;
 }
 
 const ThemeProvider = forwardRef<
     ThemeProviderRef,
     PropsWithChildren & {
-        onThemeChange?: (theme: Theme) => void;
-        onTypeChange?: (type: ThemeType) => void;
-        onStyleChange?: (style: ThemeStyle) => void;
-        disableDefaultThemeOnTypeChange?: boolean;
-        disableDefaultThemeOnStyleChange?: boolean;
+        onThemeChange?: (theme: Theme, type: ThemeType | null) => void;
     }
->(
-    (
-        {
-            children,
-            onThemeChange,
-            onTypeChange,
-            onStyleChange,
-            disableDefaultThemeOnTypeChange = false,
-            disableDefaultThemeOnStyleChange = false,
-        },
-        ref,
-    ) => {
-        const [theme, setTheme] = useState<Theme | null>(null);
-        const [type, setType] = useState<ThemeType>("system");
-        const [style, setStyle] = useState<ThemeStyle>("normal");
-        const [prefersDark, setPrefersDark] = useState<boolean | null>(null);
-        const [mounted, setMounted] = useState(false);
+>(({ children, onThemeChange }, ref) => {
+    const [type, setType] = useState<ThemeType | null>(null);
 
-        useEffect(() => {
-            setMounted(true);
-            if (typeof window === "undefined") return;
+    const [theme, setTheme] = useState<Theme>(baseDarkTheme);
+    const [mounted, setMounted] = useState(false);
 
-            const mediaQuery = window.matchMedia(
-                "(prefers-color-scheme: dark)",
-            );
-            const updatePrefersDark = () => {
-                const isDark = mediaQuery.matches;
-                setPrefersDark(isDark);
-                if (type === "system") {
-                    setTheme(isDark ? baseDarkTheme : baseLightTheme);
-                }
-            };
+    useEffect(() => {
+        setMounted(true);
+        if (typeof window === "undefined") return;
 
-            updatePrefersDark(); // initialize on mount
-            mediaQuery.addEventListener("change", updatePrefersDark);
-            return () =>
-                mediaQuery.removeEventListener("change", updatePrefersDark);
-        }, [type]);
-
-        const changeType = (type: ThemeType) => {
-            setType(type);
-
-            if (!disableDefaultThemeOnTypeChange) {
-                if (type === "system" && prefersDark !== null)
-                    setTheme(prefersDark ? baseDarkTheme : baseLightTheme);
-                else if (type === "dark") setTheme(baseDarkTheme);
-                else setTheme(baseLightTheme);
-                setStyle("normal");
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const updatePrefersDark = () => {
+            const isDark = mediaQuery.matches;
+            if (!type) {
+                setTheme(isDark ? baseDarkTheme : baseLightTheme);
             }
-
-            onTypeChange?.(type);
-            onStyleChange?.("normal");
         };
 
-        const changeTheme = (theme: Theme) => {
-            setTheme(theme);
-            setStyle(theme.style);
-            setType(theme.type as ThemeType);
+        updatePrefersDark(); // initialize on mount
+        mediaQuery.addEventListener("change", updatePrefersDark);
+        return () =>
+            mediaQuery.removeEventListener("change", updatePrefersDark);
+    }, [type]);
 
-            onThemeChange?.(theme);
-            onStyleChange?.(theme.style);
-        };
+    const changeTheme = (newTheme: Theme | null) => {
+        if (!newTheme) {
+            const mediaQuery =
+                window?.matchMedia("(prefers-color-scheme: dark)") ?? true;
+            const preferredTheme = mediaQuery.matches
+                ? baseDarkTheme
+                : baseLightTheme;
+            setTheme(preferredTheme);
+            setType(null);
+            onThemeChange?.(preferredTheme, null);
+            return;
+        }
 
-        const changeStyle = (style: ThemeStyle) => {
-            if (!disableDefaultThemeOnStyleChange && style === "normal") {
-                if (type === "system" && prefersDark !== null)
-                    setTheme(prefersDark ? baseDarkTheme : baseLightTheme);
-                else if (type === "dark") setTheme(baseDarkTheme);
-                else setTheme(baseLightTheme);
-            }
+        setTheme(newTheme);
+        setType(newTheme.type);
 
-            setStyle(style);
-            onStyleChange?.(style);
-        };
+        onThemeChange?.(newTheme, newTheme.type);
+    };
 
-        useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
+        theme,
+        type,
+        changeTheme,
+    }));
+
+    const value = useMemo(
+        () => ({
+            theme,
             changeTheme,
-            changeType,
-            changeStyle,
-        }));
+            type,
+        }),
+        [type, theme],
+    );
 
-        const themeObject =
-            theme ??
-            (prefersDark != null
-                ? prefersDark
-                    ? baseDarkTheme
-                    : baseLightTheme
-                : baseDarkTheme);
+    if (!mounted) return null;
 
-        const value = useMemo(
-            () => ({
-                theme: themeObject,
-                changeTheme,
-                type,
-                changeType,
-                style,
-                changeStyle,
-            }),
-            [type, style, themeObject],
-        );
-
-        if (!mounted) return null;
-
-        return (
-            <ThemeContext.Provider value={value}>
-                <EmotionThemeProvder theme={themeObject}>
-                    {children}
-                </EmotionThemeProvder>
-            </ThemeContext.Provider>
-        );
-    },
-);
-
-ThemeProvider.displayName = "ThemeProvider";
+    return (
+        <ThemeContext.Provider value={value}>
+            <EmotionThemeProvder theme={theme}>{children}</EmotionThemeProvder>
+        </ThemeContext.Provider>
+    );
+});
 
 export { ThemeProvider };
