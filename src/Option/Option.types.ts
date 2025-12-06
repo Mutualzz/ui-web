@@ -8,9 +8,11 @@ import type {
 } from "@mutualzz/ui-core";
 import type { HTMLAttributes, ReactNode } from "react";
 
-export interface OptionProps
-    extends Omit<HTMLAttributes<HTMLDivElement>, "color"> {
-    value: string | number;
+export interface OptionProps extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "color"
+> {
+    value: any;
 
     disabled?: boolean;
     selected?: boolean;
