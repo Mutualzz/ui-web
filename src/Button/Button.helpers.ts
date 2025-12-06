@@ -36,6 +36,7 @@ export const resolveButtonContainerSize = (
 export const resolveButtonContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
+    disabled?: boolean,
     selected?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
@@ -56,18 +57,20 @@ export const resolveButtonContainerStyles = (
                 : hexColor,
             color: solidTextColor,
             border: "none",
-            "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
-            },
-            "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 70,
-                    format: "hexa",
-                }),
-            },
+            ...(!disabled && {
+                "&:hover": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 80,
+                        format: "hexa",
+                    }),
+                },
+                "&:active": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 70,
+                        format: "hexa",
+                    }),
+                },
+            }),
             "&:disabled": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 50,
@@ -88,21 +91,23 @@ export const resolveButtonContainerStyles = (
                 : "transparent",
             border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
             color: formatColor(resolvedColor, { format: "hexa" }),
-            "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 20,
-                    format: "hexa",
-                }),
-                borderColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                }),
-            },
-            "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 30,
-                    format: "hexa",
-                }),
-            },
+            ...(!disabled && {
+                "&:hover": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 20,
+                        format: "hexa",
+                    }),
+                    borderColor: formatColor(resolvedColor, {
+                        format: "hexa",
+                    }),
+                },
+                "&:active": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 30,
+                        format: "hexa",
+                    }),
+                },
+            }),
             "&:disabled": {
                 color: formatColor(resolvedColor, {
                     format: "hexa",
@@ -123,18 +128,20 @@ export const resolveButtonContainerStyles = (
                 : "transparent",
             border: "none",
             color: formatColor(resolvedColor, { format: "hexa" }),
-            "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 20,
-                }),
-            },
-            "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 30,
-                }),
-            },
+            ...(!disabled && {
+                "&:hover": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        format: "hexa",
+                        alpha: 20,
+                    }),
+                },
+                "&:active": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        format: "hexa",
+                        alpha: 30,
+                    }),
+                },
+            }),
             "&:disabled": {
                 color: formatColor(resolvedColor, {
                     alpha: 50,
@@ -156,18 +163,20 @@ export const resolveButtonContainerStyles = (
                 format: "hexa",
             }),
             border: "none",
-            "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 30,
-                    format: "hexa",
-                }),
-            },
-            "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 40,
-                }),
-            },
+            ...(!disabled && {
+                "&:hover": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        alpha: 30,
+                        format: "hexa",
+                    }),
+                },
+                "&:active": {
+                    backgroundColor: formatColor(resolvedColor, {
+                        format: "hexa",
+                        alpha: 40,
+                    }),
+                },
+            }),
             "&:disabled": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 5,

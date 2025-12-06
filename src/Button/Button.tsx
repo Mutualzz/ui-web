@@ -42,7 +42,6 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         flexGrow: fullWidth ? 1 : 0,
         ...(disabled && {
             opacity: 0.5,
-            pointerEvents: "none",
         }),
         ...resolveResponsiveMerge(
             theme,
@@ -56,7 +55,9 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                 padding: p,
             }) => ({
                 ...resolveButtonContainerSize(theme, s, p),
-                ...resolveButtonContainerStyles(theme, c, selected)[v],
+                ...resolveButtonContainerStyles(theme, c, disabled, selected)[
+                    v
+                ],
                 alignItems:
                     va === "top"
                         ? "flex-start"
