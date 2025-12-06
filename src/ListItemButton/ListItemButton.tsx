@@ -25,6 +25,7 @@ export const ListItemButtonRoot = styled("button")<
     boxSizing: "border-box",
     cursor: "pointer",
     transition: "all 0.3s ease",
+    gap: 4,
     ...resolveResponsiveMerge(
         theme,
         {
@@ -81,13 +82,13 @@ const ListItemButton = forwardRef<HTMLButtonElement, ListItemButtonProps>(
                 {...rest}
             >
                 {startDecorator && (
-                    <DecoratorWrapper position="start">
+                    <DecoratorWrapper>
                         {startDecorator}
                     </DecoratorWrapper>
                 )}
                 <ListItemButtonContent>{children}</ListItemButtonContent>
                 {endDecorator && (
-                    <DecoratorWrapper position="end">
+                    <DecoratorWrapper>
                         {endDecorator}
                     </DecoratorWrapper>
                 )}
