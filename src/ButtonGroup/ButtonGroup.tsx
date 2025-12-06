@@ -8,7 +8,8 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import { resolveResponsiveMerge, resolveSize, styled } from "@mutualzz/ui-core";
-import { forwardRef } from "react";
+import type { ButtonProps } from "Button/Button.types";
+import { Children, forwardRef, isValidElement } from "react";
 import { ButtonGroupContext } from "./ButtonGroup.context";
 import {
     baseSpacingMap,
@@ -21,6 +22,7 @@ const ButtonGroupRoot = styled("div")<{
     spacing: Responsive<Size | SizeValue | number>;
     color?: Responsive<Color | ColorLike>;
     variant?: Responsive<Variant>;
+    fullWidth?: boolean;
     separatorColor?: Responsive<Color | ColorLike>;
     disabled?: boolean;
 }>(
@@ -31,11 +33,13 @@ const ButtonGroupRoot = styled("div")<{
         orientation,
         spacing,
         separatorColor,
+        fullWidth,
         disabled,
     }) => ({
         display: "inline-flex",
         flexWrap: "wrap",
 
+        flexGrow: fullWidth ? 1 : 0,
         alignItems: "stretch",
         ...(disabled && {
             pointerEvents: "none",
@@ -96,11 +100,45 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
             horizontalAlign,
             disabled,
             loading,
+            fullWidth,
             separatorColor,
-            children,
+            toggleable,
+            value,
+            onChange,
+            exclusive,
+            children: childrenProp,
         },
         ref,
     ) => {
+        const children = toggleable
+            ? Children.map(childrenProp, (child) => {
+                  if (!isValidElement<ButtonProps>(child)) return child;
+
+                  const childValue = child.props.value;
+                  const selected = exclusive
+                      ? value === childValue
+                      : Array.isArray(value) && value.includes(childValue);
+
+                  return (
+                      <child.type
+                          {...child.props}
+                          color={child.props.color ?? color}
+                          size={child.props.size ?? size}
+                          variant={child.props.variant ?? variant}
+                          verticalAlign={
+                              child.props.verticalAlign ?? verticalAlign
+                          }
+                          horizontalAlign={
+                              child.props.horizontalAlign ?? horizontalAlign
+                          }
+                          disabled={child.props.disabled ?? disabled}
+                          loading={child.props.loading ?? loading}
+                          selected={selected}
+                      />
+                  );
+              })
+            : childrenProp;
+
         return (
             <ButtonGroupContext.Provider
                 value={{
@@ -109,8 +147,13 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     size,
                     verticalAlign,
                     horizontalAlign,
+                    fullWidth,
                     disabled,
                     loading,
+                    toggleable,
+                    value,
+                    onChange,
+                    exclusive,
                 }}
             >
                 <ButtonGroupRoot
@@ -120,6 +163,8 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     color={color as string}
                     variant={variant}
                     separatorColor={separatorColor}
+                    fullWidth={fullWidth}
+                    disabled={disabled}
                 >
                     {children}
                 </ButtonGroupRoot>

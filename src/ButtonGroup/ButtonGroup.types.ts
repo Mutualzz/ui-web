@@ -7,13 +7,13 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import type { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import type {
     HorizontalButtonAlign,
     VerticalButtonAlign,
 } from "../Button/Button.types";
 
-export interface ButtonGroupProps {
+export interface ButtonGroupProps extends PropsWithChildren {
     /**
      * The color of the button group, which can be a predefined color or a custom color.
      * If not provided, the buttons will use their assigned colors.
@@ -38,6 +38,8 @@ export interface ButtonGroupProps {
 
     verticalAlign?: Responsive<VerticalButtonAlign>;
     horizontalAlign?: Responsive<HorizontalButtonAlign>;
+
+    fullWidth?: boolean;
 
     /**
      * Indicates whether all buttons in the group should be disabled.
@@ -74,8 +76,8 @@ export interface ButtonGroupProps {
      */
     spacing?: Responsive<Size | SizeValue | number>;
 
-    /**
-     * The children of the button group, which should be Button components.
-     */
-    children: ReactNode;
+    toggleable?: boolean;
+    value?: any | any[];
+    onChange?: (value: any | any[]) => void;
+    exclusive?: boolean;
 }
