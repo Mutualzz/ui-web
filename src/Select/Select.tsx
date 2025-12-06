@@ -3,6 +3,10 @@ import {
     resolveResponsiveMerge,
     styled,
     useOnClickOutside,
+    type Color,
+    type ColorLike,
+    type Responsive,
+    type Variant,
 } from "@mutualzz/ui-core";
 import {
     forwardRef,
@@ -15,7 +19,6 @@ import {
 } from "react";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { Portal } from "../Portal/Portal";
-import { Typography } from "../Typography/Typography";
 import { SelectContext } from "./Select.context";
 import {
     resolveSelectContentStyles,
@@ -103,16 +106,30 @@ const HiddenSelect = styled("select")<SelectProps>({
     },
 });
 
-const SelectPlaceholder = styled(Typography)<{ hasValue?: boolean }>(
-    ({ hasValue }) => ({
-        flex: 1,
-        textAlign: "left",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        opacity: hasValue ? 1 : 0.5,
-    }),
-);
+const SelectPlaceholder = styled("span")<{
+    color: Responsive<Color | ColorLike>;
+    variant: Responsive<Variant>;
+}>(({ theme, color, variant }) => ({
+    flex: 1,
+    textAlign: "left",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    background: "transparent",
+    whiteSpace: "nowrap",
+
+    ...resolveResponsiveMerge(
+        theme,
+        {
+            color,
+            variant,
+        },
+        ({ color: c, variant: v }) => ({
+            color:
+                resolveSelectContentStyles(theme, c)[v as Variant]?.color ??
+                "inherit",
+        }),
+    ),
+}));
 
 const DropdownIcon = styled("svg")({
     display: "inline-block",
@@ -141,7 +158,6 @@ const SelectContent = styled("div")<
         variant = "outlined",
         isOpen,
         portalPosition,
-        placement = "bottom",
     }) => ({
         ...resolveResponsiveMerge(
             theme,
@@ -522,7 +538,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         <DecoratorWrapper>{startDecorator}</DecoratorWrapper>
                     )}
 
-                    <SelectPlaceholder hasValue={hasValue}>
+                    <SelectPlaceholder
+                        variant={variant}
+                        color={color as string}
+                    >
                         {hasValue ? displayValue : placeholder}
                     </SelectPlaceholder>
 

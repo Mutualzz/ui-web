@@ -114,6 +114,7 @@ export const resolveSelectContentStyles = (
             backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
             color: formatColor(theme.typography.colors.primary, {
                 format: "hexa",
+                negate: createColor(resolvedColor).isLight(),
             }),
         },
         outlined: {
