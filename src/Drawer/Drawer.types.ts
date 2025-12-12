@@ -4,17 +4,19 @@ import type {
     Responsive,
     Size,
     SizeValue,
-    Variant,
 } from "@mutualzz/ui-core";
 import type { HTMLAttributes } from "react";
+import type { PaperVariant } from "../Paper/Paper.types";
 
 export type DrawerAnchor = "left" | "right" | "top" | "bottom";
 export type DrawerConsistency = "permanent" | "temporary";
 
-export interface DrawerProps
-    extends Omit<HTMLAttributes<HTMLDivElement>, "color"> {
+export interface DrawerProps extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "color"
+> {
     color?: Responsive<Color | ColorLike>;
-    variant?: Responsive<Variant | "elevation">;
+    variant?: Responsive<PaperVariant>;
     size?: Responsive<Size | SizeValue | number>;
 
     elevation?: Responsive<number>;
@@ -31,7 +33,7 @@ export interface DrawerProps
 
     disablePortal?: boolean;
 
-    nonTranslucent?: Responsive<boolean>;
+    transparency?: Responsive<number>;
 
     swipeArea?: Responsive<number | Size | SizeValue>;
     threshold?: Responsive<number | Size | SizeValue>;

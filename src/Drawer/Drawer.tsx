@@ -25,7 +25,7 @@ const DrawerRoot = styled("div")<{
     anchor: Responsive<DrawerAnchor>;
     elevation: Responsive<number>;
     size: Responsive<number | Size | SizeValue>;
-    nonTranslucent: Responsive<boolean>;
+    transparency: Responsive<number>;
 }>(
     ({
         theme,
@@ -35,7 +35,7 @@ const DrawerRoot = styled("div")<{
         variant,
         elevation,
         size,
-        nonTranslucent,
+        transparency,
     }) => ({
         position: "fixed",
         zIndex: theme.zIndex.drawer,
@@ -53,7 +53,7 @@ const DrawerRoot = styled("div")<{
                 variant,
                 elevation,
                 size,
-                nonTranslucent,
+                transparency,
             },
             ({
                 anchor: a,
@@ -61,7 +61,7 @@ const DrawerRoot = styled("div")<{
                 variant: v,
                 elevation: e,
                 size: s,
-                nonTranslucent: trans,
+                transparency: trans,
             }) => ({
                 ...resolveAnchorStyles(theme, a, s),
                 ...resolvePaperStyles(theme, c, "primary", e, trans)[v],
@@ -145,7 +145,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
             onClose,
             anchor = "left",
             swipeable = true,
-            nonTranslucent = false,
+            transparency = 90,
             disablePortal = false,
             swipeArea = "md",
             threshold = "md",
@@ -189,7 +189,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
                 {!hideBackdrop && open && <DrawerBackdrop onClick={onClose} />}
                 <FocusTrap active={open}>
                     <DrawerRoot
-                        nonTranslucent={nonTranslucent}
+                        transparency={transparency}
                         elevation={elevation}
                         color={color as string}
                         size={size}
