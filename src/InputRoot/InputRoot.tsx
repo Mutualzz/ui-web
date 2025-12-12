@@ -10,6 +10,7 @@ const InputRoot = styled("div")<InputRootProps>(
         size = "md",
         variant = "outlined",
         error = false,
+        readOnly = false,
         fullWidth,
         disabled,
     }) => ({
@@ -17,7 +18,7 @@ const InputRoot = styled("div")<InputRootProps>(
             theme,
             { color, textColor, size, variant, fullWidth },
             ({ color: c, textColor: tc, variant: v }) => ({
-                ...resolveInputRootStyles(theme, c, tc, error)[v],
+                ...resolveInputRootStyles(theme, c, tc, error, readOnly)[v],
             }),
         ),
         ...(disabled && { opacity: 0.5, cursor: "not-allowed" }),

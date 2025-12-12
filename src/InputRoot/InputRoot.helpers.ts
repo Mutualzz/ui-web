@@ -18,6 +18,7 @@ export const resolveInputRootStyles = (
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
     error: boolean,
+    readonly: boolean,
 ): Record<Variant, CSSObject> => {
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
@@ -55,27 +56,29 @@ export const resolveInputRootStyles = (
             border: `1px solid ${formatColor(activeColor, {
                 format: "hexa",
             })}`,
-            "&:hover": {
-                borderColor: formatColor(activeColor, {
-                    alpha: 50,
-                    format: "hexa",
-                }),
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 5,
-                    format: "hexa",
-                }),
-            },
-            "&:focus-within": {
-                borderColor: formatColor(activeColor, { format: "hexa" }),
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 5,
-                    format: "hexa",
-                }),
-                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                    alpha: 20,
-                    format: "hexa",
-                })}`,
-            },
+            ...(!readonly && {
+                "&:hover": {
+                    borderColor: formatColor(activeColor, {
+                        alpha: 50,
+                        format: "hexa",
+                    }),
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 5,
+                        format: "hexa",
+                    }),
+                },
+                "&:focus-within": {
+                    borderColor: formatColor(activeColor, { format: "hexa" }),
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 5,
+                        format: "hexa",
+                    }),
+                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                        alpha: 20,
+                        format: "hexa",
+                    })}`,
+                },
+            }),
         },
         solid: {
             backgroundColor: formatColor(activeColor, {
@@ -83,22 +86,24 @@ export const resolveInputRootStyles = (
             }),
             color: solidTextColor,
             border: "none",
-            "&:hover": {
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 90,
-                    format: "hexa",
-                }),
-            },
-            "&:focus-within": {
-                backgroundColor: formatColor(activeColor, {
-                    format: "hexa",
-                    alpha: 80,
-                }),
-                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                    alpha: 30,
-                    format: "hexa",
-                })}`,
-            },
+            ...(!readonly && {
+                "&:hover": {
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 90,
+                        format: "hexa",
+                    }),
+                },
+                "&:focus-within": {
+                    backgroundColor: formatColor(activeColor, {
+                        format: "hexa",
+                        alpha: 80,
+                    }),
+                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                        alpha: 30,
+                        format: "hexa",
+                    })}`,
+                },
+            }),
         },
         soft: {
             backgroundColor: formatColor(activeColor, {
@@ -109,40 +114,44 @@ export const resolveInputRootStyles = (
                 format: "hexa",
             }),
             border: "none",
-            "&:hover": {
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 15,
-                    format: "hexa",
-                }),
-            },
-            "&:focus-within": {
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 20,
-                    format: "hexa",
-                }),
-                boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                    format: "hexa",
-                    alpha: 20,
-                })}`,
-            },
+            ...(!readonly && {
+                "&:hover": {
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 15,
+                        format: "hexa",
+                    }),
+                },
+                "&:focus-within": {
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 20,
+                        format: "hexa",
+                    }),
+                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
+                        format: "hexa",
+                        alpha: 20,
+                    })}`,
+                },
+            }),
         },
         plain: {
             backgroundColor: "transparent",
             color: textColorFinal,
             border: "none",
-            "&:hover": {
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 5,
-                    format: "hexa",
-                }),
-            },
-            "&:focus-within": {
-                backgroundColor: formatColor(activeColor, {
-                    alpha: 10,
-                    format: "hexa",
-                }),
-                boxShadow: `0 0 0 2px ${formatColor(activeColor, { alpha: 20, format: "hexa" })}`,
-            },
+            ...(!readonly && {
+                "&:hover": {
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 5,
+                        format: "hexa",
+                    }),
+                },
+                "&:focus-within": {
+                    backgroundColor: formatColor(activeColor, {
+                        alpha: 10,
+                        format: "hexa",
+                    }),
+                    boxShadow: `0 0 0 2px ${formatColor(activeColor, { alpha: 20, format: "hexa" })}`,
+                },
+            }),
         },
     };
 };

@@ -127,6 +127,7 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                 fullWidth={fullWidth}
                 error={error}
                 disabled={disabled}
+                {...props}
             >
                 {startDecorator && (
                     <InputDecoratorWrapper position="start">

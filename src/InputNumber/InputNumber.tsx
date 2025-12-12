@@ -296,6 +296,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
                 fullWidth={fullWidth}
                 error={error}
                 disabled={disabled}
+                {...props}
             >
                 {startDecorator && (
                     <InputDecoratorWrapper position="start">
