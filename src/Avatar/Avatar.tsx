@@ -14,12 +14,15 @@ const AvatarWrapper = styled("div")<AvatarProps & { hasText: boolean }>(
         variant = "plain",
         shape = "circle",
         size = "md",
+        elevation = 1,
         hasText,
     }) => ({
         display: "inline-flex",
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
+        transition:
+            "background 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease, color 0.2s ease",
         ...resolveResponsiveMerge(
             theme,
             {
@@ -27,11 +30,12 @@ const AvatarWrapper = styled("div")<AvatarProps & { hasText: boolean }>(
                 variant,
                 size,
                 shape,
+                elevation,
             },
-            ({ color: c, variant: v, size: s, shape: sp }) => ({
+            ({ color: c, variant: v, size: s, shape: sp, elevation: e }) => ({
                 ...resolveAvatarSize(theme, s, hasText),
                 ...resolveAvatarShape(sp),
-                ...resolveAvatarStyles(theme, c, hasText)[v],
+                ...resolveAvatarStyles(theme, c, hasText, e)[v],
             }),
         ),
     }),
@@ -55,6 +59,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
             shape = "circle",
             size = "md",
             variant = "plain",
+            elevation = 1,
             ...props
         },
         ref,
@@ -67,6 +72,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
                 shape={shape}
                 size={size}
                 variant={variant}
+                elevation={elevation}
                 hasText={!src && Boolean(children)}
                 tabIndex={0}
             >

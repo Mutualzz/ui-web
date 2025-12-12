@@ -1,10 +1,14 @@
 import type { CSSObject, Theme } from "@emotion/react";
-import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
 import {
+    type Color,
+    type ColorLike,
     createColor,
+    dynamicElevation,
     formatColor,
     resolveColor,
     resolveSize,
+    type Size,
+    type SizeValue,
 } from "@mutualzz/ui-core";
 import type { AvatarShape } from "./Avatar.types";
 
@@ -63,7 +67,9 @@ export const resolveAvatarStyles = (
     theme: Theme,
     color: Color | ColorLike,
     hasText: boolean,
+    elevation: number,
 ) => {
+    const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
     const hexColor = formatColor(resolvedColor, { format: "hexa" });
 
@@ -93,6 +99,11 @@ export const resolveAvatarStyles = (
                 border: "none",
             },
         }),
+        elevation: {
+            background: dynamicElevation(colors.surface, elevation),
+            boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
+            backdropFilter: `blur(${6 + elevation * 2}px)`,
+        },
         outlined: {
             backgroundColor: "transparent",
             border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
