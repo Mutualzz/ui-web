@@ -266,13 +266,14 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
         return (
             <InputRoot
-                color={isInvalid ? "danger" : colorToShow}
+                color={isInvalid ? "danger" : (colorToShow as any)}
                 textColor={isInvalid ? theme.colors.danger : formattedTextColor}
                 variant={variant}
                 size={size}
                 fullWidth={fullWidth}
                 error={isInvalid}
                 disabled={disabled}
+                {...props}
             >
                 <InputDecoratorWrapper position="start">
                     {startDecorator ??
