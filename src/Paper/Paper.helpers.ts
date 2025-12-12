@@ -2,6 +2,7 @@ import type { Theme } from "@emotion/react";
 import {
     createColor,
     dynamicElevation,
+    flipNumber,
     formatColor,
     isValidGradient,
     resolveColor,
@@ -16,7 +17,7 @@ export const resolvePaperStyles = (
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
     elevation: number,
-    nonTranslucent: boolean,
+    transparency: number,
 ) => {
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
@@ -36,16 +37,16 @@ export const resolvePaperStyles = (
         negate: createColor(resolvedColor).isLight(),
     });
 
+    const elevatedColor = dynamicElevation(colors.surface, elevation);
+
     return {
         elevation: {
             background: isValidGradient(colors.surface)
-                ? nonTranslucent
-                    ? colors.surface
-                    : formatColor(colors.surface, {
-                          alpha: 10,
-                          format: "hexa",
-                      })
-                : dynamicElevation(colors.surface, elevation),
+                ? formatColor(elevatedColor, {
+                      alpha: flipNumber(transparency),
+                      format: "hexa",
+                  })
+                : elevatedColor,
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
             backdropFilter: `blur(${6 + elevation * 2}px)`,
         },

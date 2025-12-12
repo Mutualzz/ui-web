@@ -17,7 +17,7 @@ const Paper = styled("div")<PaperProps>(
         elevation = 1,
         color = "neutral",
         textColor = "inherit",
-        nonTranslucent = false,
+        transparency = 90,
     }) => ({
         transition: "background 0.2s ease",
         ...resolveResponsiveMerge(
@@ -28,7 +28,7 @@ const Paper = styled("div")<PaperProps>(
                 elevation,
                 color,
                 textColor,
-                nonTranslucent,
+                transparency,
             },
             ({
                 display: d,
@@ -36,7 +36,7 @@ const Paper = styled("div")<PaperProps>(
                 elevation: e,
                 color: c,
                 textColor: tc,
-                nonTranslucent: trans,
+                transparency: trans,
             }) => ({
                 display: d,
                 ...resolvePaperStyles(theme, c, tc, e, trans)[v],
