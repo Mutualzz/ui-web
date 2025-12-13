@@ -123,10 +123,10 @@ const ModalCloseButton = styled(IconButton)<
             alignSelf: "flex-end",
             marginTop: layout === "fullscreen" ? "3em" : "1.5em",
             marginRight: layout === "fullscreen" ? "3em" : "1.5em",
-            marginBottom: layout === "fullscreen" ? "-3em" : "-3em",
+            marginBottom: "-3em",
             zIndex: 1,
+            borderRadius: 16,
 
-            borderRadius: "50%",
             aspectRatio: "1",
             minWidth: layout === "fullscreen" ? "44px" : "40px",
             width: layout === "fullscreen" ? "44px" : "40px",
