@@ -36,7 +36,7 @@ const ButtonGroupRoot = styled("div")<{
         fullWidth,
         disabled,
     }) => ({
-        display: "inline-flex",
+        display: "flex",
         flexWrap: "wrap",
 
         flexGrow: fullWidth ? 1 : 0,
