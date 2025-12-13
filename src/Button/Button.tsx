@@ -110,13 +110,13 @@ const ButtonContent = styled("span")<ButtonProps>(
                     justifyContent:
                         ha === "left"
                             ? "flex-start"
-                            : horizontalAlign === "right"
+                            : ha === "right"
                               ? "flex-end"
                               : "center",
                     alignItems:
                         va === "top"
                             ? "flex-start"
-                            : verticalAlign === "bottom"
+                            : va === "bottom"
                               ? "flex-end"
                               : "center",
                     ...resolveButtonTextStyles(theme, c)[v],
@@ -221,8 +221,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 fullWidth={fullWidth}
                 verticalAlign={verticalAlign}
                 horizontalAlign={horizontalAlign}
-                disabled={Boolean(loading || disabled)}
-                loading={Boolean(loading)}
+                disabled={loading || disabled}
+                loading={loading}
                 onClick={handleClick}
                 padding={padding}
                 selected={selected}
