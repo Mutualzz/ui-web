@@ -64,7 +64,7 @@ const DrawerRoot = styled("div")<{
                 transparency: trans,
             }) => ({
                 ...resolveAnchorStyles(theme, a, s),
-                ...resolvePaperStyles(theme, c, "primary", e, trans)[v],
+                ...resolvePaperStyles(theme, c, "primary", v, e, trans)[v],
                 flexDirection: a === "left" || a === "right" ? "column" : "row",
                 ...(open && {
                     transform: "none",
