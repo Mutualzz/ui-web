@@ -22,6 +22,7 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         theme,
         color = "primary",
         variant = "solid",
+        padding,
     }) => ({
         display: "inline-flex",
         alignItems: "center",
@@ -33,7 +34,7 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         whiteSpace: "nowrap",
         flexShrink: 0,
         lineHeight: 1.2,
-        padding: "0.25em",
+        padding,
         ...(disabled && {
             opacity: 0.5,
             pointerEvents: "none",
@@ -113,9 +114,9 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             size: propSize,
             loading: propLoading,
             loadingIndicator,
-
             disabled: propDisabled,
             children,
+            padding = "0.25rem",
             type = "button",
             ...props
         },
@@ -137,8 +138,9 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
                 variant={variant}
                 color={color as string}
                 size={size}
-                disabled={Boolean(loading || disabled)}
-                loading={Boolean(loading)}
+                disabled={loading || disabled}
+                padding={padding}
+                loading={loading}
             >
                 {loading && (
                     <SpinnerOverlay>

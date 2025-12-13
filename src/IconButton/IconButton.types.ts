@@ -6,10 +6,17 @@ import {
     type SizeValue,
     type Variant,
 } from "@mutualzz/ui-core";
-import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import { type ReactNode } from "react";
+import type { ButtonProps } from "../Button/Button.types";
 
-export interface IconButtonProps
-    extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color" | "size"> {
+export interface IconButtonProps extends Omit<
+    ButtonProps,
+    | "verticalAlign"
+    | "horizontalAlign"
+    | "fullWidth"
+    | "startDecorator"
+    | "endDecorator"
+> {
     /**
      * The variant of the button, which determines its style.
      * @default "solid"
