@@ -111,7 +111,7 @@ const PopoverContent = styled(Paper)<{
                 transparency: trans,
             }) => ({
                 ...resolvePopoverSize(theme, s),
-                ...resolvePopoverStyles(theme, c, tc, e, trans)[v],
+                ...resolvePopoverStyles(theme, c, tc, v, e, trans)[v],
             }),
         ),
     };

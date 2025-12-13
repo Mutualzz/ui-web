@@ -11,11 +11,13 @@ import {
     type ColorLike,
     type TypographyColor,
 } from "@mutualzz/ui-core";
+import type { PaperVariant } from "./Paper.types";
 
 export const resolvePaperStyles = (
     theme: Theme,
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
+    variant: PaperVariant,
     elevation: number,
     transparency: number,
 ) => {
@@ -37,40 +39,50 @@ export const resolvePaperStyles = (
         negate: createColor(resolvedColor).isLight(),
     });
 
-    const elevatedColor = dynamicElevation(colors.surface, elevation);
+    const elevatedColor = dynamicElevation(
+        variant === "solid" ? resolvedColor : colors.surface,
+        elevation,
+    );
+
+    const elevatedBackground = isValidGradient(elevatedColor)
+        ? formatColor(elevatedColor, {
+              alpha: flipNumber(transparency),
+              format: "hexa",
+          })
+        : elevatedColor;
 
     return {
         elevation: {
-            background: isValidGradient(colors.surface)
-                ? formatColor(elevatedColor, {
-                      alpha: flipNumber(transparency),
-                      format: "hexa",
-                  })
-                : elevatedColor,
+            background: elevatedBackground,
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
             backdropFilter: `blur(${6 + elevation * 2}px)`,
         },
         solid: {
             background:
-                formatColor(resolvedColor, { format: "hexa" }) ??
-                theme.colors.primary,
+                formatColor(elevatedColor, {
+                    format: "hexa",
+                }) ?? theme.colors.primary,
             color: solidTextColor,
             border: "none",
         },
         outlined: {
-            border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
+            background: elevation === 0 ? "transparent" : elevatedBackground,
+            border: `1px solid ${formatColor(resolvedColor, { alpha: 20, format: "hexa" })}`,
             color: textColorWithFallback,
         },
         plain: {
-            background: "transparent",
+            background: elevation === 0 ? "transparent" : elevatedBackground,
             border: "none",
             color: textColorWithFallback,
         },
         soft: {
-            background: formatColor(resolvedColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
+            background: formatColor(
+                elevation === 0 ? resolvedColor : elevatedBackground,
+                {
+                    alpha: 10,
+                    format: "hexa",
+                },
+            ),
             border: "none",
             color: textColorWithFallback,
         },

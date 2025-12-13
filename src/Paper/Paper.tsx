@@ -14,7 +14,7 @@ const Paper = styled("div")<PaperProps>(
         theme,
         display = "flex",
         variant = "elevation",
-        elevation = 1,
+        elevation = 0,
         color = "neutral",
         textColor = "inherit",
         transparency = 90,
@@ -37,10 +37,12 @@ const Paper = styled("div")<PaperProps>(
                 color: c,
                 textColor: tc,
                 transparency: trans,
-            }) => ({
-                display: d,
-                ...resolvePaperStyles(theme, c, tc, e, trans)[v],
-            }),
+            }) => {
+                return {
+                    display: d,
+                    ...resolvePaperStyles(theme, c, tc, v, e, trans)[v],
+                };
+            },
         ),
     }),
 );
