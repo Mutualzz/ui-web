@@ -44,16 +44,32 @@ export const resolvePaperStyles = (
         elevation,
     );
 
-    const elevatedBackground = isValidGradient(elevatedColor)
+    const isGradient = isValidGradient(elevatedColor);
+    const gradientLayer = isGradient
         ? formatColor(elevatedColor, {
               alpha: flipNumber(transparency),
               format: "hexa",
           })
-        : elevatedColor;
+        : null;
+
+    const opaqueBase =
+        formatColor(colors.background, { format: "hexa" }) ??
+        formatColor(colors.neutral, { darken: 20, format: "hexa" });
+
+    const elevatedBackgroundStyles = isGradient
+        ? {
+              backgroundColor: opaqueBase,
+              backgroundImage: gradientLayer!,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+          }
+        : {
+              background: elevatedColor,
+          };
 
     return {
         elevation: {
-            background: elevatedBackground,
+            ...elevatedBackgroundStyles,
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
             backdropFilter: `blur(${6 + elevation * 2}px)`,
         },
@@ -66,18 +82,24 @@ export const resolvePaperStyles = (
             border: "none",
         },
         outlined: {
-            background: elevation === 0 ? "transparent" : elevatedBackground,
+            ...(elevation === 0
+                ? { background: "transparent" }
+                : elevatedBackgroundStyles),
             border: `1px solid ${formatColor(resolvedColor, { alpha: 20, format: "hexa" })}`,
             color: textColorWithFallback,
         },
         plain: {
-            background: elevation === 0 ? "transparent" : elevatedBackground,
+            ...(elevation === 0
+                ? { background: "transparent" }
+                : elevatedBackgroundStyles),
             border: "none",
             color: textColorWithFallback,
         },
         soft: {
             background: formatColor(
-                elevation === 0 ? resolvedColor : elevatedBackground,
+                elevation === 0
+                    ? resolvedColor
+                    : (gradientLayer ?? resolvedColor),
                 {
                     alpha: 10,
                     format: "hexa",

@@ -17,7 +17,7 @@ const Paper = styled("div")<PaperProps>(
         elevation = 0,
         color = "neutral",
         textColor = "inherit",
-        transparency = 90,
+        transparency = 0,
     }) => ({
         transition: "background 0.2s ease",
         ...resolveResponsiveMerge(
