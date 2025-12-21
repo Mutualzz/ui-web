@@ -42,12 +42,12 @@
     "module": "./dist/index.mjs",
     "name": "@mutualzz/ui-web",
     "peerDependencies": {
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.1",
-        "@floating-ui/react": "0.27.16",
-        "@types/react": "^17.0.0 || ^18.0.0 || ^19.0.0",
-        "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
-        "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0"
+        "@emotion/react": "*",
+        "@emotion/styled": "*",
+        "@floating-ui/react": "*",
+        "@types/react": "*",
+        "react": "*",
+        "react-dom": "*"
     },
     "repository": {
         "type": "git",

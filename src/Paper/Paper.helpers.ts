@@ -59,7 +59,7 @@ export const resolvePaperStyles = (
     const elevatedBackgroundStyles = isGradient
         ? {
               backgroundColor: opaqueBase,
-              backgroundImage: gradientLayer!,
+              backgroundImage: gradientLayer,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
           }
