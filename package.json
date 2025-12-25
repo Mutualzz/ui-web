@@ -17,8 +17,8 @@
         "@testing-library/react": "^16.3.1",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
-        "@types/react": "^19.2.7",
-        "@types/react-dom": "^19.2.3",
+        "@types/react": "^19.1.0",
+        "@types/react-dom": "^19.1.0",
         "bunchee": "^6.7.0",
         "csstype": "^3.2.3",
         "eslint": "^9.39.2",
@@ -42,12 +42,12 @@
     "module": "./dist/index.mjs",
     "name": "@mutualzz/ui-web",
     "peerDependencies": {
-        "@emotion/react": "*",
-        "@emotion/styled": "*",
-        "@floating-ui/react": "*",
-        "@types/react": "*",
-        "react": "*",
-        "react-dom": "*"
+        "@emotion/react": "11.14.0",
+        "@emotion/styled": "11.14.1",
+        "@floating-ui/react": "0.27.16",
+        "@types/react": "19.1.10",
+        "react": "19.1.0",
+        "react-dom": "19.1.0"
     },
     "repository": {
         "type": "git",
@@ -62,7 +62,6 @@
         "test:watch": "jest --watch",
         "typecheck": "tsc --noEmit"
     },
-    "sideEffects": false,
     "types": "./dist/index.d.ts",
     "version": "4.1.0"
 }
