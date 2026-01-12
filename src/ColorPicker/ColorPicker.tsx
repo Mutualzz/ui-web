@@ -155,7 +155,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 css={css}
                 width={200}
                 position="relative"
-                spacing={5}
+                spacing={2}
                 {...props}
             >
                 {allowGradient && (
@@ -169,7 +169,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         css={{
                             background: previewColor,
                         }}
-                        mb={5}
                     >
                         {stops.length > 1 &&
                             stops.map((stop, i) => (

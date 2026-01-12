@@ -41,6 +41,7 @@ const ButtonGroupRoot = styled("div")<{
 
         flexGrow: fullWidth ? 1 : 0,
         alignItems: "stretch",
+        width: fullWidth ? "100%" : undefined,
         ...(disabled && {
             pointerEvents: "none",
             opacity: 0.5,
@@ -133,6 +134,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                           }
                           disabled={child.props.disabled ?? disabled}
                           loading={child.props.loading ?? loading}
+                          fullWidth={child.props.fullWidth ?? fullWidth}
                           selected={selected}
                       />
                   );

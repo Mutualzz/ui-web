@@ -65,6 +65,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             disableHoverListener,
             disableTouchListener,
             followCursor,
+            usePortal = true,
             ...props
         },
         ref,
@@ -129,6 +130,18 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
         const child = children ? Children.only<any>(children) : null;
 
+        const tooltipEl = (
+            <TooltipRoot
+                ref={refs.setFloating}
+                id={tipId}
+                role="tooltip"
+                css={floatingStyles as CSSObject}
+                {...getFloatingProps(props)}
+            >
+                <TooltipContent>{label ?? title}</TooltipContent>
+            </TooltipRoot>
+        );
+
         return (
             <div ref={ref} {...props}>
                 {child &&
@@ -138,19 +151,10 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                         ...getReferenceProps(child.props as any),
                     })}
 
-                {mounted && open && label && (
-                    <Portal>
-                        <TooltipRoot
-                            ref={refs.setFloating}
-                            id={tipId}
-                            role="tooltip"
-                            css={floatingStyles as CSSObject}
-                            {...getFloatingProps({})}
-                        >
-                            <TooltipContent>{label ?? title}</TooltipContent>
-                        </TooltipRoot>
-                    </Portal>
-                )}
+                {mounted &&
+                    open &&
+                    label &&
+                    (usePortal ? <Portal>{tooltipEl}</Portal> : tooltipEl)}
             </div>
         );
     },

@@ -39,7 +39,8 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         whiteSpace: "nowrap",
         flexShrink: 0,
         lineHeight: 1,
-        flexGrow: fullWidth ? 1 : 0,
+        flex: fullWidth ? "1 1 0%" : "0 0 auto",
+        minWidth: 0,
         ...(disabled && {
             opacity: 0.5,
         }),
@@ -64,12 +65,17 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                         : va === "bottom"
                           ? "flex-end"
                           : "center",
-                justifyContent:
-                    ha === "left"
+                justifyContent: fullWidth
+                    ? horizontalAlign === "left"
                         ? "flex-start"
-                        : ha === "right"
+                        : horizontalAlign === "right"
                           ? "flex-end"
-                          : "space-between",
+                          : "center"
+                    : horizontalAlign === "left"
+                      ? "flex-start"
+                      : horizontalAlign === "right"
+                        ? "flex-end"
+                        : "space-between",
             }),
         ),
     }),

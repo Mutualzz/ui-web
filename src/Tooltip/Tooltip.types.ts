@@ -22,11 +22,10 @@ export type TooltipPlacement =
 
 export type TooltipVariant = Variant | "none";
 
-export interface TooltipProps
-    extends Omit<
-        HTMLAttributes<HTMLDivElement>,
-        "color" | "title" | "content"
-    > {
+export interface TooltipProps extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "color" | "title" | "content"
+> {
     title?: ReactNode;
     content?: ReactNode;
     children?: ReactNode;
@@ -50,6 +49,8 @@ export interface TooltipProps
     disableFocusListener?: boolean;
     disableTouchListener?: boolean;
     followCursor?: boolean;
+
+    usePortal?: boolean;
 
     id?: string;
 }
