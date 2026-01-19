@@ -12,6 +12,7 @@
     "devDependencies": {
         "@happy-dom/global-registrator": "^20.1.0",
         "@jest/globals": "^30.2.0",
+        "@mutualzz/eslint-config": "workspace:*",
         "@testing-library/dom": "^10.4.1",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.1",
@@ -60,7 +61,8 @@
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint ."
     },
     "types": "./dist/index.d.ts",
     "version": "4.1.0"
