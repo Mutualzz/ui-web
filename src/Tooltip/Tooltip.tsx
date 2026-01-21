@@ -65,7 +65,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             disableHoverListener,
             disableTouchListener,
             followCursor,
-            usePortal = true,
+            disablePortal = false,
             ...props
         },
         ref,
@@ -148,13 +148,13 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                     cloneElement(child, {
                         ref: refs.setReference,
                         "aria-describedby": open ? tipId : undefined,
-                        ...getReferenceProps(child.props as any),
+                        ...getReferenceProps(child.props),
                     })}
 
                 {mounted &&
                     open &&
                     label &&
-                    (usePortal ? <Portal>{tooltipEl}</Portal> : tooltipEl)}
+                    (!disablePortal ? <Portal>{tooltipEl}</Portal> : tooltipEl)}
             </div>
         );
     },

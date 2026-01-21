@@ -22,11 +22,12 @@ const InputBase = styled("input")<InputBaseProps>(
         outline: "none",
         background: "transparent",
         display: "block",
-        width: fullWidth ? "100%" : "auto",
+        width: "100%",
         minWidth: 0,
         height: "100%",
         boxSizing: "border-box",
         verticalAlign: "middle",
+        flexGrow: 1,
 
         "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
             WebkitAppearance: "none",

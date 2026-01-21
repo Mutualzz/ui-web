@@ -50,7 +50,7 @@ export interface TooltipProps extends Omit<
     disableTouchListener?: boolean;
     followCursor?: boolean;
 
-    usePortal?: boolean;
+    disablePortal?: boolean;
 
     id?: string;
 }

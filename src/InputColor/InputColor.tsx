@@ -20,8 +20,7 @@ import {
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
-import { Box } from "Box/Box";
-import { forwardRef, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { forwardRef, useMemo, useState, type ChangeEvent } from "react";
 import { Button } from "../Button/Button";
 import { ColorPicker } from "../ColorPicker/ColorPicker";
 import { IconButton } from "../IconButton/IconButton";
@@ -127,6 +126,9 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             defaultValue ?? randomColor("hex"),
         );
 
+        const [gradientRotation, setGradientRotation] = useState(90);
+        const [focusedStop, setFocusedStop] = useState(0);
+
         const currentValue = isControlled
             ? isValidGradient(colorProp)
                 ? toGradientStops(colorProp)
@@ -145,8 +147,6 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                 }
             },
         );
-
-        const popoverRef = useRef<HTMLDivElement>(null);
 
         const {
             inputValue,
@@ -177,12 +177,19 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                 if (!isControlled) setInternalValue(newColor[finalStop].hex);
 
                 onChangeResult?.(newColor[finalStop]);
-                onChange?.(
-                    constructLinearGradient(
-                        90,
-                        newColor.map((c) => c.hex),
-                    ),
-                );
+                if (newColor.length > 1) {
+                    onChange?.(
+                        constructLinearGradient(
+                            gradientRotation,
+                            newColor.map((c, i, arr) => ({
+                                color: c.hex,
+                                position: (i / (arr.length - 1)) * 100,
+                            })),
+                        ),
+                    );
+                } else {
+                    onChange?.(newColor[0].hex);
+                }
                 return;
             }
 
@@ -293,13 +300,15 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                     padding: 8,
                                 }}
                             >
-                                <Box ref={popoverRef}>
-                                    <ColorPicker
-                                        color={pickerColor}
-                                        onChange={handleNewColor}
-                                        allowGradient={allowGradient}
-                                    />
-                                </Box>
+                                <ColorPicker
+                                    color={pickerColor}
+                                    onChange={handleNewColor}
+                                    allowGradient={allowGradient}
+                                    rotation={gradientRotation}
+                                    onRotationChange={setGradientRotation}
+                                    currentStop={focusedStop}
+                                    onStopChange={setFocusedStop}
+                                />
                             </Popover>
                         ))}
                 </InputDecoratorWrapper>
