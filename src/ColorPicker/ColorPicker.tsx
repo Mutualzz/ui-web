@@ -38,8 +38,10 @@ import { Pointer } from "./Pointer";
 import { Paper } from "../Paper/Paper";
 import {
     distributePositions,
+    enforceMinGap,
     newStopId,
     sortStops,
+    sortStopsStable,
 } from "./ColorPicker.helpers";
 
 const DRAG_THRESHOLD_PX = 3;
@@ -77,8 +79,20 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             return sortStops(withIds);
         });
 
-        const currentStop =
-            typeof currentStopProp === "number" ? currentStopProp : 0;
+        const [selectedStopId, setSelectedStopId] = useState<string | null>(
+            () => {
+                const idx =
+                    typeof currentStopProp === "number" ? currentStopProp : 0;
+                return stops[idx]?.id ?? stops[0]?.id ?? null;
+            },
+        );
+
+        const currentStop = useMemo(() => {
+            if (!selectedStopId) return 0;
+            const idx = stops.findIndex((s) => s.id === selectedStopId);
+            return idx === -1 ? 0 : idx;
+        }, [stops, selectedStopId]);
+
         const [rotation, setRotation] = useState(rotationProp);
 
         const lastSyncedColor = useRef<typeof color>(color);
@@ -106,24 +120,22 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             onChange?.(handleColor(nextStops[0]));
         };
 
-        const changeStop = (stop: number) => {
-            onStopChange?.(stop);
-            onChange?.(
-                stops.map(({ position, id, ...s }) => handleColor(s)),
-                stop,
-            );
-        };
-
-        const selectStopById = (id: string) => {
+        const changeStopById = (id: string) => {
             const idx = stops.findIndex((s) => s.id === id);
             if (idx === -1) return;
-            if (idx !== currentStop) changeStop(idx);
+
+            setSelectedStopId(id);
+            onStopChange?.(idx);
+            onChange?.(
+                stops.map(({ position, id: _id, ...s }) => handleColor(s)),
+                idx,
+            );
         };
 
         const handlePointerDown = (e: PointerEvent, id: string) => {
             if (!barRef.current) return;
 
-            selectStopById(id);
+            changeStopById(id);
 
             activePointerId.current = e.pointerId;
             pointerDownRef.current = {
@@ -156,7 +168,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             if (!activeId) return;
 
             const rect = barRef.current.getBoundingClientRect();
-            const percent = snap(
+            const rawPercent = snap(
                 clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100),
                 0.1,
             );
@@ -165,16 +177,11 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 const moved = prev.find((s) => s.id === activeId);
                 if (!moved) return prev;
 
-                const updated = prev.map((s) =>
-                    s.id === activeId ? { ...s, position: percent } : s,
+                const nextPos = enforceMinGap(prev, activeId, rawPercent);
+
+                const next = prev.map((s) =>
+                    s.id === activeId ? { ...s, position: nextPos } : s,
                 );
-
-                const next = sortStops(updated);
-
-                const newIndex = next.findIndex((s) => s.id === activeId);
-                if (newIndex !== -1 && newIndex !== currentStop) {
-                    onStopChange?.(newIndex);
-                }
 
                 emitSingleOrGradient(next);
                 return next;
@@ -190,6 +197,20 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             } catch {
                 // ignore
             }
+
+            setStops((prev) => {
+                if (!draggingId) return prev;
+                const sorted = sortStopsStable(prev);
+
+                const newIndex = sorted.findIndex((s) => s.id === draggingId);
+                if (newIndex !== -1) {
+                    setSelectedStopId(draggingId);
+                    onStopChange?.(newIndex);
+                }
+
+                emitSingleOrGradient(sorted);
+                return sorted;
+            });
 
             activePointerId.current = null;
             pointerDownRef.current = null;
@@ -211,7 +232,15 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                     id: prev[i]?.id ?? newStopId(),
                     position: n === 1 ? 0 : (i / (n - 1)) * 100,
                 }));
-                return sortStops(next);
+                const sorted = sortStops(next);
+
+                setSelectedStopId((prevId) => {
+                    if (prevId && sorted.some((s) => s.id === prevId))
+                        return prevId;
+                    return sorted[0]?.id ?? null;
+                });
+
+                return sorted;
             });
 
             lastSyncedColor.current = color;
@@ -222,7 +251,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 stops[currentStop] ||
                 stops[stops.length - 1] ||
                 handleColor(randomColor("hsv")).hsv,
-            [stops],
+            [stops, currentStop],
         );
 
         const handleChange = (value: HsvaColor) => {
