@@ -1,40 +1,49 @@
-import {Alpha, hsvaToHex, hsvaToRgbaString, Hue, Saturation,} from "@mutualzz/color-picker";
 import {
+    Alpha,
+    hsvaToHex,
+    hsvaToRgbaString,
+    Hue,
+    Saturation,
+} from "@mutualzz/color-picker";
+import {
+    clamp,
     type ColorLike,
     constructLinearGradient,
     createColor,
     handleColor,
     type HsvaColor,
     randomColor,
+    snap,
 } from "@mutualzz/ui-core";
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {FaPlus} from "react-icons/fa";
-import {MdClose} from "react-icons/md";
-import {Slider} from "Slider/Slider";
-import {Typography} from "Typography/Typography";
-import {Box} from "../Box/Box";
-import {Button} from "../Button/Button";
-import {IconButton} from "../IconButton/IconButton";
-import {toGradientStops} from "../InputColor/InputColor.helpers";
-import {Stack} from "../Stack/Stack";
-import {useTheme} from "../useTheme";
-import type {ColorPickerProps} from "./ColorPicker.types";
-import {Pointer} from "./Pointer";
-import {Paper} from "../Paper/Paper";
+import {
+    forwardRef,
+    type PointerEvent,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { FaPlus } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
+import { Slider } from "Slider/Slider";
+import { Typography } from "Typography/Typography";
+import { Box } from "../Box/Box";
+import { Button } from "../Button/Button";
+import { IconButton } from "../IconButton/IconButton";
+import { toGradientStops } from "../InputColor/InputColor.helpers";
+import { Stack } from "../Stack/Stack";
+import { useTheme } from "../useTheme";
+import type { ColorPickerProps, GradientStop } from "./ColorPicker.types";
+import { Pointer } from "./Pointer";
+import { Paper } from "../Paper/Paper";
+import {
+    distributePositions,
+    newStopId,
+    sortStops,
+} from "./ColorPicker.helpers";
 
-type GradientStop = HsvaColor & { position: number };
+const DRAG_THRESHOLD_PX = 3;
 
-const distributePositions = <T extends object>(
-    arr: T[],
-): (T & { position: number })[] => {
-    const n = arr.length;
-    return arr.map((stop, i) => ({
-        ...stop,
-        position: n === 1 ? 0 : (i / (n - 1)) * 100,
-    }));
-};
-
-// TODO: Add position labels when hovered or focused/dragged
 const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
     (
         {
@@ -57,11 +66,15 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             const baseStops = Array.isArray(color)
                 ? color.map((c) => handleColor(c).hsva)
                 : toGradientStops(color);
+
             const n = baseStops.length;
-            return baseStops.map((stop, i) => ({
+            const withIds = baseStops.map((stop, i) => ({
                 ...stop,
+                id: newStopId(),
                 position: n === 1 ? 0 : (i / (n - 1)) * 100,
             }));
+
+            return sortStops(withIds);
         });
 
         const currentStop =
@@ -71,59 +84,136 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         const lastSyncedColor = useRef<typeof color>(color);
         const barRef = useRef<HTMLDivElement>(null);
 
-        const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+        const [draggingId, setDraggingId] = useState<string | null>(null);
         const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+        const activePointerId = useRef<number | null>(null);
 
-        const handleMouseDown = (i: number) => {
-            setDraggingIndex(i);
+        const pointerDownRef = useRef<{
+            pointerId: number;
+            startX: number;
+            dragging: boolean;
+            stopId: string;
+        } | null>(null);
+
+        const emitSingleOrGradient = (nextStops: GradientStop[]) => {
+            if (allowGradient) {
+                onChange?.(
+                    nextStops.map(({ position, id, ...s }) => handleColor(s)),
+                    currentStop,
+                );
+                return;
+            }
+            onChange?.(handleColor(nextStops[0]));
+        };
+
+        const changeStop = (stop: number) => {
+            onStopChange?.(stop);
+            onChange?.(
+                stops.map(({ position, id, ...s }) => handleColor(s)),
+                stop,
+            );
+        };
+
+        const selectStopById = (id: string) => {
+            const idx = stops.findIndex((s) => s.id === id);
+            if (idx === -1) return;
+            if (idx !== currentStop) changeStop(idx);
+        };
+
+        const handlePointerDown = (e: PointerEvent, id: string) => {
+            if (!barRef.current) return;
+
+            selectStopById(id);
+
+            activePointerId.current = e.pointerId;
+            pointerDownRef.current = {
+                pointerId: e.pointerId,
+                startX: e.clientX,
+                dragging: false,
+                stopId: id,
+            };
+        };
+
+        const handlePointerMove = (e: PointerEvent) => {
+            if (!barRef.current) return;
+            if (activePointerId.current !== e.pointerId) return;
+
+            const info = pointerDownRef.current;
+            if (!info) return;
+
+            if (!info.dragging) {
+                const dx = Math.abs(e.clientX - info.startX);
+                if (dx < DRAG_THRESHOLD_PX) return;
+
+                info.dragging = true;
+                pointerDownRef.current = info;
+
+                setDraggingId(info.stopId);
+                barRef.current.setPointerCapture(e.pointerId);
+            }
+
+            const activeId = info.stopId;
+            if (!activeId) return;
+
+            const rect = barRef.current.getBoundingClientRect();
+            const percent = snap(
+                clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100),
+                0.1,
+            );
+
+            setStops((prev) => {
+                const moved = prev.find((s) => s.id === activeId);
+                if (!moved) return prev;
+
+                const updated = prev.map((s) =>
+                    s.id === activeId ? { ...s, position: percent } : s,
+                );
+
+                const next = sortStops(updated);
+
+                const newIndex = next.findIndex((s) => s.id === activeId);
+                if (newIndex !== -1 && newIndex !== currentStop) {
+                    onStopChange?.(newIndex);
+                }
+
+                emitSingleOrGradient(next);
+                return next;
+            });
+        };
+
+        const endDrag = (e: PointerEvent) => {
+            if (!barRef.current) return;
+            if (activePointerId.current !== e.pointerId) return;
+
+            try {
+                barRef.current.releasePointerCapture(e.pointerId);
+            } catch {
+                // ignore
+            }
+
+            activePointerId.current = null;
+            pointerDownRef.current = null;
+            setDraggingId(null);
         };
 
         useEffect(() => {
-            if (draggingIndex === null) return;
-
-            const handleMouseMove = (e: MouseEvent) => {
-                if (!barRef.current) return;
-                const rect = barRef.current.getBoundingClientRect();
-                const percent = Math.min(
-                    100,
-                    Math.max(0, ((e.clientX - rect.left) / rect.width) * 100),
-                );
-                setStops((prev) => {
-                    const next = [...prev];
-                    next[draggingIndex] = {
-                        ...next[draggingIndex],
-                        position: percent,
-                    };
-                    emitSingleOrGradient(next);
-                    return next;
-                });
-            };
-
-            const handleMouseUp = () => setDraggingIndex(null);
-
-            window.addEventListener("mousemove", handleMouseMove);
-            window.addEventListener("mouseup", handleMouseUp);
-
-            return () => {
-                window.removeEventListener("mousemove", handleMouseMove);
-                window.removeEventListener("mouseup", handleMouseUp);
-            };
-        }, [draggingIndex]);
-
-        useEffect(() => {
             if (allowGradient && stops.length > 1) return;
-
             if (lastSyncedColor.current === color) return;
 
             const baseStops = Array.isArray(color)
                 ? color.map((c) => handleColor(c).hsva)
                 : toGradientStops(color);
-            const n = baseStops.length;
-            const next = baseStops.map((stop, i) => ({
-                ...stop,
-                position: n === 1 ? 0 : (i / (n - 1)) * 100,
-            }));
-            setStops(next);
+
+            setStops((prev) => {
+                const n = baseStops.length;
+                const next = baseStops.map((stop, i) => ({
+                    ...stop,
+                    id: prev[i]?.id ?? newStopId(),
+                    position: n === 1 ? 0 : (i / (n - 1)) * 100,
+                }));
+                return sortStops(next);
+            });
+
             lastSyncedColor.current = color;
         }, [color, allowGradient, stops.length]);
 
@@ -132,19 +222,8 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 stops[currentStop] ||
                 stops[stops.length - 1] ||
                 handleColor(randomColor("hsv")).hsv,
-            [stops, currentStop],
+            [stops],
         );
-
-        const emitSingleOrGradient = (nextStops: GradientStop[]) => {
-            if (allowGradient) {
-                onChange?.(
-                    nextStops.map(({ position, ...s }) => handleColor(s)),
-                    currentStop,
-                );
-                return;
-            }
-            onChange?.(handleColor(nextStops[0]));
-        };
 
         const handleChange = (value: HsvaColor) => {
             setStops((prev) => {
@@ -159,44 +238,58 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             if (stops.length === 5) return;
             const base = hsva;
 
+            const addedId = newStopId();
+
             setStops((prev) => {
-                const next = [
+                const nextRaw: GradientStop[] = [
                     ...prev,
                     {
                         ...base,
+                        id: addedId,
                         h: (base.h + 40) % 360,
+                        position: 100,
                     },
                 ];
-                const distributed = distributePositions(next);
-                const newIndex = distributed.length - 1;
-                onChange?.(
-                    distributed.map((s) => handleColor(s)),
-                    newIndex,
+
+                const distributed = distributePositions(
+                    nextRaw,
+                ) as GradientStop[];
+
+                const distributedWithIds: GradientStop[] = distributed.map(
+                    (s, i) => ({
+                        ...s,
+                        id: nextRaw[i]?.id ?? s.id ?? newStopId(),
+                    }),
                 );
-                onStopChange?.(newIndex);
-                return distributed;
+
+                const sorted = sortStops(distributedWithIds);
+                const newIndex = sorted.findIndex((s) => s.id === addedId);
+
+                onChange?.(
+                    sorted.map(({ position, id, ...s }) => handleColor(s)),
+                    newIndex === -1 ? sorted.length - 1 : newIndex,
+                );
+                onStopChange?.(newIndex === -1 ? sorted.length - 1 : newIndex);
+
+                return sorted;
             });
         };
 
         const removeStop = () => {
             if (stops.length <= 1) return;
+
             setStops((prev) => {
                 const next = prev.filter((_, i) => i !== currentStop);
-                const distributed = distributePositions(next);
-                onChange?.(
-                    distributed.map((s) => handleColor(s)),
-                    Math.min(currentStop, distributed.length - 1),
-                );
-                return distributed;
-            });
-        };
+                const distributed = distributePositions(next) as GradientStop[];
+                const sorted = sortStops(distributed);
 
-        const changeStop = (stop: number) => {
-            onStopChange?.(stop);
-            onChange?.(
-                stops.map((s) => handleColor(s)),
-                stop,
-            );
+                onChange?.(
+                    sorted.map(({ position, id, ...s }) => handleColor(s)),
+                    Math.min(currentStop, sorted.length - 1),
+                );
+
+                return sorted;
+            });
         };
 
         useEffect(() => {
@@ -216,7 +309,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             stops.length > 1
                 ? constructLinearGradient(
                       rotation,
-                      stops.map(({ position, ...stop }) => ({
+                      stops.map(({ position, id, ...stop }) => ({
                           color: handleColor(stop).hex,
                           position,
                       })),
@@ -245,9 +338,13 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         height="2rem"
                         borderRadius={10}
                         p="1.25rem"
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={endDrag}
+                        onPointerCancel={endDrag}
                         css={{
                             background: previewColor,
                             position: "relative",
+                            touchAction: "none",
                         }}
                     >
                         {stops.length > 1 &&
@@ -255,8 +352,10 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                                 const { position, ...hsvaOnly } = stop;
                                 return (
                                     <Box
-                                        key={`gradient-box-${i}`}
+                                        key={stop.id}
                                         width={24}
+                                        tabIndex={0}
+                                        role="button"
                                         css={{
                                             position: "absolute",
                                             left: `${stop.position}%`,
@@ -264,7 +363,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                                             transform: "translate(-50%, -50%)",
                                             background: hsvaToHex(hsvaOnly),
                                             cursor:
-                                                draggingIndex === i
+                                                draggingId === stop.id
                                                     ? "grabbing"
                                                     : "grab",
                                             zIndex: currentStop === i ? 2 : 1,
@@ -292,10 +391,10 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                                         borderRadius={5}
                                         border={`1px solid ${getBorderColor(hsvaOnly)}`}
                                         height={24}
-                                        onMouseDown={() => handleMouseDown(i)}
-                                        onClick={() =>
-                                            currentStop !== i && changeStop(i)
+                                        onPointerDown={(e) =>
+                                            handlePointerDown(e, stop.id)
                                         }
+                                        onDragStart={(e) => e.preventDefault()}
                                         onMouseEnter={() => setHoveredIndex(i)}
                                         onMouseLeave={() =>
                                             setHoveredIndex(null)

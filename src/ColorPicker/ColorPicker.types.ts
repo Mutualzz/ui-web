@@ -1,8 +1,11 @@
 import type { CSSObject } from "@emotion/react";
 import type { ColorLike, ColorResult, HsvaColor } from "@mutualzz/ui-core";
+import type { HTMLAttributes } from "react";
+
+export type GradientStop = HsvaColor & { position: number; id: string };
 
 export interface ColorPickerProps extends Omit<
-    React.HTMLAttributes<HTMLDivElement>,
+    HTMLAttributes<HTMLDivElement>,
     "onChange" | "color"
 > {
     color?: ColorLike | HsvaColor | (ColorLike | HsvaColor)[];
