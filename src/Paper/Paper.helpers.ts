@@ -45,6 +45,7 @@ export const resolvePaperStyles = (
     );
 
     const isGradient = isValidGradient(elevatedColor);
+
     const gradientLayer = isGradient
         ? formatColor(elevatedColor, {
               alpha: flipNumber(transparency),
@@ -71,7 +72,6 @@ export const resolvePaperStyles = (
         elevation: {
             ...elevatedBackgroundStyles,
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
-            backdropFilter: `blur(${6 + elevation * 2}px)`,
         },
         solid: {
             background:
