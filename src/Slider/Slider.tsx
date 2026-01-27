@@ -17,6 +17,7 @@ import {
     useState,
     type ChangeEvent,
     type MouseEvent,
+    Fragment,
 } from "react";
 import {
     resolveSliderLabelSize,
@@ -649,7 +650,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                         const percent =
                             ((mark.value - min) / (max - min)) * 100;
                         return (
-                            <>
+                            <Fragment key={`mark-${i}`}>
                                 <Tick
                                     key={`tick-${i}`}
                                     orientation={orientation}
@@ -666,12 +667,12 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                                         {mark.label ?? mark.value}
                                     </MarkLabel>
                                 )}
-                            </>
+                            </Fragment>
                         );
                     })}
 
                     {currentValue.map((val, i) => (
-                        <>
+                        <Fragment key={`thumb-${i}`}>
                             <Thumb
                                 color={color as string}
                                 variant={variant}
@@ -731,7 +732,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                                     })()}
                                 </ValueLabel>
                             )}
-                        </>
+                        </Fragment>
                     ))}
                 </TrackContainer>
                 <HiddenInput
