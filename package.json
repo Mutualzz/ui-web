@@ -10,7 +10,7 @@
         "react-icons": "^5.5.0"
     },
     "devDependencies": {
-        "@happy-dom/global-registrator": "^20.3.7",
+        "@happy-dom/global-registrator": "^20.4.0",
         "@jest/globals": "^30.2.0",
         "@mutualzz/eslint-config": "workspace:*",
         "@testing-library/dom": "^10.4.1",
@@ -18,8 +18,8 @@
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
-        "@types/react": "^19.2.9",
-        "@types/react-dom": "^19.2.3",
+        "@types/react": "^19.1.10",
+        "@types/react-dom": "^19.1.0",
         "bunchee": "^6.9.4",
         "csstype": "^3.2.3",
         "eslint": "^9.39.2",
