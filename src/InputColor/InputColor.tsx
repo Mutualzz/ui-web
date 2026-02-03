@@ -110,7 +110,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             showRandom = false,
             value: colorProp,
             allowGradient = false,
-            allowAlpha = false,
+            // allowAlpha = false,
             onChange,
             onChangeResult,
             defaultValue,

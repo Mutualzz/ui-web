@@ -17,9 +17,13 @@ export const resolveDividerColor = (
         ? resolveColor(color, theme)
         : isTypographyColor(color)
           ? resolveTypographyColor(color, theme)
-          : resolveColor(color, theme);
+          : color === "inherit" || color === "transparent"
+            ? color
+            : resolveColor(color, theme);
 
-    return formatColor(resolvedColor, { format: "hexa" });
+    return resolvedColor === "inherit" || resolvedColor === "transparent"
+        ? resolvedColor
+        : formatColor(resolvedColor);
 };
 
 export const resolveDividerStyles = (
@@ -55,13 +59,13 @@ export const resolveDividerStyles = (
                       width: "1px",
                       borderLeft: `3px double ${lineColor}`,
                       background: "none",
-                      boxSizing: "content-box" as const,
+                      boxSizing: "content-box",
                   }
                 : {
                       height: 0,
                       borderTop: `3px double ${lineColor}`,
                       background: "none",
-                      boxSizing: "content-box" as const,
+                      boxSizing: "content-box",
                   }),
         },
         solid: {

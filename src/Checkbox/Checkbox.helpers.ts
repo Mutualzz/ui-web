@@ -34,10 +34,9 @@ export const resolveCheckboxStyles = (
     checked?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const hexColor = formatColor(resolvedColor, { format: "hexa" });
+    const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
         negate: createColor(resolvedColor).isLight(),
     });
 
@@ -77,16 +76,14 @@ export const resolveCheckboxStyles = (
                       format: "hexa",
                   })
                 : "transparent",
-            color: formatColor(resolvedColor, { format: "hexa" }),
-            border: `1px solid ${formatColor(resolvedColor, {
-                format: "hexa",
-            })}`,
+            color: formatColor(resolvedColor),
+            border: `1px solid ${formatColor(resolvedColor)}`,
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 20,
                     format: "hexa",
                 }),
-                borderColor: formatColor(resolvedColor, { format: "hexa" }),
+                borderColor: formatColor(resolvedColor),
             },
             "&:active": {
                 backgroundColor: formatColor(resolvedColor, {
@@ -100,36 +97,34 @@ export const resolveCheckboxStyles = (
                 alpha: checked ? 30 : 10,
                 format: "hexa",
             }),
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            color: formatColor(resolvedColor),
             border: "none",
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
-                    alpha: 40,
+                    alpha: checked ? 40 : 20,
                     format: "hexa",
                 }),
             },
             "&:active": {
                 backgroundColor: formatColor(resolvedColor, {
-                    alpha: 50,
+                    alpha: checked ? 50 : 30,
                     format: "hexa",
                 }),
             },
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            color: formatColor(resolvedColor),
             border: "none",
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     format: "hexa",
-                    alpha: 20,
+                    alpha: checked ? 20 : 10,
                 }),
             },
             "&:active": {
                 backgroundColor: formatColor(resolvedColor, {
-                    alpha: 30,
+                    alpha: checked ? 30 : 20,
                     format: "hexa",
                 }),
             },

@@ -35,9 +35,7 @@ export const resolveListItemStyles = (
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            backgroundColor: formatColor(resolvedColor),
             border: "none",
         },
         outlined: {

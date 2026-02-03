@@ -42,46 +42,39 @@ export const resolveSelectStyles = (
     const resolvedColor = resolveColor(color, theme);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
         negate: createColor(resolvedColor).isLight(),
     });
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
+            backgroundColor: formatColor(resolvedColor),
             color: solidTextColor,
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     darken: 30,
-                    format: "hexa",
                 }),
             },
         },
         outlined: {
-            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            border: `1px solid ${formatColor(resolvedColor)}`,
             color: formatColor(resolvedColor, {
-                format: "hexa",
                 lighten: 75,
             }),
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
                     darken: 30,
                 }),
             },
         },
         soft: {
             backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
                 darken: 50,
             }),
             color: formatColor(resolvedColor, {
-                format: "hexa",
                 lighten: 75,
             }),
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
                     lighten: 5,
                 }),
             },
@@ -89,13 +82,11 @@ export const resolveSelectStyles = (
         plain: {
             backgroundColor: "transparent",
             color: formatColor(resolvedColor, {
-                format: "hexa",
                 lighten: 75,
             }),
             "&:hover": {
                 backgroundColor: formatColor(resolvedColor, {
                     darken: 30,
-                    format: "hexa",
                 }),
             },
         },
@@ -111,27 +102,25 @@ export const resolveSelectContentStyles = (
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, { format: "hexa" }),
+            backgroundColor: formatColor(resolvedColor),
             color: formatColor(theme.typography.colors.primary, {
-                format: "hexa",
                 negate: createColor(resolvedColor).isLight(),
             }),
         },
         outlined: {
             backgroundColor: colors.background,
-            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
-            color: formatColor(resolvedColor, { format: "hexa", lighten: 20 }),
+            border: `1px solid ${formatColor(resolvedColor)}`,
+            color: formatColor(resolvedColor, { lighten: 20 }),
         },
         soft: {
             backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
                 darken: 50,
             }),
-            color: formatColor(resolvedColor, { format: "hexa", lighten: 20 }),
+            color: formatColor(resolvedColor, { lighten: 20 }),
         },
         plain: {
             backgroundColor: colors.background,
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            color: formatColor(resolvedColor),
         },
     };
 };

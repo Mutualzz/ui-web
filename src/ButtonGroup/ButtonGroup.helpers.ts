@@ -26,23 +26,20 @@ export const resolveButtonGroupStyles = (
         : resolveColor(color, theme);
 
     const solidBorder = separatorColor
-        ? formatColor(resolvedColor, { format: "hexa" })
+        ? formatColor(resolvedColor)
         : formatColor(resolvedColor, {
-              format: "hexa",
               darken: 50,
           });
 
     const plainBorder = separatorColor
-        ? formatColor(resolvedColor, { format: "hexa" })
+        ? formatColor(resolvedColor)
         : formatColor(resolvedColor, {
-              format: "hexa",
               darken: 30,
           });
 
     const softBorder = separatorColor
-        ? formatColor(resolvedColor, { format: "hexa" })
+        ? formatColor(resolvedColor)
         : formatColor(resolvedColor, {
-              format: "hexa",
               darken: 10,
           });
 

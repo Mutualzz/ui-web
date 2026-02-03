@@ -10,9 +10,7 @@ export const resolveListStyles = (
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            backgroundColor: formatColor(resolvedColor),
             border: "none",
         },
         outlined: {

@@ -49,26 +49,20 @@ export const resolveOptionStyles = (
             backgroundColor: isSelected
                 ? formatColor(resolvedColor, {
                       lighten: 18,
-                      format: "hexa",
                   })
-                : formatColor(resolvedColor, {
-                      format: "hexa",
-                  }),
+                : formatColor(resolvedColor),
             color: solidTextColor,
             ...(!isSelected && {
                 "&:hover": {
                     backgroundColor: formatColor(resolvedColor, {
                         lighten: 28,
-                        format: "hexa",
                     }),
                 },
             }),
         },
         outlined: {
             "&:not(:first-of-type)": {
-                borderTop: `1px solid ${formatColor(resolvedColor, {
-                    format: "hexa",
-                })}`,
+                borderTop: `1px solid ${formatColor(resolvedColor)}`,
             },
             backgroundColor: isSelected
                 ? formatColor(resolvedColor, {
@@ -78,7 +72,6 @@ export const resolveOptionStyles = (
                   })
                 : "transparent",
             color: formatColor(resolvedColor, {
-                format: "hexa",
                 lighten: 80,
             }),
             ...(!isSelected && {
@@ -99,17 +92,14 @@ export const resolveOptionStyles = (
                       lighten: 15,
                   })
                 : formatColor(resolvedColor, {
-                      format: "hexa",
                       lighten: 8,
                   }),
             color: formatColor(resolvedColor, {
-                format: "hexa",
                 lighten: 80,
             }),
             ...(!isSelected && {
                 "&:hover": {
                     backgroundColor: formatColor(resolvedColor, {
-                        format: "hexa",
                         lighten: 18,
                     }),
                 },
@@ -125,7 +115,6 @@ export const resolveOptionStyles = (
                 : "transparent",
             color: formatColor(resolvedColor, {
                 lighten: 80,
-                format: "hexa",
             }),
             ...(!isSelected && {
                 "&:hover": {

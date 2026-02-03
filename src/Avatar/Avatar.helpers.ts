@@ -71,10 +71,9 @@ export const resolveAvatarStyles = (
 ) => {
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
-    const hexColor = formatColor(resolvedColor, { format: "hexa" });
+    const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
         negate: createColor(resolvedColor).isLight(),
     });
 
@@ -88,14 +87,14 @@ export const resolveAvatarStyles = (
             plain: {
                 backgroundColor: "transparent",
                 border: "none",
-                color: formatColor(resolvedColor, { format: "hexa" }),
+                color: formatColor(resolvedColor),
             },
             soft: {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 15,
                     format: "hexa",
                 }),
-                color: formatColor(resolvedColor, { format: "hexa" }),
+                color: formatColor(resolvedColor),
                 border: "none",
             },
         }),
@@ -106,8 +105,8 @@ export const resolveAvatarStyles = (
         },
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            border: `1px solid ${formatColor(resolvedColor)}`,
+            color: formatColor(resolvedColor),
         },
     };
 };

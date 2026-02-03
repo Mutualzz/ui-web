@@ -21,7 +21,9 @@ export interface PaperProps extends Omit<BoxProps, "color"> {
      * Can be a color name or a color value.
      * @default "inherit"
      */
-    textColor?: Responsive<TypographyColor | ColorLike | "inherit">;
+    textColor?: Responsive<
+        TypographyColor | ColorLike | "inherit" | "transparent"
+    >;
     /**
      * The variant of the Paper component.
      * Can be "elevation", "solid", "outlined", "plain", or "soft".

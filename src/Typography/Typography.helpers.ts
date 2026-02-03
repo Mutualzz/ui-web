@@ -18,43 +18,34 @@ export const resolveTypographStyles = (
 ): Record<TypographyVariant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
 
-    const parsedTextColor =
-        textColor === "inherit"
-            ? theme.typography.colors.primary
-            : resolveTypographyColor(textColor, theme);
+    const parsedTextColor = resolveTypographyColor(textColor, theme);
 
     const isColorLike = isValidColorInput(parsedTextColor);
     const isDark = createColor(resolvedColor).isDark();
     const solidTextColor = isDark
-        ? formatColor(theme.typography.colors.primary, { format: "hexa" })
+        ? theme.typography.colors.primary
         : formatColor(resolvedColor, {
-              format: "hexa",
               darken: 70,
           });
 
-    const textColorFinal = formatColor(
-        isColorLike ? parsedTextColor : theme.typography.colors.primary,
-        {
-            format: "hexa",
-        },
-    );
+    const textColorFinal = isColorLike
+        ? parsedTextColor
+        : theme.typography.colors.primary;
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            backgroundColor: resolvedColor,
             color: solidTextColor,
             border: "none",
         },
         outlined: {
             backgroundColor: "transparent",
-            color: formatColor(resolvedColor, { format: "hexa" }),
-            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            color: resolvedColor,
+            border: `1px solid ${resolvedColor}`,
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            color: resolvedColor,
             border: "none",
         },
         soft: {
@@ -62,7 +53,7 @@ export const resolveTypographStyles = (
                 format: "hexa",
                 alpha: 40,
             }),
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            color: resolvedColor,
             border: "none",
         },
         none: {

@@ -74,12 +74,12 @@ export const resolveSliderTrackStyles = (
         solid: {
             backgroundColor: hovered
                 ? formatColor(resolvedColor, { alpha: 90, format: "hexa" })
-                : formatColor(resolvedColor, { format: "hexa" }),
+                : formatColor(resolvedColor),
         },
         outlined: {
             border: hovered
                 ? `1px solid ${formatColor(resolvedColor, { format: "hexa", alpha: 70 })}`
-                : `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+                : `1px solid ${formatColor(resolvedColor)}`,
             backgroundColor: hovered
                 ? formatColor(resolvedColor, {
                       alpha: 10,
@@ -126,11 +126,11 @@ export const resolveSliderThumbStyles = (
                       format: "hexa",
                       alpha: 90,
                   })}`
-                : `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+                : `2px solid ${formatColor(resolvedColor)}`,
         },
         outlined: {
             backgroundColor: colors.common.white,
-            border: `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+            border: `2px solid ${formatColor(resolvedColor)}`,
         },
         plain: {
             backgroundColor: formatColor(resolvedColor, {
@@ -141,16 +141,14 @@ export const resolveSliderThumbStyles = (
         soft: {
             backgroundColor: hovered
                 ? formatColor(resolvedColor, {
-                      format: "hexa",
                       lighten: 50,
                   })
                 : formatColor(resolvedColor, {
-                      format: "hexa",
                       lighten: 70,
                   }),
             border: hovered
                 ? `2px solid ${formatColor(resolvedColor, { alpha: 85, format: "hexa" })}`
-                : `2px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
+                : `2px solid ${formatColor(resolvedColor)}`,
         },
     };
 };

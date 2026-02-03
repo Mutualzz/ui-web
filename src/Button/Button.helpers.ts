@@ -40,10 +40,9 @@ export const resolveButtonContainerStyles = (
     selected?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const hexColor = formatColor(resolvedColor, { format: "hexa" });
+    const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
         negate: createColor(resolvedColor).isLight(),
     });
 
@@ -77,6 +76,7 @@ export const resolveButtonContainerStyles = (
                     format: "hexa",
                 }),
                 color: formatColor(theme.typography.colors.primary, {
+                    negate: createColor(resolvedColor).isLight(),
                     alpha: 60,
                     format: "hexa",
                 }),
@@ -89,17 +89,15 @@ export const resolveButtonContainerStyles = (
                       format: "hexa",
                   })
                 : "transparent",
-            border: `1px solid ${formatColor(resolvedColor, { format: "hexa" })}`,
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            border: `1px solid ${formatColor(resolvedColor)}`,
+            color: formatColor(resolvedColor),
             ...(!disabled && {
                 "&:hover": {
                     backgroundColor: formatColor(resolvedColor, {
                         alpha: 20,
                         format: "hexa",
                     }),
-                    borderColor: formatColor(resolvedColor, {
-                        format: "hexa",
-                    }),
+                    borderColor: formatColor(resolvedColor),
                 },
                 "&:active": {
                     backgroundColor: formatColor(resolvedColor, {
@@ -127,7 +125,7 @@ export const resolveButtonContainerStyles = (
                   })
                 : "transparent",
             border: "none",
-            color: formatColor(resolvedColor, { format: "hexa" }),
+            color: formatColor(resolvedColor),
             ...(!disabled && {
                 "&:hover": {
                     backgroundColor: formatColor(resolvedColor, {
@@ -159,9 +157,7 @@ export const resolveButtonContainerStyles = (
                       alpha: 15,
                       format: "hexa",
                   }),
-            color: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            color: solidTextColor,
             border: "none",
             ...(!disabled && {
                 "&:hover": {
@@ -196,10 +192,9 @@ export const resolveButtonTextStyles = (
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
-    const hexColor = formatColor(resolvedColor, { format: "hexa" });
+    const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
         negate: createColor(resolvedColor).isLight(),
     });
 
@@ -214,7 +209,7 @@ export const resolveButtonTextStyles = (
             color: hexColor,
         },
         soft: {
-            color: hexColor,
+            color: solidTextColor,
         },
     };
 };

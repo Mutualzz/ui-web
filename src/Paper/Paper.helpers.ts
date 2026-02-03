@@ -16,7 +16,7 @@ import type { PaperVariant } from "./Paper.types";
 export const resolvePaperStyles = (
     theme: Theme,
     color: Color | ColorLike,
-    textColor: TypographyColor | ColorLike | "inherit",
+    textColor: TypographyColor | ColorLike,
     variant: PaperVariant,
     elevation: number,
     transparency: number,
@@ -24,15 +24,7 @@ export const resolvePaperStyles = (
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
 
-    const resolvedTextColor =
-        textColor === "inherit"
-            ? resolvedColor
-            : resolveTypographyColor(textColor, theme);
-
-    const textColorWithFallback =
-        formatColor(resolvedTextColor, {
-            format: "hexa",
-        }) ?? theme.typography.colors.muted;
+    const resolvedTextColor = resolveTypographyColor(textColor, theme);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
         format: "hexa",
@@ -53,9 +45,7 @@ export const resolvePaperStyles = (
           })
         : null;
 
-    const opaqueBase =
-        formatColor(colors.background, { format: "hexa" }) ??
-        formatColor(colors.neutral, { darken: 20, format: "hexa" });
+    const opaqueBase = formatColor(colors.background, { format: "hexa" });
 
     const elevatedBackgroundStyles = isGradient
         ? {
@@ -74,10 +64,7 @@ export const resolvePaperStyles = (
             boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
         },
         solid: {
-            background:
-                formatColor(elevatedColor, {
-                    format: "hexa",
-                }) ?? theme.colors.primary,
+            background: formatColor(elevatedColor),
             color: solidTextColor,
             border: "none",
         },
@@ -86,14 +73,14 @@ export const resolvePaperStyles = (
                 ? { background: "transparent" }
                 : elevatedBackgroundStyles),
             border: `1px solid ${formatColor(resolvedColor, { alpha: 20, format: "hexa" })}`,
-            color: textColorWithFallback,
+            color: resolvedTextColor,
         },
         plain: {
             ...(elevation === 0
                 ? { background: "transparent" }
                 : elevatedBackgroundStyles),
             border: "none",
-            color: textColorWithFallback,
+            color: resolvedTextColor,
         },
         soft: {
             background: formatColor(
@@ -106,7 +93,7 @@ export const resolvePaperStyles = (
                 },
             ),
             border: "none",
-            color: textColorWithFallback,
+            color: resolvedTextColor,
         },
     };
 };

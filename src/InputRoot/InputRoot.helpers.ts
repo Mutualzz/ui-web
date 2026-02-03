@@ -34,28 +34,20 @@ export const resolveInputRootStyles = (
 
     const isDark = createColor(activeColor).isDark();
     const solidTextColor = isDark
-        ? formatColor(theme.typography.colors.primary, {
-              format: "hexa",
-          })
+        ? formatColor(theme.typography.colors.primary)
         : formatColor(activeColor, {
               darken: 70,
-              format: "hexa",
           });
 
-    const textColorFinal = formatColor(
-        isColorLike ? parsedTextColor : theme.typography.colors.primary,
-        {
-            format: "hexa",
-        },
-    );
+    const textColorFinal = isColorLike
+        ? parsedTextColor
+        : theme.typography.colors.primary;
 
     return {
         outlined: {
             backgroundColor: "transparent",
             color: textColorFinal,
-            border: `1px solid ${formatColor(activeColor, {
-                format: "hexa",
-            })}`,
+            border: `1px solid ${formatColor(activeColor)}`,
             ...(!readonly && {
                 "&:hover": {
                     borderColor: formatColor(activeColor, {
@@ -68,7 +60,7 @@ export const resolveInputRootStyles = (
                     }),
                 },
                 "&:focus-within": {
-                    borderColor: formatColor(activeColor, { format: "hexa" }),
+                    borderColor: formatColor(activeColor),
                     backgroundColor: formatColor(activeColor, {
                         alpha: 5,
                         format: "hexa",
@@ -81,9 +73,7 @@ export const resolveInputRootStyles = (
             }),
         },
         solid: {
-            backgroundColor: formatColor(activeColor, {
-                format: "hexa",
-            }),
+            backgroundColor: formatColor(activeColor),
             color: solidTextColor,
             border: "none",
             ...(!readonly && {
@@ -110,9 +100,7 @@ export const resolveInputRootStyles = (
                 alpha: 10,
                 format: "hexa",
             }),
-            color: formatColor(activeColor, {
-                format: "hexa",
-            }),
+            color: formatColor(activeColor),
             border: "none",
             ...(!readonly && {
                 "&:hover": {

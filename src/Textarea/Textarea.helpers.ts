@@ -54,36 +54,24 @@ export const resolveTextareaStyles = (
     const { colors } = theme;
     const resolvedColor = resolveColor(color, theme);
 
-    const parsedTextColor =
-        textColor === "inherit"
-            ? theme.typography.colors.primary
-            : resolveTypographyColor(textColor, theme);
+    const parsedTextColor = resolveTypographyColor(textColor, theme);
 
-    const errorColor = colors.danger;
     const isColorLike = isValidColorInput(parsedTextColor);
 
     const isDark = createColor(resolvedColor).isDark();
     const solidTextColor = isDark
-        ? formatColor(theme.typography.colors.primary, {
-              format: "hexa",
-          })
+        ? theme.typography.colors.primary
         : formatColor(resolvedColor, {
               darken: 70,
-              format: "hexa",
           });
 
-    const textColorFinal = formatColor(
-        isColorLike ? parsedTextColor : theme.typography.colors.primary,
-        {
-            format: "hexa",
-        },
-    );
+    const textColorFinal = isColorLike
+        ? parsedTextColor
+        : theme.typography.colors.primary;
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-            }),
+            backgroundColor: resolvedColor,
             color: solidTextColor,
             border: "none",
             "&:focus-within": {
@@ -98,9 +86,7 @@ export const resolveTextareaStyles = (
             border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
             color: textColorFinal,
             "&:focus-within": {
-                borderColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                }),
+                borderColor: resolvedColor,
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 5,
                     format: "hexa",

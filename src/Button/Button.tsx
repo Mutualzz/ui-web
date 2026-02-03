@@ -66,14 +66,14 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                           ? "flex-end"
                           : "center",
                 justifyContent: fullWidth
-                    ? horizontalAlign === "left"
+                    ? ha === "left"
                         ? "flex-start"
-                        : horizontalAlign === "right"
+                        : ha === "right"
                           ? "flex-end"
                           : "center"
-                    : horizontalAlign === "left"
+                    : ha === "left"
                       ? "flex-start"
-                      : horizontalAlign === "right"
+                      : ha === "right"
                         ? "flex-end"
                         : "space-between",
             }),
@@ -190,14 +190,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             selectedProp !== undefined
                 ? selectedProp
                 : group?.exclusive
-                  ? group?.value === props.value
+                  ? group.value === props.value
                   : Array.isArray(group?.value) &&
-                    group?.value.includes(props.value);
+                    group.value.includes(props.value);
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
             if (
                 group?.toggleable &&
-                group?.onChange &&
+                group.onChange &&
                 props.value !== undefined
             ) {
                 if (group.exclusive) {
