@@ -75,11 +75,6 @@ export const resolveButtonContainerStyles = (
                     alpha: 50,
                     format: "hexa",
                 }),
-                color: formatColor(theme.typography.colors.primary, {
-                    negate: createColor(resolvedColor).isLight(),
-                    alpha: 60,
-                    format: "hexa",
-                }),
             },
         },
         outlined: {
@@ -107,10 +102,6 @@ export const resolveButtonContainerStyles = (
                 },
             }),
             "&:disabled": {
-                color: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 50,
-                }),
                 borderColor: formatColor(resolvedColor, {
                     alpha: 30,
                     format: "hexa",
@@ -140,12 +131,6 @@ export const resolveButtonContainerStyles = (
                     }),
                 },
             }),
-            "&:disabled": {
-                color: formatColor(resolvedColor, {
-                    alpha: 50,
-                    format: "hexa",
-                }),
-            },
         },
         soft: {
             backgroundColor: selected
@@ -157,7 +142,7 @@ export const resolveButtonContainerStyles = (
                       alpha: 15,
                       format: "hexa",
                   }),
-            color: solidTextColor,
+            color: resolvedColor,
             border: "none",
             ...(!disabled && {
                 "&:hover": {
@@ -176,10 +161,6 @@ export const resolveButtonContainerStyles = (
             "&:disabled": {
                 backgroundColor: formatColor(resolvedColor, {
                     alpha: 5,
-                    format: "hexa",
-                }),
-                color: formatColor(resolvedColor, {
-                    alpha: 50,
                     format: "hexa",
                 }),
             },
@@ -209,7 +190,7 @@ export const resolveButtonTextStyles = (
             color: hexColor,
         },
         soft: {
-            color: solidTextColor,
+            color: hexColor,
         },
     };
 };
