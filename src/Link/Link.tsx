@@ -55,6 +55,7 @@ const LinkWrapper = styled("a")<LinkProps>(
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
+        fontFamily: "inherit",
         gap: 4,
     }),
 );
