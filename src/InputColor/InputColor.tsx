@@ -20,7 +20,13 @@ import {
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
-import { forwardRef, useMemo, useState, type ChangeEvent } from "react";
+import {
+    forwardRef,
+    useMemo,
+    useState,
+    type ChangeEvent,
+    useEffect,
+} from "react";
 import { Button } from "../Button/Button";
 import { ColorPicker } from "../ColorPicker/ColorPicker";
 import { IconButton } from "../IconButton/IconButton";
@@ -120,7 +126,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
     ) => {
         const { theme } = useTheme();
 
-        const isControlled = colorProp !== undefined;
+        const isControlled = colorProp != null;
 
         const [internalValue, setInternalValue] = useState<ColorLike>(
             defaultValue ?? randomColor("hex"),
@@ -163,6 +169,38 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             "hex",
             allowGradient,
         );
+
+        useEffect(() => {
+            if (!isControlled) return;
+
+            try {
+                if (Array.isArray(currentValue)) {
+                    const stop = focusedStop ?? 0;
+                    const hex = handleColor(currentValue[stop]).hex;
+
+                    setColorDirectly(hex);
+                    setPickerColor(
+                        currentValue.map((c) => handleColor(c).hsva),
+                    );
+                    return;
+                }
+
+                // currentValue can be a gradient string
+                if (isValidGradient(currentValue)) {
+                    const stops = toGradientStops(currentValue);
+                    const stop = focusedStop ?? 0;
+                    const hex = handleColor(stops[stop]).hex;
+
+                    setColorDirectly(hex);
+                    setPickerColor(stops.map((c) => handleColor(c).hsva));
+                    return;
+                }
+
+                const hex = handleColor(currentValue as any).hex;
+                setColorDirectly(hex);
+                setPickerColor(handleColor(currentValue as any).hsva);
+            } catch {}
+        }, [colorProp, isControlled, focusedStop]);
 
         const handleNewColor = (
             newColor: ColorResult | ColorResult[],
