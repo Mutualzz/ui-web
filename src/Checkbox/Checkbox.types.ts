@@ -8,11 +8,11 @@ import {
 } from "@mutualzz/ui-core";
 import type { InputHTMLAttributes, ReactNode } from "react";
 
-export interface CheckboxProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        "size" | "type" | "value" | "color"
-    > {
+// TODO: in the future instead of having rtl prop, we can use startDecorator and endDecorator
+export interface CheckboxProps extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "size" | "type" | "value" | "color"
+> {
     /**
      * The label for the checkbox.
      * It can be a string or a ReactNode.
