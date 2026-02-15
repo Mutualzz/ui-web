@@ -1,3 +1,10 @@
+// TODO: Adding todo here so it counts for all components,
+//  start using more css variables, rather than relying mostly
+//  on js for styling. This will allow for more flexibility and easier
+//  theming in the future. For example, instead of hardcoding
+//  colors in the component styles, we can use CSS variables that can be easily overridden by themes or user preferences.
+//  We started using it in Switch component right now, but it would be good to expand this approach to other components as well.
+
 // Components
 
 export * from "./Avatar/Avatar";
@@ -90,6 +97,9 @@ export type * from "./Slider/Slider.types";
 
 export * from "./Select/Select";
 export type * from "./Select/Select.types";
+
+export * from "./Switch/Switch";
+export type * from "./Switch/Switch.types";
 
 export * from "./Option/Option";
 export type * from "./Option/Option.types";
