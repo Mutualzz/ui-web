@@ -33,7 +33,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         position: "relative",
         display: "flex",
         boxSizing: "border-box",
-        borderRadius: "6px",
+        borderRadius: 12,
         cursor: disabled ? "not-allowed" : "pointer",
         transition: "all 0.3s ease",
         whiteSpace: "nowrap",
