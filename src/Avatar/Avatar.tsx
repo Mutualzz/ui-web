@@ -1,10 +1,10 @@
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import { forwardRef } from "react";
 import {
-    resolveAvatarShape,
-    resolveAvatarSize,
-    resolveAvatarStyles,
-} from "./Avatar.helpers";
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    styled,
+} from "@mutualzz/ui-core";
+import { forwardRef } from "react";
+import { resolveAvatarSize, resolveAvatarStyles } from "./Avatar.helpers";
 import type { AvatarProps } from "./Avatar.types";
 
 const AvatarWrapper = styled("div")<AvatarProps & { hasText: boolean }>(
@@ -34,8 +34,8 @@ const AvatarWrapper = styled("div")<AvatarProps & { hasText: boolean }>(
             },
             ({ color: c, variant: v, size: s, shape: sp, elevation: e }) => ({
                 ...resolveAvatarSize(theme, s, hasText),
-                ...resolveAvatarShape(sp),
                 ...resolveAvatarStyles(theme, c, hasText, e)[v],
+                borderRadius: resolveShapeValue(sp),
             }),
         ),
     }),

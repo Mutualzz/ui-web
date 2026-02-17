@@ -1,6 +1,11 @@
-import type { Size } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, resolveSize, styled } from "@mutualzz/ui-core";
-import { forwardRef, useContext } from "react";
+import React, { forwardRef, useContext } from "react";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    resolveSize,
+    type Size,
+    styled,
+} from "@mutualzz/ui-core";
 import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
@@ -28,6 +33,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         horizontalAlign = "center",
         fullWidth,
         selected,
+        shape = "rounded",
         padding,
     }) => ({
         position: "relative",
@@ -46,7 +52,15 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         }),
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant, verticalAlign, horizontalAlign, padding },
+            {
+                size,
+                color,
+                variant,
+                verticalAlign,
+                horizontalAlign,
+                padding,
+                shape,
+            },
             ({
                 size: s,
                 color: c,
@@ -54,11 +68,13 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                 verticalAlign: va,
                 horizontalAlign: ha,
                 padding: p,
+                shape: sp,
             }) => ({
                 ...resolveButtonContainerSize(theme, s, p),
                 ...resolveButtonContainerStyles(theme, c, disabled, selected)[
                     v
                 ],
+                borderRadius: resolveShapeValue(sp),
                 alignItems:
                     va === "top"
                         ? "flex-start"
@@ -163,6 +179,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             startDecorator,
             endDecorator,
             disabled: propDisabled,
+            shape: propShape,
             padding,
             fullWidth: propFullWidth,
             children,
@@ -185,6 +202,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const loading = propLoading ?? group?.loading ?? false;
         const disabled = propDisabled ?? group?.disabled ?? false;
         const fullWidth = propFullWidth ?? group?.fullWidth ?? false;
+        const shape = propShape ?? group?.shape ?? "rounded";
 
         const selected =
             selectedProp !== undefined
@@ -232,6 +250,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 onClick={handleClick}
                 padding={padding}
                 selected={selected}
+                shape={shape}
             >
                 {loading && (
                     <SpinnerOverlay>

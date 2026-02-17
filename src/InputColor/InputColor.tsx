@@ -21,11 +21,11 @@ import {
     useColorInput,
 } from "@mutualzz/ui-core";
 import {
+    type ChangeEvent,
     forwardRef,
+    useEffect,
     useMemo,
     useState,
-    type ChangeEvent,
-    useEffect,
 } from "react";
 import { Button } from "../Button/Button";
 import { ColorPicker } from "../ColorPicker/ColorPicker";
@@ -57,15 +57,13 @@ interface RandomIconProps {
 const RandomIcon = ({ color, size, variant }: RandomIconProps) => {
     const { theme } = useTheme();
 
-    const { size: resolvedSize, variant: resolvedVariant } =
-        resolveResponsiveMerge(
-            theme,
-            { size, variant },
-            ({ size: s, variant: v }) => ({
-                size: resolveSize(theme, s, baseIconSize),
-                variant: v,
-            }),
-        );
+    const { size: resolvedSize } = resolveResponsiveMerge(
+        theme,
+        { size, variant },
+        ({ size: s }) => ({
+            size: resolveSize(theme, s, baseIconSize),
+        }),
+    );
 
     const resolvedColor = formatColor(theme.typography.colors.primary, {
         format: "hexa",

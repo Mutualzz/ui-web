@@ -10,7 +10,6 @@ import {
     type Size,
     type SizeValue,
 } from "@mutualzz/ui-core";
-import type { AvatarShape } from "./Avatar.types";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 28,
@@ -37,30 +36,6 @@ export const resolveAvatarSize = (
             fontSize: resolvedSize / 2.2,
         };
     } else return base;
-};
-
-export const resolveAvatarShape = (
-    radius: AvatarShape | SizeValue | number,
-): CSSObject => {
-    let resolvedRadius;
-    switch (radius) {
-        case "circle":
-            resolvedRadius = 9999;
-            break;
-        case "rounded":
-            resolvedRadius = "25%";
-            break;
-        case "square":
-            resolvedRadius = 0;
-            break;
-        default:
-            resolvedRadius = radius;
-            break;
-    }
-
-    return {
-        borderRadius: resolvedRadius,
-    };
 };
 
 export const resolveAvatarStyles = (

@@ -20,13 +20,13 @@ export const baseSizeMap: Record<Size, number> = {
 export const resolveSwitchDimensions = (
     theme: Theme,
     size: Size | SizeValue | number,
-): { width: number; height: number; thumb: number; pad: number } => {
+): { width: number; height: number; thumb: number; padding: number } => {
     const height = resolveSize(theme, size, baseSizeMap);
     const width = Math.round(height * 1.8);
-    const pad = Math.max(2, Math.round(height * 0.15));
-    const thumb = height - pad * 2;
+    const padding = Math.max(2, Math.round(height * 0.15));
+    const thumb = height - padding * 2;
 
-    return { width, height, thumb, pad };
+    return { width, height, thumb, padding };
 };
 
 export const resolveSwitchTrackStyles = (

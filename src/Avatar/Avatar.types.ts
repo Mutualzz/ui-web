@@ -2,13 +2,12 @@ import type {
     Color,
     ColorLike,
     Responsive,
+    Shape,
     Size,
     SizeValue,
 } from "@mutualzz/ui-core";
 import type { ImgHTMLAttributes } from "react";
 import type { PaperVariant } from "../Paper/Paper.types";
-
-export type AvatarShape = "circle" | "square" | "rounded";
 
 export interface AvatarProps extends Omit<
     ImgHTMLAttributes<HTMLImageElement>,
@@ -20,5 +19,5 @@ export interface AvatarProps extends Omit<
 
     elevation?: Responsive<number>;
 
-    shape?: Responsive<AvatarShape | SizeValue | number>;
+    shape?: Responsive<Shape | SizeValue | number>;
 }

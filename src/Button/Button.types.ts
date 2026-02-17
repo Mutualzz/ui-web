@@ -2,6 +2,7 @@ import {
     type Color,
     type ColorLike,
     type Responsive,
+    type Shape,
     type Size,
     type SizeValue,
     type Variant,
@@ -11,8 +12,10 @@ import { type ButtonHTMLAttributes, type ReactNode } from "react";
 export type VerticalButtonAlign = "top" | "center" | "bottom";
 export type HorizontalButtonAlign = "left" | "center" | "right";
 
-export interface ButtonProps
-    extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color" | "size"> {
+export interface ButtonProps extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    "color" | "size"
+> {
     /**
      * The variant of the button, which determines its style.
      * @default "solid"
@@ -70,4 +73,6 @@ export interface ButtonProps
     padding?: Size | SizeValue | number;
 
     selected?: boolean;
+
+    shape?: Responsive<Shape | SizeValue | number>;
 }

@@ -1,11 +1,10 @@
-import type { Responsive, Size, SizeValue } from "@mutualzz/ui-core";
+import type { Responsive, Shape, Size, SizeValue } from "@mutualzz/ui-core";
 import type { InputHTMLAttributes } from "react";
 
-export interface InputBaseProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        "onChange" | "size" | "type" | "color"
-    > {
+export interface InputBaseProps extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "onChange" | "size" | "type" | "color"
+> {
     /**
      * The size of the input element.
      * Can be a predefined size ("sm", "md", "lg") or a custom size in pixels.
@@ -23,4 +22,6 @@ export interface InputBaseProps
      * @default false
      */
     fullWidth?: boolean;
+
+    shape?: Responsive<Shape | SizeValue | number>;
 }

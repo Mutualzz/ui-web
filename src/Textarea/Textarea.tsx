@@ -1,5 +1,8 @@
-import type { Responsive, Size, SizeValue } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    styled,
+} from "@mutualzz/ui-core";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import {
     resolveTextareaInputSize,
@@ -15,14 +18,16 @@ const TextareaRoot = styled("div")<TextareaProps>(
         textColor = "inherit",
         size = "md",
         variant = "outlined",
+        shape = "rounded",
         disabled,
     }) => ({
         ...resolveResponsiveMerge(
             theme,
-            { size, color, textColor, variant },
-            ({ color: c, textColor: tc, size: s, variant: v }) => ({
+            { size, color, textColor, variant, shape },
+            ({ color: c, textColor: tc, size: s, variant: v, shape: sp }) => ({
                 ...resolveTextareaSize(theme, s),
                 ...resolveTextareaStyles(theme, c, tc)[v],
+                borderRadius: resolveShapeValue(sp),
             }),
         ),
 
@@ -45,24 +50,28 @@ const TextareaRoot = styled("div")<TextareaProps>(
 
 TextareaRoot.displayName = "TextareaRoot";
 
-const TextareaInput = styled("textarea")<{
-    resizable?: boolean;
-    size: Responsive<Size | SizeValue | number>;
-}>(({ theme, size, resizable }) => ({
-    ...resolveResponsiveMerge(theme, { size }, ({ size: s }) => ({
-        ...resolveTextareaInputSize(theme, s),
-    })),
-    flex: 1,
-    width: "100%",
-    minWidth: 0,
-    border: "none",
-    outline: "none",
-    background: "transparent",
-    color: "inherit",
-    font: "inherit",
-    lineHeight: 1.5,
-    resize: resizable ? "both" : "none",
-}));
+const TextareaInput = styled("textarea")<TextareaProps>(
+    ({ theme, size = "md", resizable, shape = "rounded" }) => ({
+        ...resolveResponsiveMerge(
+            theme,
+            { size, shape },
+            ({ size: s, shape: sp }) => ({
+                ...resolveTextareaInputSize(theme, s),
+                borderRadius: resolveShapeValue(sp),
+            }),
+        ),
+        flex: 1,
+        width: "100%",
+        minWidth: 0,
+        border: "none",
+        outline: "none",
+        background: "transparent",
+        color: "inherit",
+        font: "inherit",
+        lineHeight: 1.5,
+        resize: resizable ? "both" : "none",
+    }),
+);
 
 TextareaInput.displayName = "TextareaInput";
 
@@ -84,6 +93,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             resizable = false,
             minRows = 1,
             maxRows,
+            shape = "rounded",
             ...props
         },
         ref,
@@ -121,15 +131,15 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
             el.addEventListener("input", updateHeight);
 
-            const resiveObserver = new ResizeObserver(() => {
+            const resizeObserver = new ResizeObserver(() => {
                 updateHeight();
             });
 
-            resiveObserver.observe(el);
+            resizeObserver.observe(el);
 
             return () => {
                 el.removeEventListener("input", updateHeight);
-                resiveObserver.disconnect();
+                resizeObserver.disconnect();
             };
         }, [minRows, maxRows, resizable]);
 
@@ -140,6 +150,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 variant={variant}
                 size={size}
                 disabled={disabled}
+                shape={shape}
             >
                 <TextareaInput
                     {...props}
@@ -148,6 +159,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                     size={size}
                     disabled={disabled}
                     rows={minRows}
+                    shape={shape}
                 />
             </TextareaRoot>
         );

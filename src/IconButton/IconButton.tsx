@@ -1,5 +1,10 @@
-import type { Size } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, resolveSize, styled } from "@mutualzz/ui-core";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    resolveSize,
+    type Size,
+    styled,
+} from "@mutualzz/ui-core";
 import { forwardRef, useContext } from "react";
 import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
@@ -22,6 +27,7 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         theme,
         color = "primary",
         variant = "solid",
+        shape = "rounded",
         padding,
     }) => ({
         display: "inline-flex",
@@ -41,12 +47,13 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         }),
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant },
-            ({ size: s, color: c, variant: v }) => {
+            { size, color, variant, shape },
+            ({ size: s, color: c, variant: v, shape: sp }) => {
                 const resolvedSize = resolveSize(theme, s, baseSizeMap);
 
                 return {
                     fontSize: resolvedSize,
+                    borderRadius: resolveShapeValue(sp),
                     ...resolveIconButtonContainerStyles(theme, c)[v],
                 };
             },
@@ -116,6 +123,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             loadingIndicator,
             disabled: propDisabled,
             children,
+            shape: propShape,
             padding = "0.25rem",
             type = "button",
             ...props
@@ -129,6 +137,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         const size = propSize ?? group?.size ?? "md";
         const loading = propLoading ?? group?.loading ?? false;
         const disabled = propDisabled ?? group?.disabled ?? false;
+        const shape = propShape ?? group?.shape ?? "rounded";
 
         return (
             <IconButtonWrapper

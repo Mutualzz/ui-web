@@ -2,6 +2,7 @@ import type {
     Color,
     ColorLike,
     Responsive,
+    Shape,
     Size,
     SizeValue,
     TypographyColor,
@@ -9,8 +10,10 @@ import type {
 } from "@mutualzz/ui-core";
 import type { ReactNode, TextareaHTMLAttributes } from "react";
 
-export interface TextareaProps
-    extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "color"> {
+export interface TextareaProps extends Omit<
+    TextareaHTMLAttributes<HTMLTextAreaElement>,
+    "color"
+> {
     /**
      * Color or color-like value for the textarea.
      * This can be a color name, hex code, or any valid color format.
@@ -102,4 +105,6 @@ export interface TextareaProps
      * This can be used to set an upper limit on the height of the textarea.
      */
     maxRows?: number;
+
+    shape?: Responsive<Shape | SizeValue | number>;
 }

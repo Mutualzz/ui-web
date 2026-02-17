@@ -1,4 +1,8 @@
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    styled,
+} from "@mutualzz/ui-core";
 import { resolveInputRootStyles } from "./InputRoot.helpers";
 import type { InputRootProps } from "./InputRoot.types";
 
@@ -11,14 +15,16 @@ const InputRoot = styled("div")<InputRootProps>(
         variant = "outlined",
         error = false,
         readOnly = false,
+        shape = "rounded",
         fullWidth,
         disabled,
     }) => ({
         ...resolveResponsiveMerge(
             theme,
-            { color, textColor, size, variant, fullWidth },
-            ({ color: c, textColor: tc, variant: v }) => ({
+            { color, textColor, size, variant, fullWidth, shape },
+            ({ color: c, textColor: tc, variant: v, shape: sp }) => ({
                 ...resolveInputRootStyles(theme, c, tc, error, readOnly)[v],
+                borderRadius: resolveShapeValue(sp),
             }),
         ),
         ...(disabled && { opacity: 0.5, cursor: "not-allowed" }),
@@ -35,7 +41,6 @@ const InputRoot = styled("div")<InputRootProps>(
         overflow: "hidden",
         lineHeight: 1,
 
-        borderRadius: 8,
         transition: "all 0.3s ease",
     }),
 );

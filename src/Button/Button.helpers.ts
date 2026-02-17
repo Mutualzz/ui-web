@@ -1,17 +1,6 @@
 import { type CSSObject, type Theme } from "@emotion/react";
-import type {
-    Color,
-    ColorLike,
-    Size,
-    SizeValue,
-    Variant,
-} from "@mutualzz/ui-core";
-import {
-    createColor,
-    formatColor,
-    resolveColor,
-    resolveSize,
-} from "@mutualzz/ui-core";
+import type { Color, ColorLike, Size, SizeValue, Variant, } from "@mutualzz/ui-core";
+import { createColor, formatColor, resolveColor, resolveSize, } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 12,

@@ -107,6 +107,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
             value,
             onChange,
             exclusive,
+            shape,
             children: childrenProp,
         },
         ref,
@@ -136,6 +137,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                           loading={child.props.loading ?? loading}
                           fullWidth={child.props.fullWidth ?? fullWidth}
                           selected={selected}
+                          shape={child.props.shape ?? shape}
                       />
                   );
               })
@@ -156,6 +158,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     value,
                     onChange,
                     exclusive,
+                    shape,
                 }}
             >
                 <ButtonGroupRoot

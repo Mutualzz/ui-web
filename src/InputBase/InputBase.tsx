@@ -1,14 +1,19 @@
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    styled,
+} from "@mutualzz/ui-core";
 import { resolveInputBaseSize } from "./InputBase.helpers";
 import type { InputBaseProps } from "./InputBase.props";
 
 const InputBase = styled("input")<InputBaseProps>(
-    ({ theme, size, fullWidth }) => ({
+    ({ theme, size, fullWidth, shape = "rounded" }) => ({
         ...resolveResponsiveMerge(
             theme,
-            { size, fullWidth },
-            ({ size: s, fullWidth: fw }) => ({
+            { size, fullWidth, shape },
+            ({ size: s, fullWidth: fw, shape: sp }) => ({
                 ...resolveInputBaseSize(theme, s, fw),
+                borderRadius: resolveShapeValue(sp),
             }),
         ),
 

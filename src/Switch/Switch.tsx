@@ -1,24 +1,33 @@
 import { type ChangeEvent, forwardRef, useMemo, useRef, useState } from "react";
 import type { SwitchProps } from "./Switch.types";
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    styled,
+} from "@mutualzz/ui-core";
 import {
     resolveSwitchDimensions,
     resolveSwitchTrackStyles,
 } from "./Switch.helpers";
 
-const SwitchWrapper = styled("div")<SwitchProps>(({ disabled }) => ({
-    position: "relative",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "0.5em",
-    cursor: "pointer",
-    userSelect: "none",
-    ...(disabled && {
-        opacity: 0.5,
-        pointerEvents: "none",
-        cursor: "not-allowed",
+const SwitchWrapper = styled("div")<SwitchProps>(
+    ({ theme, shape = "rounded", disabled }) => ({
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.5em",
+        cursor: "pointer",
+        userSelect: "none",
+        ...(disabled && {
+            opacity: 0.5,
+            pointerEvents: "none",
+            cursor: "not-allowed",
+        }),
+        ...resolveResponsiveMerge(theme, { shape }, ({ shape: sp }) => ({
+            borderRadius: resolveShapeValue(sp),
+        })),
     }),
-}));
+);
 
 SwitchWrapper.displayName = "SwitchWrapper";
 
@@ -27,6 +36,7 @@ const Track = styled("span")<SwitchProps>(({
     color = "neutral",
     variant = "solid",
     size = "md",
+    shape = "rounded",
     checked,
 }) => {
     const dimensions = resolveResponsiveMerge(theme, { size }, ({ size: s }) =>
@@ -59,7 +69,7 @@ const Track = styled("span")<SwitchProps>(({
         borderRadius: dimensions.height,
         boxSizing: "border-box",
         transition: "all 0.2s ease",
-        padding: dimensions.pad,
+        padding: dimensions.padding,
         ...variantStyles,
 
         'input[type="checkbox"]:hover + &': checkedStyles,
@@ -67,7 +77,7 @@ const Track = styled("span")<SwitchProps>(({
         'input[type="checkbox"]:focus-visible + &': {
             outline: "none",
             boxShadow: `0 0 0 3px ${
-                (checkedStyles as any).backgroundColor ?? "currentColor"
+                checkedStyles.backgroundColor ?? "currentColor"
             }`,
         },
     };
@@ -136,6 +146,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             color = "neutral",
             variant = "solid",
             size = "md",
+            shape = "rounded",
             ...props
         },
         ref,
@@ -175,6 +186,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
                 tabIndex={disabled ? -1 : 0}
                 disabled={disabled}
                 onClick={handleWrapperClick}
+                shape={shape}
             >
                 {startDecorator && <Decorator>{startDecorator}</Decorator>}
 
@@ -199,6 +211,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
                         color={color as string}
                         variant={variant}
                         size={size}
+                        shape={shape}
                     >
                         <Thumb size={size} checked={isChecked} />
                     </Track>

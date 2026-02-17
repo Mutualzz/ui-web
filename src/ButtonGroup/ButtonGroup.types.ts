@@ -3,6 +3,7 @@ import type {
     ColorLike,
     Orientation,
     Responsive,
+    Shape,
     Size,
     SizeValue,
     Variant,
@@ -75,6 +76,8 @@ export interface ButtonGroupProps extends PropsWithChildren {
      * @default 0
      */
     spacing?: Responsive<Size | SizeValue | number>;
+
+    shape?: Responsive<Shape | SizeValue | number>;
 
     toggleable?: boolean;
     value?: any | any[];

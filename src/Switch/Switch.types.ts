@@ -2,6 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from "react";
 import type {
     Color,
     Responsive,
+    Shape,
     Size,
     SizeValue,
     Variant,
@@ -23,4 +24,6 @@ export interface SwitchProps extends Omit<
 
     startDecorator?: ReactNode;
     endDecorator?: ReactNode;
+
+    shape?: Responsive<Shape | SizeValue | number>;
 }
