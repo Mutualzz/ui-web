@@ -60,16 +60,24 @@ const Track = styled("span")<SwitchProps>(({
             resolveSwitchTrackStyles(theme, c as any, true)[v],
     );
 
+    const shapeStyles = resolveResponsiveMerge(
+        theme,
+        { shape },
+        ({ shape: sp }) => ({
+            borderRadius: resolveShapeValue(sp),
+        }),
+    );
+
     return {
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
         width: dimensions.width,
         height: dimensions.height,
-        borderRadius: dimensions.height,
         boxSizing: "border-box",
         transition: "all 0.2s ease",
         padding: dimensions.padding,
+        ...shapeStyles,
         ...variantStyles,
 
         'input[type="checkbox"]:hover + &': checkedStyles,
@@ -86,17 +94,29 @@ const Track = styled("span")<SwitchProps>(({
 Track.displayName = "SwitchTrack";
 
 const Thumb = styled("span")<SwitchProps>(({ theme, size = "md", checked }) => {
-    const dimensions = resolveResponsiveMerge(theme, { size }, ({ size: s }) =>
-        resolveSwitchDimensions(theme, s),
+    const dimensions = resolveResponsiveMerge(
+        theme,
+        { size },
+        ({ size: s }) => {
+            const dim = resolveSwitchDimensions(theme, s);
+            return {
+                width: dim.width,
+                height: dim.height,
+                thumb: dim.thumb,
+                pad: dim.padding,
+                translateX: dim.width - dim.thumb - dim.padding * 2,
+            };
+        },
     );
-    const translateX = dimensions.width - dimensions.thumb - dimensions.pad * 2;
 
     return {
         width: dimensions.thumb,
         height: dimensions.thumb,
         borderRadius: dimensions.thumb,
         backgroundColor: "var(--switch-thumb)",
-        transform: checked ? `translateX(${translateX}px)` : "translateX(0)",
+        transform: checked
+            ? `translateX(${dimensions.translateX}px)`
+            : "translateX(0)",
         transition: "transform 0.2s ease",
         boxShadow: "0 1px 2px rgba(0,0,0,0.25)",
     };
@@ -211,7 +231,6 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
                         color={color as string}
                         variant={variant}
                         size={size}
-                        shape={shape}
                     >
                         <Thumb size={size} checked={isChecked} />
                     </Track>

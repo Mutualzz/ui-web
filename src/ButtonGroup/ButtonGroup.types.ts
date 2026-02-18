@@ -83,4 +83,6 @@ export interface ButtonGroupProps extends PropsWithChildren {
     value?: any | any[];
     onChange?: (value: any | any[]) => void;
     exclusive?: boolean;
+
+    textColor?: Responsive<Color | ColorLike>;
 }

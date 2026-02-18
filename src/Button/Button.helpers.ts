@@ -160,8 +160,12 @@ export const resolveButtonContainerStyles = (
 export const resolveButtonTextStyles = (
     theme: Theme,
     color: Color | ColorLike,
+    textColor?: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
+    let resolvedTextColor: ColorLike | undefined;
+    if (textColor) resolvedTextColor = resolveColor(textColor, theme);
+
     const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
@@ -170,16 +174,16 @@ export const resolveButtonTextStyles = (
 
     return {
         solid: {
-            color: solidTextColor,
+            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
         },
         outlined: {
-            color: hexColor,
+            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
         },
         plain: {
-            color: hexColor,
+            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
         },
         soft: {
-            color: hexColor,
+            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
         },
     };
 };

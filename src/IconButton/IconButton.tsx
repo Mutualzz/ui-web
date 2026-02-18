@@ -137,7 +137,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         const size = propSize ?? group?.size ?? "md";
         const loading = propLoading ?? group?.loading ?? false;
         const disabled = propDisabled ?? group?.disabled ?? false;
-        const shape = propShape ?? group?.shape ?? "rounded";
+        const shape = propShape ?? group?.shape ?? "circle";
 
         return (
             <IconButtonWrapper
@@ -150,6 +150,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
                 disabled={loading || disabled}
                 padding={padding}
                 loading={loading}
+                shape={shape}
             >
                 {loading && (
                     <SpinnerOverlay>

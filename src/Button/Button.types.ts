@@ -75,4 +75,6 @@ export interface ButtonProps extends Omit<
     selected?: boolean;
 
     shape?: Responsive<Shape | SizeValue | number>;
+
+    textColor?: Responsive<Color | ColorLike>;
 }

@@ -185,6 +185,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             children,
             selected: selectedProp,
             onClick: onClickProp,
+            textColor: textColorProp,
             type = "button",
             ...props
         },
@@ -203,6 +204,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const disabled = propDisabled ?? group?.disabled ?? false;
         const fullWidth = propFullWidth ?? group?.fullWidth ?? false;
         const shape = propShape ?? group?.shape ?? "rounded";
+        const textColor = textColorProp ?? group?.textColor;
 
         const selected =
             selectedProp !== undefined
@@ -251,6 +253,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 padding={padding}
                 selected={selected}
                 shape={shape}
+                textColor={textColor}
             >
                 {loading && (
                     <SpinnerOverlay>
