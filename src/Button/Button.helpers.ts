@@ -25,10 +25,13 @@ export const resolveButtonContainerSize = (
 export const resolveButtonContainerStyles = (
     theme: Theme,
     color: Color | ColorLike,
+    textColor?: Color | ColorLike,
     disabled?: boolean,
     selected?: boolean,
 ): Record<Variant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
+    let resolvedTextColor: ColorLike | undefined;
+    if (textColor) resolvedTextColor = resolveColor(textColor, theme);
     const hexColor = formatColor(resolvedColor);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
@@ -43,7 +46,7 @@ export const resolveButtonContainerStyles = (
                       format: "hexa",
                   })
                 : hexColor,
-            color: solidTextColor,
+            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
             border: "none",
             ...(!disabled && {
                 "&:hover": {
@@ -74,13 +77,18 @@ export const resolveButtonContainerStyles = (
                   })
                 : "transparent",
             border: `1px solid ${formatColor(resolvedColor)}`,
-            color: formatColor(resolvedColor),
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
             ...(!disabled && {
                 "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        alpha: 20,
-                        format: "hexa",
-                    }),
+                    backgroundColor: resolvedTextColor
+                        ? formatColor(resolvedColor, {
+                              alpha: 5,
+                              format: "hexa",
+                          })
+                        : formatColor(resolvedColor, {
+                              alpha: 20,
+                              format: "hexa",
+                          }),
                     borderColor: formatColor(resolvedColor),
                 },
                 "&:active": {
@@ -105,13 +113,18 @@ export const resolveButtonContainerStyles = (
                   })
                 : "transparent",
             border: "none",
-            color: formatColor(resolvedColor),
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
             ...(!disabled && {
                 "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        format: "hexa",
-                        alpha: 20,
-                    }),
+                    backgroundColor: resolvedTextColor
+                        ? formatColor(resolvedColor, {
+                              alpha: 5,
+                              format: "hexa",
+                          })
+                        : formatColor(resolvedColor, {
+                              format: "hexa",
+                              alpha: 20,
+                          }),
                 },
                 "&:active": {
                     backgroundColor: formatColor(resolvedColor, {
@@ -131,14 +144,19 @@ export const resolveButtonContainerStyles = (
                       alpha: 15,
                       format: "hexa",
                   }),
-            color: resolvedColor,
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
             border: "none",
             ...(!disabled && {
                 "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        alpha: 30,
-                        format: "hexa",
-                    }),
+                    backgroundColor: resolvedTextColor
+                        ? formatColor(resolvedColor, {
+                              alpha: 5,
+                              format: "hexa",
+                          })
+                        : formatColor(resolvedColor, {
+                              alpha: 30,
+                              format: "hexa",
+                          }),
                 },
                 "&:active": {
                     backgroundColor: formatColor(resolvedColor, {
@@ -177,13 +195,13 @@ export const resolveButtonTextStyles = (
             color: resolvedTextColor ? resolvedTextColor : solidTextColor,
         },
         outlined: {
-            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
         },
         plain: {
-            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
         },
         soft: {
-            color: resolvedTextColor ? resolvedTextColor : solidTextColor,
+            color: resolvedTextColor ? resolvedTextColor : hexColor,
         },
     };
 };

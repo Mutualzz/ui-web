@@ -1,19 +1,9 @@
 import React, { forwardRef, useContext } from "react";
-import {
-    resolveResponsiveMerge,
-    resolveShapeValue,
-    resolveSize,
-    type Size,
-    styled,
-} from "@mutualzz/ui-core";
+import { resolveResponsiveMerge, resolveShapeValue, resolveSize, type Size, styled, } from "@mutualzz/ui-core";
 import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
-import {
-    resolveButtonContainerSize,
-    resolveButtonContainerStyles,
-    resolveButtonTextStyles,
-} from "./Button.helpers";
+import { resolveButtonContainerSize, resolveButtonContainerStyles, resolveButtonTextStyles, } from "./Button.helpers";
 import { type ButtonProps } from "./Button.types";
 
 const baseSizeMap: Record<Size, number> = {
@@ -34,6 +24,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         fullWidth,
         selected,
         shape = "rounded",
+        textColor,
         padding,
     }) => ({
         position: "relative",
@@ -60,6 +51,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                 horizontalAlign,
                 padding,
                 shape,
+                textColor,
             },
             ({
                 size: s,
@@ -69,11 +61,16 @@ const ButtonWrapper = styled("button")<ButtonProps>(
                 horizontalAlign: ha,
                 padding: p,
                 shape: sp,
+                textColor: tc,
             }) => ({
                 ...resolveButtonContainerSize(theme, s, p),
-                ...resolveButtonContainerStyles(theme, c, disabled, selected)[
-                    v
-                ],
+                ...resolveButtonContainerStyles(
+                    theme,
+                    c,
+                    tc,
+                    disabled,
+                    selected,
+                )[v],
                 borderRadius: resolveShapeValue(sp),
                 alignItems:
                     va === "top"
@@ -107,6 +104,7 @@ const ButtonContent = styled("span")<ButtonProps>(
         size = "md",
         horizontalAlign = "center",
         verticalAlign = "center",
+        textColor,
         loading,
     }) => ({
         flex: "1 1 0%",
@@ -118,13 +116,14 @@ const ButtonContent = styled("span")<ButtonProps>(
         boxSizing: "border-box",
         ...resolveResponsiveMerge(
             theme,
-            { size, color, variant, horizontalAlign, verticalAlign },
+            { size, color, variant, horizontalAlign, verticalAlign, textColor },
             ({
                 size: s,
                 color: c,
                 variant: v,
                 horizontalAlign: ha,
                 verticalAlign: va,
+                textColor: tc,
             }) => {
                 const resolvedSize = resolveSize(theme, s, baseSizeMap);
                 return {
@@ -141,7 +140,7 @@ const ButtonContent = styled("span")<ButtonProps>(
                             : va === "bottom"
                               ? "flex-end"
                               : "center",
-                    ...resolveButtonTextStyles(theme, c)[v],
+                    ...resolveButtonTextStyles(theme, c, tc)[v],
                 };
             },
         ),
@@ -285,6 +284,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     loading={Boolean(loading)}
                     horizontalAlign={horizontalAlign}
                     verticalAlign={verticalAlign}
+                    textColor={textColor}
                 >
                     {children}
                 </ButtonContent>
