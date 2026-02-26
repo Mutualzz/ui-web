@@ -6,9 +6,9 @@ const DecoratorWrapper = styled("span")<{ position: "start" | "end" }>(
         fontSize: "inherit",
         color: "inherit",
         display: "flex",
-        justifyContent: "center",
-        alignItems: position === "start" ? "flex-start" : "flex-end",
+        justifyContent: position === "start" ? "flex-start" : "flex-end",
         height: "100%",
+        alignItems: "center",
         flex: "0 0 auto",
     }),
 );
