@@ -1,21 +1,21 @@
 import {
-    getScrollableAncestors,
-    resolveResponsiveMerge,
-    styled,
-    useOnClickOutside,
     type Color,
     type ColorLike,
+    getScrollableAncestors,
+    resolveResponsiveMerge,
     type Responsive,
+    styled,
+    useOnClickOutside,
     type Variant,
 } from "@mutualzz/ui-core";
 import {
+    type ChangeEvent,
+    type FocusEvent,
     forwardRef,
     useCallback,
     useEffect,
     useRef,
     useState,
-    type ChangeEvent,
-    type FocusEvent,
 } from "react";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { Portal } from "../Portal/Portal";
@@ -110,12 +110,12 @@ const SelectPlaceholder = styled("span")<{
     color: Responsive<Color | ColorLike>;
     variant: Responsive<Variant>;
 }>(({ theme, color, variant }) => ({
-    flex: 1,
+    flex: "1 1 auto",
     textAlign: "left",
     overflow: "hidden",
     textOverflow: "ellipsis",
     background: "transparent",
-    whiteSpace: "nowrap",
+    whiteSpace: "wrap",
 
     ...resolveResponsiveMerge(
         theme,
