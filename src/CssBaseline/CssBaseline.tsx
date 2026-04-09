@@ -1,5 +1,5 @@
 import { Global } from "@emotion/react";
-import { formatColor, isValidGradient } from "@mutualzz/ui-core";
+import { formatColor } from "@mutualzz/ui-core";
 import { useTheme } from "../useTheme";
 
 interface CssBaselineProps {
@@ -48,8 +48,8 @@ export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
 
                 ...(adaptiveScrollbar && {
                     "*": {
-                        scrollbarWidth: "auto",
-                        scrollbarColor: `${theme.colors.primary} ${isValidGradient(theme.colors.surface) ? theme.colors.primary : theme.colors.surface}`,
+                        scrollbarWidth: "thin",
+                        scrollbarColor: `${theme.colors.primary} transparent`,
                     },
                     "::-webkit-scrollbar": {
                         width: 8,
