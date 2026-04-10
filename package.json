@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@mutualzz/eslint-config": "workspace:*",
-        "@types/react": "19.2.14",
+        "@types/react": "19.2.10",
         "@types/react-dom": "^19.2.3",
         "bunchee": "^6.10.0",
         "csstype": "^3.2.3",
@@ -56,5 +56,5 @@
         "lint": "eslint ."
     },
     "types": "./dist/index.d.ts",
-    "version": "4.1.0"
+    "version": "5.0.0"
 }
