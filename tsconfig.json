@@ -6,7 +6,7 @@
         "declarationDir": "dist",
         "emitDeclarationOnly": false,
         "outDir": "dist",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "allowSyntheticDefaultImports": true,
         "verbatimModuleSyntax": true,
         "esModuleInterop": true,
@@ -15,10 +15,11 @@
         "strict": true,
         "jsx": "react-jsx",
         "jsxImportSource": "@emotion/react",
-        "baseUrl": "./src",
+        "rootDir": "./src",
         "paths": {
-            "@test-utils": ["setupTests.tsx"]
+            "@test-utils": ["./src/setupTests.tsx"]
         }
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": ["dist", "dist/**", "**/dist/**"]
 }

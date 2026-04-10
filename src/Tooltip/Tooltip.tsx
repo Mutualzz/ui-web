@@ -14,7 +14,7 @@ import {
     useRole,
 } from "@floating-ui/react";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import { Portal } from "Portal/Portal";
+import { Portal } from "../Portal/Portal";
 import {
     Children,
     cloneElement,

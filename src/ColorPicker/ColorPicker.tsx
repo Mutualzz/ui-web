@@ -1,10 +1,4 @@
-import {
-    Alpha,
-    hsvaToHex,
-    hsvaToRgbaString,
-    Hue,
-    Saturation,
-} from "@mutualzz/color-picker";
+import { Alpha, hsvaToHex, hsvaToRgbaString, Hue, Saturation, } from "@mutualzz/color-picker";
 import {
     clamp,
     type ColorLike,
@@ -15,18 +9,11 @@ import {
     randomColor,
     snap,
 } from "@mutualzz/ui-core";
-import {
-    forwardRef,
-    type PointerEvent,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import { forwardRef, type PointerEvent, useEffect, useMemo, useRef, useState, } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
-import { Slider } from "Slider/Slider";
-import { Typography } from "Typography/Typography";
+import { Slider } from "../Slider/Slider";
+import { Typography } from "../Typography/Typography";
 import { Box } from "../Box/Box";
 import { Button } from "../Button/Button";
 import { IconButton } from "../IconButton/IconButton";
@@ -36,13 +23,7 @@ import { useTheme } from "../useTheme";
 import type { ColorPickerProps, GradientStop } from "./ColorPicker.types";
 import { Pointer } from "./Pointer";
 import { Paper } from "../Paper/Paper";
-import {
-    distributePositions,
-    enforceMinGap,
-    newStopId,
-    sortStops,
-    sortStopsStable,
-} from "./ColorPicker.helpers";
+import { distributePositions, enforceMinGap, newStopId, sortStops, sortStopsStable, } from "./ColorPicker.helpers";
 
 const DRAG_THRESHOLD_PX = 3;
 
