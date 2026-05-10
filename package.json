@@ -15,9 +15,9 @@
         "@types/react-dom": "^19.2.3",
         "bunchee": "^6.10.0",
         "csstype": "^3.2.3",
-        "eslint": "^10.2.0",
+        "eslint": "^10.3.0",
         "ts-jest": "^29.4.9",
-        "tsc-alias": "^1.8.16"
+        "tsc-alias": "^1.8.17"
     },
     "exports": {
         ".": {
