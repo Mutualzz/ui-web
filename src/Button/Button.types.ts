@@ -77,4 +77,6 @@ export interface ButtonProps extends Omit<
     shape?: Responsive<Shape | SizeValue | number>;
 
     textColor?: Responsive<Color | ColorLike>;
+
+    expand?: boolean;
 }

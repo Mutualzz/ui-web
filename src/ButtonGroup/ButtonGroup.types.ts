@@ -41,6 +41,7 @@ export interface ButtonGroupProps extends PropsWithChildren {
     horizontalAlign?: Responsive<HorizontalButtonAlign>;
 
     fullWidth?: boolean;
+    expand?: boolean;
 
     /**
      * Indicates whether all buttons in the group should be disabled.

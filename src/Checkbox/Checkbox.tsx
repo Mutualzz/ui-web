@@ -1,11 +1,11 @@
 import type { Responsive, Size, SizeValue } from "@mutualzz/ui-core";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import {
+    type ChangeEvent,
     forwardRef,
     useContext,
     useRef,
     useState,
-    type ChangeEvent,
 } from "react";
 import { CheckboxGroupContext } from "../CheckboxGroup/CheckboxGroup.context";
 import {
@@ -199,7 +199,8 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             propOnChange?.(e);
         };
 
-        const handleWrapperClick = () => {
+        const handleWrapperClick = (e: React.MouseEvent) => {
+            e.stopPropagation();
             if (!disabled && inputRef.current) {
                 inputRef.current.click();
             }
@@ -227,6 +228,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                     checked={isChecked}
                     onChange={handleChange}
                     disabled={disabled}
+                    onClick={(e) => e.stopPropagation()}
                     ref={(node) => {
                         inputRef.current = node;
                         if (typeof ref === "function") ref(node);

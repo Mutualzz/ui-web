@@ -1,9 +1,20 @@
-import React, { forwardRef, useContext } from "react";
-import { resolveResponsiveMerge, resolveShapeValue, resolveSize, type Size, styled, } from "@mutualzz/ui-core";
+import type React from "react";
+import { forwardRef, useContext } from "react";
+import {
+    resolveResponsiveMerge,
+    resolveShapeValue,
+    resolveSize,
+    type Size,
+    styled,
+} from "@mutualzz/ui-core";
 import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
-import { resolveButtonContainerSize, resolveButtonContainerStyles, resolveButtonTextStyles, } from "./Button.helpers";
+import {
+    resolveButtonContainerSize,
+    resolveButtonContainerStyles,
+    resolveButtonTextStyles,
+} from "./Button.helpers";
 import { type ButtonProps } from "./Button.types";
 
 const baseSizeMap: Record<Size, number> = {
@@ -24,6 +35,7 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         fullWidth,
         selected,
         shape = "rounded",
+        expand,
         textColor,
         padding,
     }) => ({
@@ -36,7 +48,8 @@ const ButtonWrapper = styled("button")<ButtonProps>(
         whiteSpace: "nowrap",
         flexShrink: 0,
         lineHeight: 1,
-        flex: fullWidth ? "1 1 0%" : "0 0 auto",
+        width: fullWidth ? "100%" : "auto",
+        flex: expand ? "1 1 0%" : "0 0 auto",
         minWidth: 0,
         ...(disabled && {
             opacity: 0.5,
@@ -185,6 +198,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             selected: selectedProp,
             onClick: onClickProp,
             textColor: textColorProp,
+            expand: propExpand,
             type = "button",
             ...props
         },
@@ -204,14 +218,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const fullWidth = propFullWidth ?? group?.fullWidth ?? false;
         const shape = propShape ?? group?.shape ?? "rounded";
         const textColor = textColorProp ?? group?.textColor;
+        const expand = propExpand ?? group?.expand ?? false;
 
         const selected =
-            selectedProp !== undefined
-                ? selectedProp
-                : group?.exclusive
-                  ? group.value === props.value
-                  : Array.isArray(group?.value) &&
-                    group.value.includes(props.value);
+            selectedProp === undefined
+                ? group?.exclusive
+                    ? group.value === props.value
+                    : Array.isArray(group?.value) &&
+                      group.value.includes(props.value)
+                : selectedProp;
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
             if (
@@ -253,6 +268,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 selected={selected}
                 shape={shape}
                 textColor={textColor}
+                expand={expand}
             >
                 {loading && (
                     <SpinnerOverlay>
