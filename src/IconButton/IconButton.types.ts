@@ -6,7 +6,7 @@ import {
     type SizeValue,
     type Variant,
 } from "@mutualzz/ui-core";
-import { type ReactNode } from "react";
+import { type ReactNode, type RefObject } from "react";
 import type { ButtonProps } from "../Button/Button.types";
 
 export interface IconButtonProps extends Omit<
@@ -52,4 +52,6 @@ export interface IconButtonProps extends Omit<
      * Content to display inside the button.
      */
     children?: ReactNode;
+
+    ref?: RefObject<HTMLButtonElement | null> | null;
 }

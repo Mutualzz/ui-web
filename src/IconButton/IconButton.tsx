@@ -80,12 +80,15 @@ const IconButtonContent = styled("span")<IconButtonProps>(
         height: "100%",
         opacity: loading ? 0 : 1,
         boxSizing: "border-box",
+        "& svg": {
+            width: "1em",
+            height: "1em",
+        },
         ...resolveResponsiveMerge(
             theme,
             { size, color, variant },
             ({ size: s, color: c, variant: v }) => {
                 const resolvedSize = resolveSize(theme, s, baseSizeMap);
-
                 return {
                     fontSize: resolvedSize,
                     ...resolveIconButtonTextStyles(theme, c)[v],
@@ -143,7 +146,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             <IconButtonWrapper
                 {...props}
                 type={type}
-                ref={ref}
+                ref={ref as any}
                 variant={variant}
                 color={color as string}
                 size={size}

@@ -1,9 +1,20 @@
-import type { Color, ColorLike, Orientation, Responsive, Size, SizeValue, Variant, } from "@mutualzz/ui-core";
+import type {
+    Color,
+    ColorLike,
+    Orientation,
+    Responsive,
+    Size,
+    SizeValue,
+    Variant,
+} from "@mutualzz/ui-core";
 import { resolveResponsiveMerge, resolveSize, styled } from "@mutualzz/ui-core";
 import type { ButtonProps } from "../Button/Button.types";
 import { Children, forwardRef, isValidElement } from "react";
 import { ButtonGroupContext } from "./ButtonGroup.context";
-import { baseSpacingMap, resolveButtonGroupStyles, } from "./ButtonGroup.helpers";
+import {
+    baseSpacingMap,
+    resolveButtonGroupStyles,
+} from "./ButtonGroup.helpers";
 import type { ButtonGroupProps } from "./ButtonGroup.types";
 
 const ButtonGroupRoot = styled("div")<{
@@ -96,6 +107,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
             value,
             onChange,
             exclusive,
+            expand,
             shape,
             children: childrenProp,
         },
@@ -127,6 +139,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                           fullWidth={child.props.fullWidth ?? fullWidth}
                           selected={selected}
                           shape={child.props.shape ?? shape}
+                          expand={child.props.expand ?? expand}
                       />
                   );
               })
@@ -144,6 +157,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                     disabled,
                     loading,
                     toggleable,
+                    expand,
                     value,
                     onChange,
                     exclusive,

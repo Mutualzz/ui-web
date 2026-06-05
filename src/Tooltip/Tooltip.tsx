@@ -143,7 +143,13 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         );
 
         return (
-            <div ref={ref} {...props}>
+            <div
+                ref={ref}
+                css={{
+                    display: "contents",
+                }}
+                {...props}
+            >
                 {child &&
                     cloneElement(child, {
                         ref: refs.setReference,
