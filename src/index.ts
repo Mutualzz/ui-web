@@ -26,6 +26,9 @@ export type * from "./Drawer/Drawer.types";
 
 export * from "./DecoratorWrapper/DecoratorWrapper";
 
+export * from "./IconSlot/IconSlot";
+export type * from "./IconSlot/IconSlot.types";
+
 export * from "./Checkbox/Checkbox";
 export type * from "./Checkbox/Checkbox.types";
 

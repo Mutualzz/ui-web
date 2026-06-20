@@ -38,10 +38,14 @@ export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
                     padding: 0,
                 },
 
-                "img, video, svg": {
+                "img, video": {
                     maxWidth: "100%",
                     height: "auto",
                     display: "block",
+                },
+
+                svg: {
+                    flexShrink: 0,
                 },
 
                 a: {
