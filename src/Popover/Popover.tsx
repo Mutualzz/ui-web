@@ -8,6 +8,7 @@ import {
 } from "@mutualzz/ui-core";
 import {
     forwardRef,
+    useCallback,
     useEffect,
     useLayoutEffect,
     useRef,
@@ -59,13 +60,8 @@ const PopoverContent = styled(Paper)<{
     };
 
     if (!disablePortal) {
-        if (placement === "top" || placement === "bottom") {
-            baseStyles.top = top;
-            baseStyles.left = left;
-        } else {
-            baseStyles.top = top;
-            baseStyles.left = left;
-        }
+        baseStyles.top = top;
+        baseStyles.left = left;
     } else {
         if (placement === "bottom") {
             baseStyles.top = "100%";
@@ -146,9 +142,9 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
         const isControlled = isOpenProp !== undefined;
         const isOpen = isControlled ? isOpenProp : visible;
-        const placement = placementProp ?? internalPlacement;
+        const placement = internalPlacement;
 
-        const updatePosition = () => {
+        const updatePosition = useCallback(() => {
             if (!triggerRef.current || !contentRef.current) return;
             const triggerRect = triggerRef.current.getBoundingClientRect();
             const popoverRect = contentRef.current.getBoundingClientRect();
@@ -166,19 +162,21 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            const bestPlacement = getBestPlacement(
-                triggerRect,
-                popoverRect,
-                viewportWidth,
-                viewportHeight,
-            );
-            setInternalPlacement(bestPlacement);
+            const effectivePlacement =
+                placementProp ??
+                getBestPlacement(
+                    triggerRect,
+                    popoverRect,
+                    viewportWidth,
+                    viewportHeight,
+                );
+            setInternalPlacement(effectivePlacement);
 
             const scrollTopForPosition = disablePortal ? scrollTop : 0;
             const scrollLeftForPosition = disablePortal ? scrollLeft : 0;
 
             const bestPosition = getPopoverPosition(
-                bestPlacement,
+                effectivePlacement,
                 triggerRect,
                 popoverRect,
                 scrollTopForPosition,
@@ -200,7 +198,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
             setPosition(clampedPosition);
             setMeasured(true);
-        };
+        }, [placementProp, disablePortal]);
 
         useLayoutEffect(() => {
             if (!isOpen) {
