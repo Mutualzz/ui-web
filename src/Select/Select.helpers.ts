@@ -110,7 +110,7 @@ export const resolveSelectContentStyles = (
         outlined: {
             backgroundColor: colors.background,
             border: `1px solid ${formatColor(resolvedColor)}`,
-            color: formatColor(resolvedColor, { lighten: 20 }),
+            color: formatColor(resolvedColor, { lighten: 80 }),
         },
         soft: {
             backgroundColor: formatColor(resolvedColor, {
