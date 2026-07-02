@@ -1,26 +1,22 @@
 import { styled } from "@mutualzz/ui-core";
-import {
-    Children,
-    cloneElement,
-    forwardRef,
-    isValidElement,
-    type Ref,
-} from "react";
+import { Children, cloneElement, forwardRef, isValidElement } from "react";
 import type { IconSlotChild, IconSlotProps } from "./IconSlot.types";
 
-const IconSlotRoot = styled("span")<Pick<IconSlotProps, "size">>(({ size }) => ({
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    flexShrink: 0,
-    lineHeight: 0,
-    fontSize: size,
-    ...(size != null && {
-        width: size,
-        height: size,
+const IconSlotRoot = styled("span")<Pick<IconSlotProps, "size">>(
+    ({ size }) => ({
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        flexShrink: 0,
+        lineHeight: 0,
+        fontSize: size,
+        ...(size != null && {
+            width: size,
+            height: size,
+        }),
     }),
-}));
+);
 
 IconSlotRoot.displayName = "IconSlotRoot";
 

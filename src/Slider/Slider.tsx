@@ -586,7 +586,6 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                 const dist = currentValue.map((v) => Math.abs(v - clickedVal));
                 indexToDrag = dist[0] <= dist[1] ? 0 : 1;
 
-                // 🔁 Update value immediately when clicking on the track
                 updateValue(indexToDrag, clickedVal);
             } else {
                 updateValue(0, clickedVal);
@@ -607,7 +606,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                     {isRange ? (
                         <>
                             <TrackSegmentFilled
-                                color={color as string}
+                                color={color}
                                 variant={variant}
                                 start={0}
                                 end={sortedPercents[0]}
@@ -620,7 +619,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                                 orientation={orientation}
                             />
                             <TrackSegmentFilled
-                                color={color as string}
+                                color={color}
                                 variant={variant}
                                 start={sortedPercents[1]}
                                 end={100}
@@ -631,7 +630,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                     ) : (
                         <>
                             <TrackSegmentFilled
-                                color={color as string}
+                                color={color}
                                 variant={variant}
                                 start={0}
                                 end={sortedPercents[0]}
@@ -674,7 +673,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                     {currentValue.map((val, i) => (
                         <Fragment key={`thumb-${i}`}>
                             <Thumb
-                                color={color as string}
+                                color={color}
                                 variant={variant}
                                 size={size}
                                 key={i}

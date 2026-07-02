@@ -9,13 +9,6 @@ interface CssBaselineProps {
 export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
     const { theme } = useTheme();
 
-    const toastBackground = theme.colors.surface;
-    const toastText = theme.typography.colors.primary;
-    const toastBorder = formatColor(theme.colors.neutral, {
-        lighten: 35,
-        format: "hexa",
-    });
-
     return (
         <Global
             styles={{

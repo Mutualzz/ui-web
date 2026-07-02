@@ -124,9 +124,7 @@ const SelectPlaceholder = styled("span")<{
             variant,
         },
         ({ color: c, variant: v }) => ({
-            color:
-                resolveSelectContentStyles(theme, c)[v as Variant]?.color ??
-                "inherit",
+            color: resolveSelectContentStyles(theme, c)[v]?.color ?? "inherit",
         }),
     ),
 }));
@@ -508,7 +506,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             >
                 <SelectWrapper
                     ref={selectRef}
-                    color={color as string}
+                    color={color}
                     size={size}
                     variant={variant}
                     disabled={disabled}
@@ -542,10 +540,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         </DecoratorWrapper>
                     )}
 
-                    <SelectPlaceholder
-                        variant={variant}
-                        color={color as string}
-                    >
+                    <SelectPlaceholder variant={variant} color={color}>
                         {hasValue ? displayValue : placeholder}
                     </SelectPlaceholder>
 
@@ -565,7 +560,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                             <SelectContent
                                 placement={placement}
                                 ref={selectContentRef}
-                                color={color as string}
+                                color={color}
                                 variant="outlined"
                                 isOpen={isOpen}
                                 role="listbox"

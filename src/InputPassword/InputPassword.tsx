@@ -120,7 +120,7 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
 
         return (
             <InputRoot
-                color={color as string}
+                color={color}
                 textColor={textColor}
                 variant={variant}
                 size={size}

@@ -78,7 +78,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
             <LinkWrapper
                 {...props}
                 ref={ref}
-                color={color as string}
+                color={color}
                 textColor={textColor}
                 variant={variant}
                 underline={underline}

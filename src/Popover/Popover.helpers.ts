@@ -40,7 +40,6 @@ export const getPopoverPosition = (
         case "bottom":
             return {
                 top: triggerRect.bottom + scrollTop + offset,
-                // Center popover over trigger
                 left:
                     triggerRect.left +
                     scrollLeft +

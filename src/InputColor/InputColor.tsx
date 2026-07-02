@@ -54,7 +54,7 @@ interface RandomIconProps {
     variant?: Responsive<Variant>;
 }
 
-const RandomIcon = ({ color, size, variant }: RandomIconProps) => {
+const RandomIcon = ({ size, variant }: RandomIconProps) => {
     const { theme } = useTheme();
 
     const { size: resolvedSize } = resolveResponsiveMerge(
@@ -194,10 +194,12 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                     return;
                 }
 
-                const hex = handleColor(currentValue as any).hex;
+                const hex = handleColor(currentValue).hex;
                 setColorDirectly(hex);
-                setPickerColor(handleColor(currentValue as any).hsva);
-            } catch {}
+                setPickerColor(handleColor(currentValue).hsva);
+            } catch {
+                //ignore
+            }
         }, [colorProp, isControlled, focusedStop]);
 
         const handleNewColor = (
@@ -309,7 +311,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
         return (
             <InputRoot
-                color={isInvalid ? "danger" : (colorToShow as any)}
+                color={isInvalid ? "danger" : colorToShow}
                 textColor={isInvalid ? theme.colors.danger : formattedTextColor}
                 variant={variant}
                 size={size}

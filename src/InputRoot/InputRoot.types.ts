@@ -1,4 +1,10 @@
-import type { Color, ColorLike, Responsive, TypographyColor, Variant, } from "@mutualzz/ui-core";
+import type {
+    Color,
+    ColorLike,
+    Responsive,
+    TypographyColor,
+    Variant,
+} from "@mutualzz/ui-core";
 import type { InputBaseProps } from "../InputBase/InputBase.props";
 import type { ChangeEvent, ReactNode } from "react";
 

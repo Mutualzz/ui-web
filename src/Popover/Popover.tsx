@@ -120,6 +120,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             variant = "elevation",
             size = "md",
             trigger,
+            triggerCss,
             children,
             isOpen: isOpenProp,
             disablePortal = false,
@@ -248,7 +249,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             <PopoverContent
                 {...props}
                 ref={contentRef}
-                color={color as string}
+                color={color}
                 variant={variant}
                 size={size}
                 transparency={transparency}
@@ -265,7 +266,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         );
 
         return (
-            <PopoverRoot ref={ref}>
+            <PopoverRoot ref={ref} css={triggerCss}>
                 <Stack ref={triggerRef} onClick={toggleVisibility}>
                     {trigger}
                 </Stack>

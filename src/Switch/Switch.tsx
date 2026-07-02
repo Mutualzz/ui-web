@@ -228,7 +228,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
                     <Track
                         checked={isChecked}
                         disabled={disabled}
-                        color={color as string}
+                        color={color}
                         variant={variant}
                         size={size}
                     >

@@ -213,7 +213,7 @@ const CircularProgress = forwardRef<HTMLDivElement, CircularProgressProps>(
                 diameter={diameter}
                 strokeWidth={strokeWidth}
                 variant={variant}
-                color={color as string}
+                color={color}
             >
                 <CircularProgressContent ref={contentRef}>
                     {children}
@@ -229,14 +229,14 @@ const CircularProgress = forwardRef<HTMLDivElement, CircularProgressProps>(
                     >
                         <CircularProgressCircleOuter
                             variant={variant}
-                            color={color as string}
+                            color={color}
                             strokeWidth={strokeWidth}
                             cx={diameter / 2}
                             cy={diameter / 2}
                             r={radius}
                         />
                         <CircularProgressCircleInner
-                            color={color as string}
+                            color={color}
                             strokeWidth={strokeWidth}
                             determinate={determinate}
                             circumference={circumference}

@@ -289,7 +289,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
 
         return (
             <InputRoot
-                color={color as string}
+                color={color}
                 textColor={textColor}
                 variant={variant}
                 size={size}

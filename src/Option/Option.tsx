@@ -65,7 +65,7 @@ const Option: FC<OptionProps> = ({
         <OptionWrapper
             role="option"
             aria-selected={isSelected}
-            color={color as string}
+            color={color}
             variant={variant}
             size={size}
             isSelected={isSelected}

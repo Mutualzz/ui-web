@@ -256,7 +256,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 type={type}
                 ref={ref}
                 variant={variant}
-                color={color as string}
+                color={color}
                 size={size}
                 fullWidth={fullWidth}
                 verticalAlign={verticalAlign}
@@ -294,7 +294,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     </DecoratorWrapper>
                 )}
                 <ButtonContent
-                    color={color as string}
+                    color={color}
                     variant={variant}
                     size={size}
                     loading={Boolean(loading)}

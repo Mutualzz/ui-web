@@ -86,7 +86,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps & { marker?: string }>(
             <ListItemRoot
                 ref={ref}
                 nesting={nesting}
-                color={(colorOverride ?? color) as string}
+                color={colorOverride ?? color}
                 variant={variantOverride ?? variant}
                 size={sizeOverride ?? size}
                 orientation={orientation}

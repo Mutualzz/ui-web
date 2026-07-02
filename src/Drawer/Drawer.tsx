@@ -191,7 +191,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
                     <DrawerRoot
                         transparency={transparency}
                         elevation={elevation}
-                        color={color as string}
+                        color={color}
                         size={size}
                         variant={variant}
                         open={open}

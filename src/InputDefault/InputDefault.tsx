@@ -26,10 +26,10 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
         ref,
     ) => (
         <InputRoot
-            color={color as string}
+            color={color}
             textColor={textColor}
             variant={variant}
-            size={size as number}
+            size={size}
             fullWidth={fullWidth}
             error={error}
             disabled={disabled}

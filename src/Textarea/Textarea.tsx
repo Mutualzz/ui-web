@@ -145,7 +145,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
         return (
             <TextareaRoot
-                color={color as string}
+                color={color}
                 textColor={textColor}
                 variant={variant}
                 size={size}
