@@ -1,9 +1,4 @@
-// TODO: Adding todo here so it counts for all components,
-//  start using more css variables, rather than relying mostly
-//  on js for styling. This will allow for more flexibility and easier
-//  theming in the future. For example, instead of hardcoding
-//  colors in the component styles, we can use CSS variables that can be easily overridden by themes or user preferences.
-//  We started using it in Switch component right now, but it would be good to expand this approach to other components as well.
+// TODO: use CSS variables for theming instead of JS-computed styles (started in Switch, expand to other components)
 
 // Components
 
