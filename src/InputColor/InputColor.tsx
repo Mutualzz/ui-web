@@ -203,9 +203,36 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
         }, [colorProp, isControlled, focusedStop]);
 
         const handleNewColor = (
-            newColor: ColorResult | ColorResult[],
+            newColor: ColorResult | ColorResult[] | ColorLike,
             stop?: number,
         ) => {
+            if (typeof newColor === "string") {
+                try {
+                    if (isValidGradient(newColor)) {
+                        const stops = toGradientStops(newColor);
+                        const activeStop = stop ?? focusedStop ?? 0;
+                        setPickerColor(stops);
+                        setColorDirectly(
+                            handleColor(stops[activeStop] ?? stops[0]).hex,
+                        );
+                        setFocusedStop(activeStop);
+                        if (!isControlled) setInternalValue(newColor);
+                        onChange?.(newColor);
+                        return;
+                    }
+
+                    const result = handleColor(newColor);
+                    setColorDirectly(result.hex);
+                    setPickerColor(result.hsva);
+                    if (!isControlled) setInternalValue(newColor);
+                    onChangeResult?.(result);
+                    onChange?.(newColor);
+                    return;
+                } catch {
+                    return;
+                }
+            }
+
             if (Array.isArray(newColor)) {
                 const finalStop = stop ?? 0;
                 setColorDirectly(newColor[finalStop].hex);

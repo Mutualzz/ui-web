@@ -1,5 +1,10 @@
 import type { GradientStop } from "./ColorPicker.types";
-import { clamp } from "@mutualzz/ui-core";
+import {
+    buildPickerGradientStops,
+    clamp,
+    constructLinearGradient,
+    handleColor,
+} from "@mutualzz/ui-core";
 
 const MIN_STOP_GAP_PERCENT = 1;
 
@@ -7,6 +12,34 @@ export const newStopId = () =>
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     globalThis.crypto?.randomUUID?.() ??
     `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+export const createPickerGradientStops = (
+    color?: Parameters<typeof buildPickerGradientStops>[0],
+    existingIds: string[] = [],
+): { angle: number; stops: GradientStop[] } => {
+    const { angle, stops, positions } = buildPickerGradientStops(color);
+
+    return {
+        angle,
+        stops: stops.map((stop, index) => ({
+            ...stop,
+            id: existingIds[index] ?? newStopId(),
+            position: positions[index] ?? 0,
+        })),
+    };
+};
+
+export const gradientStopsToLinearGradient = (
+    rotation: number,
+    stops: GradientStop[],
+) =>
+    constructLinearGradient(
+        rotation,
+        stops.map(({ position, id, ...stop }) => ({
+            color: handleColor(stop).hex,
+            position,
+        })),
+    );
 
 export const sortStops = (arr: GradientStop[]) =>
     [...arr].sort(

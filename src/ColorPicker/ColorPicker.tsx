@@ -8,6 +8,7 @@ import {
 import {
     clamp,
     type ColorLike,
+    computeInsertedStopPosition,
     constructLinearGradient,
     createColor,
     handleColor,
@@ -30,15 +31,15 @@ import { Typography } from "../Typography/Typography";
 import { Box } from "../Box/Box";
 import { Button } from "../Button/Button";
 import { IconButton } from "../IconButton/IconButton";
-import { toGradientStops } from "../InputColor/InputColor.helpers";
 import { Stack } from "../Stack/Stack";
 import { useTheme } from "../useTheme";
 import type { ColorPickerProps, GradientStop } from "./ColorPicker.types";
 import { Pointer } from "./Pointer";
 import { Paper } from "../Paper/Paper";
 import {
-    distributePositions,
+    createPickerGradientStops,
     enforceMinGap,
+    gradientStopsToLinearGradient,
     newStopId,
     sortStops,
     sortStopsStable,
@@ -66,18 +67,7 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         const { theme } = useTheme();
 
         const [stops, setStops] = useState<GradientStop[]>(() => {
-            const baseStops = Array.isArray(color)
-                ? color.map((c) => handleColor(c).hsva)
-                : toGradientStops(color);
-
-            const n = baseStops.length;
-            const withIds = baseStops.map((stop, i) => ({
-                ...stop,
-                id: newStopId(),
-                position: n === 1 ? 0 : (i / (n - 1)) * 100,
-            }));
-
-            return sortStops(withIds);
+            return createPickerGradientStops(color).stops;
         });
 
         const [selectedStopId, setSelectedStopId] = useState<string | null>(
@@ -94,7 +84,9 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             return idx === -1 ? 0 : idx;
         }, [stops, selectedStopId]);
 
-        const [rotation, setRotation] = useState(rotationProp);
+        const [rotation, setRotation] = useState(() =>
+            createPickerGradientStops(color).angle,
+        );
 
         const lastSyncedColor = useRef<typeof color>(color);
         const barRef = useRef<HTMLDivElement>(null);
@@ -110,15 +102,21 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             stopId: string;
         } | null>(null);
 
-        const emitSingleOrGradient = (nextStops: GradientStop[]) => {
-            if (allowGradient) {
+        const emitSingleOrGradient = (
+            nextStops: GradientStop[],
+            stopIndex = currentStop,
+        ) => {
+            if (allowGradient && nextStops.length > 1) {
                 onChange?.(
-                    nextStops.map(({ position, id, ...s }) => handleColor(s)),
-                    currentStop,
+                    gradientStopsToLinearGradient(rotation, nextStops),
+                    stopIndex,
                 );
                 return;
             }
-            onChange?.(handleColor(nextStops[0]));
+
+            const stop = nextStops[stopIndex] ?? nextStops[0];
+            if (!stop) return;
+            onChange?.(handleColor(stop), stopIndex);
         };
 
         const changeStopById = (id: string) => {
@@ -127,10 +125,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
 
             setSelectedStopId(id);
             onStopChange?.(idx);
-            onChange?.(
-                stops.map(({ position, id: _id, ...s }) => handleColor(s)),
-                idx,
-            );
         };
 
         const handlePointerDown = (e: PointerEvent, id: string) => {
@@ -222,27 +216,25 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             if (allowGradient && stops.length > 1) return;
             if (lastSyncedColor.current === color) return;
 
-            const baseStops = Array.isArray(color)
-                ? color.map((c) => handleColor(c).hsva)
-                : toGradientStops(color);
+            const parsed = createPickerGradientStops(
+                color,
+                stops.map((stop) => stop.id),
+            );
 
             setStops((prev) => {
-                const n = baseStops.length;
-                const next = baseStops.map((stop, i) => ({
-                    ...stop,
-                    id: prev[i]?.id ?? newStopId(),
-                    position: n === 1 ? 0 : (i / (n - 1)) * 100,
-                }));
-                const sorted = sortStops(next);
+                const sorted = sortStops(parsed.stops);
 
                 setSelectedStopId((prevId) => {
-                    if (prevId && sorted.some((s) => s.id === prevId))
+                    if (prevId && sorted.some((s) => s.id === prevId)) {
                         return prevId;
+                    }
                     return sorted[0]?.id ?? null;
                 });
 
                 return sorted;
             });
+
+            setRotation(parsed.angle);
 
             lastSyncedColor.current = color;
         }, [color, allowGradient, stops.length]);
@@ -277,29 +269,34 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         ...base,
                         id: addedId,
                         h: (base.h + 40) % 360,
-                        position: 100,
+                        position: computeInsertedStopPosition(
+                            prev,
+                            selectedStopId ?? prev[currentStop]?.id ?? "",
+                        ),
                     },
                 ];
 
-                const distributed = distributePositions(
+                const nextPosition = enforceMinGap(
                     nextRaw,
-                ) as GradientStop[];
-
-                const distributedWithIds: GradientStop[] = distributed.map(
-                    (s, i) => ({
-                        ...s,
-                        id: nextRaw[i]?.id ?? s.id ?? newStopId(),
-                    }),
+                    addedId,
+                    nextRaw[nextRaw.length - 1]?.position ?? 100,
                 );
 
-                const sorted = sortStops(distributedWithIds);
+                const next = nextRaw.map((stop) =>
+                    stop.id === addedId
+                        ? { ...stop, position: nextPosition }
+                        : stop,
+                );
+
+                const sorted = sortStops(next);
                 const newIndex = sorted.findIndex((s) => s.id === addedId);
 
-                onChange?.(
-                    sorted.map(({ position, id, ...s }) => handleColor(s)),
+                setSelectedStopId(addedId);
+                onStopChange?.(newIndex === -1 ? sorted.length - 1 : newIndex);
+                emitSingleOrGradient(
+                    sorted,
                     newIndex === -1 ? sorted.length - 1 : newIndex,
                 );
-                onStopChange?.(newIndex === -1 ? sorted.length - 1 : newIndex);
 
                 return sorted;
             });
@@ -310,11 +307,10 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
 
             setStops((prev) => {
                 const next = prev.filter((_, i) => i !== currentStop);
-                const distributed = distributePositions(next) as GradientStop[];
-                const sorted = sortStops(distributed);
+                const sorted = sortStops(next);
 
-                onChange?.(
-                    sorted.map(({ position, id, ...s }) => handleColor(s)),
+                emitSingleOrGradient(
+                    sorted,
                     Math.min(currentStop, sorted.length - 1),
                 );
 
@@ -333,17 +329,17 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             if (Array.isArray(newRotation)) return;
             setRotation(newRotation);
             onRotationChange?.(newRotation);
+            if (allowGradient && stops.length > 1) {
+                onChange?.(
+                    gradientStopsToLinearGradient(newRotation, stops),
+                    currentStop,
+                );
+            }
         };
 
         const previewColor =
             stops.length > 1
-                ? constructLinearGradient(
-                      rotation,
-                      stops.map(({ position, id, ...stop }) => ({
-                          color: handleColor(stop).hex,
-                          position,
-                      })),
-                  )
+                ? gradientStopsToLinearGradient(rotation, stops)
                 : hsvaToHex(hsva);
 
         const getBorderColor = (stop: HsvaColor) =>
@@ -367,7 +363,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                         width="100%"
                         height="2rem"
                         borderRadius={10}
-                        p="1.25rem"
                         onPointerMove={handlePointerMove}
                         onPointerUp={endDrag}
                         onPointerCancel={endDrag}
@@ -458,12 +453,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 <Saturation
                     hsva={hsva}
                     radius="8px 8px 0 0"
-                    css={{
-                        width: "auto",
-                        height: 150,
-                        minWidth: 120,
-                        borderBottom: "12px solid #000",
-                    }}
                     pointer={({ left, top }) => (
                         <Pointer css={{ left, top }} color={hsvaToHex(hsva)} />
                     )}

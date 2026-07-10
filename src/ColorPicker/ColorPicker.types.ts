@@ -10,7 +10,7 @@ export interface ColorPickerProps extends Omit<
 > {
     color?: ColorLike | HsvaColor | (ColorLike | HsvaColor)[];
 
-    onChange?: (color: ColorResult | ColorResult[], stop?: number) => void;
+    onChange?: (color: ColorResult | ColorResult[] | ColorLike, stop?: number) => void;
     currentStop?: number;
     onStopChange?: (stop: number) => void;
 
