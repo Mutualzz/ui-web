@@ -9,6 +9,7 @@ import {
     useEffect,
     useRef,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { resolveButtonContainerStyles } from "../Button/Button.helpers";
 import type { ButtonProps } from "../Button/Button.types";
 import { Portal } from "../Portal/Portal";
@@ -229,6 +230,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         },
         ref,
     ) => {
+        const { t } = useTranslation("common");
         const modalRef = useRef<HTMLDivElement>(null);
         const lastFocusedElementRef = useRef<Element | null>(null);
 
@@ -307,7 +309,9 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                                     variant="plain"
                                     layout={layout}
                                     onClick={onClose}
-                                    aria-label="Close modal"
+                                    aria-label={t("a11y.closeModal", {
+                                        defaultValue: "Close modal",
+                                    })}
                                 />
                             ))}
                         <ModalContent height={height} layout={layout}>

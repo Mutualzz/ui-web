@@ -9,14 +9,17 @@ import {
     type Variant,
 } from "@mutualzz/ui-core";
 import {
+    Children,
     type ChangeEvent,
     type FocusEvent,
     forwardRef,
+    isValidElement,
     useCallback,
     useEffect,
     useRef,
     useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { Portal } from "../Portal/Portal";
 import { SelectContext } from "./Select.context";
@@ -203,7 +206,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             disabled = false,
             required = false,
             autoFocus = false,
-            placeholder = "Select an option",
+            placeholder,
             value,
             defaultValue,
             onChange,
@@ -216,6 +219,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         },
         ref,
     ) => {
+        const { t } = useTranslation("common");
+        const resolvedPlaceholder =
+            placeholder ??
+            t("select.placeholder", { defaultValue: "Select an option" });
         const selectRef = useRef<HTMLDivElement>(null);
         const selectContentRef = useRef<HTMLDivElement>(null);
 
@@ -448,25 +455,30 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         );
 
         const getSelectedOptionContent = () => {
-            const opts = Array.isArray(children) ? children : [children];
+            // Flatten mapped/fragment children so Option values resolve correctly.
+            const opts = Children.toArray(children).filter(isValidElement) as {
+                props: { value?: unknown; children?: React.ReactNode; label?: React.ReactNode };
+            }[];
+
             if (multiple && Array.isArray(currentValue)) {
-                // For multiple selection, return array of children
                 return opts
                     .filter(
-                        (opt: any) =>
-                            opt?.props?.value &&
-                            currentValue.includes(opt.props.value),
+                        (opt) =>
+                            opt.props.value != null &&
+                            currentValue.includes(opt.props.value as never),
                     )
-                    .map((opt: any) => opt.props.children);
+                    .map((opt) => opt.props.children ?? opt.props.label);
             }
 
             const selected = opts.find(
-                (opt: any) => opt?.props?.value === currentValue,
+                (opt) => opt.props.value === currentValue,
             );
-            return selected ? selected.props.children : null;
+            return selected
+                ? (selected.props.children ?? selected.props.label ?? null)
+                : null;
         };
 
-        const displayValue = getSelectedOptionContent() ?? placeholder;
+        const displayValue = getSelectedOptionContent() ?? resolvedPlaceholder;
         const hasValue = multiple
             ? Array.isArray(currentValue) && currentValue.length > 0
             : currentValue !== undefined &&
@@ -541,7 +553,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     )}
 
                     <SelectPlaceholder variant={variant} color={color}>
-                        {hasValue ? displayValue : placeholder}
+                        {hasValue ? displayValue : resolvedPlaceholder}
                     </SelectPlaceholder>
 
                     <DecoratorWrapper position="end">

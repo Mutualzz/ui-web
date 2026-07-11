@@ -1,4 +1,3 @@
-import type { CSSObject } from "@emotion/react";
 import {
     autoUpdate,
     flip,
@@ -28,12 +27,17 @@ import type { TooltipProps } from "./Tooltip.types";
 
 const TooltipRoot = styled("div")<Omit<TooltipProps, "children">>(
     ({ theme }) => ({
-        position: "absolute",
+        position: "fixed",
+        top: 0,
+        left: 0,
         zIndex: theme.zIndex.tooltip,
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
+        maxWidth: "calc(100vw - 16px)",
+        width: "max-content",
+        pointerEvents: "auto",
     }),
 );
 
@@ -94,14 +98,23 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             open,
             onOpenChange: setOpen,
             placement,
+            // Always fixed so tips never expand scroll containers / document.
+            strategy: "fixed",
             whileElementsMounted: (r, f, u) =>
                 autoUpdate(r, f, u, {
                     animationFrame: true,
                 }),
             middleware: [
                 offset(offsetProp ?? 8),
-                shift(shiftProp),
-                flip(flipProp),
+                flip({
+                    padding: 8,
+                    fallbackAxisSideDirection: "start",
+                    ...flipProp,
+                }),
+                shift({
+                    padding: 8,
+                    ...shiftProp,
+                }),
             ],
         });
 
@@ -135,7 +148,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 ref={refs.setFloating}
                 id={tipId}
                 role="tooltip"
-                css={floatingStyles as CSSObject}
+                // Inline style required: floating position updates every frame.
+                style={floatingStyles}
+                css={{
+                    visibility: open ? "visible" : "hidden",
+                }}
                 {...getFloatingProps(props)}
             >
                 <TooltipContent>{label ?? title}</TooltipContent>
@@ -148,7 +165,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 css={{
                     display: "contents",
                 }}
-                {...props}
             >
                 {child &&
                     cloneElement(child, {

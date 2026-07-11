@@ -11,6 +11,7 @@ import {
     constructLinearGradient,
     createColor,
     extractColors,
+    extractGradientInfo,
     formatColor,
     handleColor,
     isValidGradient,
@@ -130,7 +131,13 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             defaultValue ?? randomColor("hex"),
         );
 
-        const [gradientRotation, setGradientRotation] = useState(90);
+        const [gradientRotation, setGradientRotation] = useState(() => {
+            const initial = colorProp ?? defaultValue;
+            if (typeof initial === "string" && isValidGradient(initial)) {
+                return extractGradientInfo(initial)?.angle ?? 90;
+            }
+            return 90;
+        });
         const [focusedStop, setFocusedStop] = useState(0);
 
         const currentValue = isControlled
@@ -152,6 +159,22 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             },
         );
 
+        const colorForPicker =
+            isControlled &&
+            typeof colorProp === "string" &&
+            isValidGradient(colorProp)
+                ? colorProp
+                : typeof internalValue === "string" &&
+                    isValidGradient(internalValue)
+                  ? internalValue
+                  : pickerColor;
+
+        const syncGradientAngle = (value: ColorLike) => {
+            if (typeof value !== "string" || !isValidGradient(value)) return;
+            const angle = extractGradientInfo(value)?.angle;
+            if (angle != null) setGradientRotation(angle);
+        };
+
         const {
             inputValue,
             color: validatedColor,
@@ -172,6 +195,13 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             if (!isControlled) return;
 
             try {
+                if (
+                    typeof colorProp === "string" &&
+                    isValidGradient(colorProp)
+                ) {
+                    syncGradientAngle(colorProp);
+                }
+
                 if (Array.isArray(currentValue)) {
                     const stop = focusedStop ?? 0;
                     const hex = handleColor(currentValue[stop]).hex;
@@ -191,6 +221,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
                     setColorDirectly(hex);
                     setPickerColor(stops.map((c) => handleColor(c).hsva));
+                    syncGradientAngle(currentValue);
                     return;
                 }
 
@@ -216,6 +247,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                             handleColor(stops[activeStop] ?? stops[0]).hex,
                         );
                         setFocusedStop(activeStop);
+                        syncGradientAngle(newColor);
                         if (!isControlled) setInternalValue(newColor);
                         onChange?.(newColor);
                         return;
@@ -291,13 +323,21 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             let newColor = randomColor("hex");
             if (typeof pickerColor === "string" && isValidGradient(pickerColor))
                 newColor = randomColor("linear-gradient");
+            if (allowGradient && Array.isArray(pickerColor) && pickerColor.length > 1)
+                newColor = randomColor("linear-gradient");
             setColorDirectly(newColor);
 
-            const colorResult = handleColor(newColor);
+            if (isValidGradient(newColor)) {
+                const stops = toGradientStops(newColor);
+                setPickerColor(stops);
+                syncGradientAngle(newColor);
+            } else {
+                const colorResult = handleColor(newColor);
+                setPickerColor(colorResult.hsva);
+                onChangeResult?.(colorResult);
+            }
 
-            setPickerColor(colorResult.hsva);
             if (!isControlled) setInternalValue(newColor);
-            onChangeResult?.(colorResult);
             onChange?.(newColor);
         };
 
@@ -366,7 +406,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                                 }}
                             >
                                 <ColorPicker
-                                    color={pickerColor}
+                                    color={colorForPicker}
                                     onChange={handleNewColor}
                                     allowGradient={allowGradient}
                                     rotation={gradientRotation}

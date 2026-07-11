@@ -18,6 +18,9 @@ export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
                 "html, body": {
                     margin: 0,
                     padding: 0,
+                    width: "100%",
+                    height: "100%",
+                    overflow: "hidden",
 
                     fontFamily: theme.typography.fontFamily,
                     fontSize: theme.typography.levels["body-md"].fontSize,

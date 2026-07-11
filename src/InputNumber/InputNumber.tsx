@@ -13,6 +13,7 @@ import {
     type FocusEvent,
     type KeyboardEvent,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { InputBase } from "../InputBase/InputBase";
 import { baseSizeMap } from "../InputBase/InputBase.helpers";
 import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
@@ -27,6 +28,7 @@ const SpinnerButtons = ({
     disabled,
     size = "md",
 }: InputNumberProps) => {
+    const { t } = useTranslation("common");
     const { theme } = useTheme();
 
     const { resolvedSize } = resolveResponsiveMerge(
@@ -59,7 +61,9 @@ const SpinnerButtons = ({
                 type="button"
                 onClick={onIncrement}
                 disabled={disabled}
-                aria-label="Increment"
+                aria-label={t("a11y.increment", {
+                    defaultValue: "Increment",
+                })}
                 css={{
                     all: "unset",
                     display: "flex",
@@ -96,7 +100,9 @@ const SpinnerButtons = ({
                 type="button"
                 onClick={onDecrement}
                 disabled={disabled}
-                aria-label="Decrement"
+                aria-label={t("a11y.decrement", {
+                    defaultValue: "Decrement",
+                })}
                 css={{
                     all: "unset",
                     display: "flex",

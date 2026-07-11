@@ -13,6 +13,7 @@ import {
     createColor,
     handleColor,
     type HsvaColor,
+    isValidGradient,
     randomColor,
     snap,
 } from "@mutualzz/ui-core";
@@ -87,6 +88,8 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         const [rotation, setRotation] = useState(() =>
             createPickerGradientStops(color).angle,
         );
+        const rotationRef = useRef(rotation);
+        rotationRef.current = rotation;
 
         const lastSyncedColor = useRef<typeof color>(color);
         const barRef = useRef<HTMLDivElement>(null);
@@ -108,7 +111,10 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         ) => {
             if (allowGradient && nextStops.length > 1) {
                 onChange?.(
-                    gradientStopsToLinearGradient(rotation, nextStops),
+                    gradientStopsToLinearGradient(
+                        rotationRef.current,
+                        nextStops,
+                    ),
                     stopIndex,
                 );
                 return;
@@ -213,7 +219,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         };
 
         useEffect(() => {
-            if (allowGradient && stops.length > 1) return;
             if (lastSyncedColor.current === color) return;
 
             const parsed = createPickerGradientStops(
@@ -221,7 +226,16 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 stops.map((stop) => stop.id),
             );
 
-            setStops((prev) => {
+            if (typeof color === "string" && isValidGradient(color)) {
+                setRotation(parsed.angle);
+            }
+
+            if (allowGradient && stops.length > 1) {
+                lastSyncedColor.current = color;
+                return;
+            }
+
+            setStops(() => {
                 const sorted = sortStops(parsed.stops);
 
                 setSelectedStopId((prevId) => {
@@ -234,10 +248,29 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                 return sorted;
             });
 
-            setRotation(parsed.angle);
-
             lastSyncedColor.current = color;
         }, [color, allowGradient, stops.length]);
+
+        useEffect(() => {
+            setRotation(rotationProp);
+            rotationRef.current = rotationProp;
+        }, [rotationProp]);
+
+        const handleRotationChange = (
+            _: any,
+            newRotation: number | number[],
+        ) => {
+            if (Array.isArray(newRotation)) return;
+            setRotation(newRotation);
+            rotationRef.current = newRotation;
+            onRotationChange?.(newRotation);
+            if (allowGradient && stops.length > 1) {
+                onChange?.(
+                    gradientStopsToLinearGradient(newRotation, stops),
+                    currentStop,
+                );
+            }
+        };
 
         const hsva = useMemo(
             () =>
@@ -316,25 +349,6 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
 
                 return sorted;
             });
-        };
-
-        useEffect(() => {
-            setRotation(rotationProp);
-        }, [rotationProp]);
-
-        const handleRotationChange = (
-            _: any,
-            newRotation: number | number[],
-        ) => {
-            if (Array.isArray(newRotation)) return;
-            setRotation(newRotation);
-            onRotationChange?.(newRotation);
-            if (allowGradient && stops.length > 1) {
-                onChange?.(
-                    gradientStopsToLinearGradient(newRotation, stops),
-                    currentStop,
-                );
-            }
         };
 
         const previewColor =
