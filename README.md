@@ -1,47 +1,61 @@
-# Mutualzz UI
+# `@mutualzz/ui-web`
 
-[Mutualzz UI](https://mutualzz.com/ui) is built for React and with [Emotion](https://emotion.sh/docs/introduction). It takes inspiration from [MUI Joy](https://mui.com/joy-ui/getting-started/) and [MUI Material](https://mui.com/material-ui/getting-started/)
+React + Emotion component library for the Mutualzz **desktop / web** app.
+
+Built with [Emotion](https://emotion.sh/), sharing tokens and helpers with [`@mutualzz/ui-core`](../ui-core). Themed surfaces and controls are meant to feel consistent with Mutualzz across platforms (see also [`@mutualzz/ui-native`](../ui-native)).
+
+Docs site: [mutualzz.com/ui](https://mutualzz.com/ui)
 
 ## Features
 
-- Full fledged theming system (For now it is very basic, but there are plans to expand it further)
-- Components that are customizable to your liking with custom color support (if the component supports color)
+- Theme provider + `useTheme` (colors, typography, elevation)
+- Customizable components with theme and per-instance color support
+- Layout primitives (`Box`, `Stack`) and common inputs / feedback / overlays
 
-## Components
+## Package layout
 
-### Inputs
+| Package | Role |
+|---|---|
+| `@mutualzz/ui-core` | Shared theme tokens, color utils, types |
+| `@mutualzz/ui-web` | Web / Electron React components (this package) |
+| `@mutualzz/ui-native` | React Native components for mobile |
 
-- [Button](https://mutualzz.com/ui/inputs/button) ✅ (Implemented)
-- [Button Group](https://mutualzz.com/ui/inputs/button-group) ✅ (Implemented)
-- [Checkbox](https://mutualzz.com/ui/inputs/checkbox) ✅ (Implemented)
-- [Input](https://mutualzz.com/ui/inputs/input) ✅ (Implemented)
-- [Markdown Input](https://mutualzz.com/ui/inputs/markdown-input) ✅ (Implemented) **SIDENOTE:** This component isn’t currently part of the UI libary, but we may integrate it into the library instead of keeping it in Mutualzz later.
-- [Radio Button](https://mutualzz.com/ui/inputs/radio-button) ✅ (Implemented)
-- [Slider](https://mutualzz.com/ui/inputs/slider) ✅ (Implemented)
-- [Textarea](https://mutualzz.com/ui/inputs/textarea) ✅ (Implemented)
+## Components (overview)
 
-### Data Display
+**Inputs** — Button, ButtonGroup, IconButton, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch, Slider, Select / Option, Input (and Default / Password / Number / Color / Root variants), Textarea
 
-- [Avatar](https://mutualzz.com/ui/data-display/avatar) ✅ (Implemented)
-- [Divider](https://mutualzz.com/ui/data-display/divider) ✅ (Implemented)
-- [Markdown Renderer](https://mutualzz.com/ui/data-display/markdown-renderer) ✅ (Implemented) **SIDENOTE:** Same situation as Markdown Input
-- [List](https://mutualzz.com/ui/data-display/list) ✅ (Implemented)
-- [Typography](https://mutualzz.com/ui/data-display/typography) ✅ (Implemented)
+**Data display** — Avatar, Divider, List / ListItem / ListItemButton, Typography, Link
 
-### Feedback
+**Feedback** — CircularProgress, LinearProgress, Tooltip
 
-- [Circular Progress](https://mutualzz.com/ui/feedback/circular-progress) ✅ (Implemented)
-- [Linear Progress](https://mutualzz.com/ui/feedback/linear-progress) ✅ (Implemented)
+**Surfaces & overlay** — Paper, Modal, Drawer, Popover, Portal
 
-### Surfaces
+**Layout** — Box, Stack
 
-- [Paper](https://mutualzz.com/ui/surfaces/paper) ✅ (Implemented)
+**Theming** — ThemeProvider, CssBaseline, useTheme
 
-### Layout
+Markdown input/renderer live in the Mutualzz app today, not in this package.
 
-- Box ✅ (Implemented)
-- Stack ✅ (Implemented)
+## Development
 
-## Authors
+From the monorepo root:
 
-- [Azrael](https://www.github.com/mateie)
+```bash
+pnpm --filter @mutualzz/ui-web build
+pnpm --filter @mutualzz/ui-web dev
+pnpm --filter @mutualzz/ui-web typecheck
+```
+
+Peer dependencies include React, Emotion (`@emotion/react`, `@emotion/styled`), and Floating UI where overlays need it — see `package.json`.
+
+## Authors & credit
+
+- [Azrael](https://github.com/mateie) — original author
+- Community contributors are credited via git authorship, PR attribution, and changelogs (see [`CONTRIBUTING.md`](./CONTRIBUTING.md))
+
+## License & contributions
+
+Source is available for transparency and community contributions. Contributors get credit for merged work.
+
+- [`LICENSE`](./LICENSE) — no unofficial redistribution / competing hosted services without permission
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — how to fork, open PRs, and how credit works
