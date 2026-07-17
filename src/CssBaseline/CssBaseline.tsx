@@ -1,5 +1,10 @@
-import { Global } from "@emotion/react";
-import { formatColor } from "@mutualzz/ui-core";
+import { Global, type CSSObject } from "@emotion/react";
+import {
+    formatColor,
+    resolveWallpaperDimOverlay,
+    resolveWallpaperImageFilter,
+    resolveWallpaperScrim,
+} from "@mutualzz/ui-core";
 import { useTheme } from "../useTheme";
 
 interface CssBaselineProps {
@@ -8,75 +13,119 @@ interface CssBaselineProps {
 
 export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
     const { theme } = useTheme();
+    const backgroundImageUrl = theme.backgroundImageUrl;
+    const dim = backgroundImageUrl
+        ? resolveWallpaperDimOverlay(theme)
+        : null;
+    const scrim = backgroundImageUrl ? resolveWallpaperScrim(theme) : null;
+    const imageFilter = backgroundImageUrl
+        ? resolveWallpaperImageFilter(theme)
+        : null;
 
-    return (
-        <Global
-            styles={{
-                "*, *::before, *::after": {
-                    boxSizing: "border-box",
-                },
-                "html, body": {
-                    margin: 0,
-                    padding: 0,
-                    width: "100%",
-                    height: "100%",
-                    overflow: "hidden",
+    const styles: CSSObject = {
+        "*, *::before, *::after": {
+            boxSizing: "border-box",
+        },
+        html: {
+            width: "100%",
+            height: "100%",
+            background: theme.colors.background,
+        },
 
-                    fontFamily: theme.typography.fontFamily,
-                    fontSize: theme.typography.levels["body-md"].fontSize,
-                    lineHeight: theme.typography.levels["body-md"].lineHeight,
-                    background: theme.colors.background,
-                    color: theme.typography.colors.primary,
-                },
+        body: {
+            margin: 0,
+            padding: 0,
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            position: "relative",
+            isolation: "isolate",
 
-                pre: {
-                    margin: 0,
-                    padding: 0,
-                },
+            fontFamily: theme.typography.fontFamily,
+            fontSize: theme.typography.levels["body-md"].fontSize,
+            lineHeight: theme.typography.levels["body-md"].lineHeight,
+            background: "transparent",
+            color: theme.typography.colors.primary,
+        },
 
-                "img, video": {
-                    maxWidth: "100%",
-                    height: "auto",
-                    display: "block",
-                },
+        "#app": {
+            position: "relative",
+            zIndex: 0,
+            height: "100%",
+        },
 
-                svg: {
-                    flexShrink: 0,
-                },
+        pre: {
+            margin: 0,
+            padding: 0,
+        },
 
-                a: {
-                    textDecoration: "none",
-                    color: "inherit",
-                },
+        "img, video": {
+            maxWidth: "100%",
+            height: "auto",
+            display: "block",
+        },
 
-                "button, input, textarea, select": {
-                    fontFamily: "inherit",
-                },
+        svg: {
+            flexShrink: 0,
+        },
 
-                ...(adaptiveScrollbar && {
-                    "*": {
-                        scrollbarWidth: "thin",
-                        scrollbarColor: `${theme.colors.primary} transparent`,
-                    },
-                    "::-webkit-scrollbar": {
-                        width: 8,
-                        height: 8,
-                    },
-                    "::-webkit-scrollbar-thumb": {
-                        background: theme.colors.neutral,
-                        borderRadius: 4,
-                    },
-                    "::-webkit-scrollbar-track": {
-                        background: theme.colors.primary,
-                    },
-                    "::-webkit-scrollbar-thumb:hover": {
-                        background: formatColor(theme.colors.neutral, {
-                            lighten: 20,
-                            format: "hexa",
-                        }),
-                    },
-                }),
-            }}
-        />
-    );
+        a: {
+            textDecoration: "none",
+            color: "inherit",
+        },
+
+        "button, input, textarea, select": {
+            fontFamily: "inherit",
+        },
+    };
+
+    if (backgroundImageUrl && dim && scrim && imageFilter) {
+        styles["body::before"] = {
+            content: '""',
+            position: "fixed",
+            inset: 0,
+            zIndex: -2,
+            pointerEvents: "none",
+            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundAttachment: "fixed",
+            filter: imageFilter,
+        };
+        styles["body::after"] = {
+            content: '""',
+            position: "fixed",
+            inset: 0,
+            zIndex: -1,
+            pointerEvents: "none",
+            backgroundImage: `linear-gradient(${dim}, ${dim}), linear-gradient(${scrim}, ${scrim})`,
+        };
+    }
+
+    if (adaptiveScrollbar) {
+        styles["*"] = {
+            scrollbarWidth: "thin",
+            scrollbarColor: `${theme.colors.primary} transparent`,
+        };
+        styles["::-webkit-scrollbar"] = {
+            width: 8,
+            height: 8,
+        };
+        styles["::-webkit-scrollbar-thumb"] = {
+            background: theme.colors.neutral,
+            borderRadius: 4,
+        };
+        styles["::-webkit-scrollbar-track"] = {
+            background: theme.colors.primary,
+        };
+        styles["::-webkit-scrollbar-thumb:hover"] = {
+            background: formatColor(theme.colors.neutral, {
+                lighten: 20,
+                format: "hexa",
+            }),
+        };
+    }
+
+    return <Global styles={styles} />;
 };
