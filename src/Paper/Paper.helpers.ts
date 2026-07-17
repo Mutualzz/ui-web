@@ -7,9 +7,11 @@ import {
     isValidGradient,
     resolveColor,
     resolveTypographyColor,
+    resolveWallpaperSurfaceStyles,
     type Color,
     type ColorLike,
     type TypographyColor,
+    type WallpaperSurfaceRole,
 } from "@mutualzz/ui-core";
 import type { PaperVariant } from "./Paper.types";
 
@@ -20,10 +22,15 @@ export const resolvePaperStyles = (
     variant: PaperVariant,
     elevation: number,
     transparency: number,
+    surfaceRole?: WallpaperSurfaceRole,
 ) => {
     const { colors } = theme;
-    const resolvedColor = resolveColor(color, theme);
+    const surface =
+        surfaceRole && theme.backgroundImageUrl
+            ? resolveWallpaperSurfaceStyles(theme, surfaceRole)
+            : null;
 
+    const resolvedColor = resolveColor(color, theme);
     const resolvedTextColor = resolveTypographyColor(textColor, theme);
 
     const solidTextColor = formatColor(theme.typography.colors.primary, {
@@ -58,31 +65,39 @@ export const resolvePaperStyles = (
               background: elevatedColor,
           };
 
+    const transparentPanel = { background: "transparent" };
+
+    const applySurface = (base: Record<string, unknown>) =>
+        surface ? { ...base, ...surface } : base;
+
+    const elevationStyles = surface
+        ? surface
+        : {
+              ...elevatedBackgroundStyles,
+              boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
+          };
+
+    const panelBackground =
+        elevation === 0 ? transparentPanel : elevatedBackgroundStyles;
+
     return {
-        elevation: {
-            ...elevatedBackgroundStyles,
-            boxShadow: `0 ${2 + elevation}px ${8 + elevation * 2}px rgba(0,0,0,${0.1 + elevation * 0.05})`,
-        },
-        solid: {
+        elevation: elevationStyles,
+        solid: applySurface({
             background: formatColor(elevatedColor),
             color: solidTextColor,
             border: "none",
-        },
-        outlined: {
-            ...(elevation === 0
-                ? { background: "transparent" }
-                : elevatedBackgroundStyles),
+        }),
+        outlined: applySurface({
+            ...panelBackground,
             border: `1px solid ${formatColor(resolvedColor, { alpha: 20, format: "hexa" })}`,
             color: resolvedTextColor,
-        },
-        plain: {
-            ...(elevation === 0
-                ? { background: "transparent" }
-                : elevatedBackgroundStyles),
+        }),
+        plain: applySurface({
+            ...panelBackground,
             border: "none",
             color: resolvedTextColor,
-        },
-        soft: {
+        }),
+        soft: applySurface({
             background: formatColor(
                 elevation === 0
                     ? resolvedColor
@@ -94,6 +109,6 @@ export const resolvePaperStyles = (
             ),
             border: "none",
             color: resolvedTextColor,
-        },
+        }),
     };
 };
