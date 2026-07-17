@@ -1,60 +1,60 @@
 {
-    "bugs": {
-        "url": "https://github.com/Mutualzz/ui/issues"
-    },
-    "dependencies": {
-        "@mutualzz/color-picker": "workspace:*",
-        "@mutualzz/ui-core": "workspace:*",
-        "color": "^5.0.3",
-        "react-best-gradient-color-picker": "^3.0.14",
-        "react-icons": "^5.6.0"
-    },
-    "devDependencies": {
-        "@mutualzz/eslint-config": "workspace:*",
-        "@types/react": "19.2.10",
-        "@types/react-dom": "^19.2.3",
-        "bunchee": "^6.10.0",
-        "csstype": "^3.2.3",
-        "eslint": "^10.4.1",
-        "ts-jest": "^29.4.11",
-        "tsc-alias": "^1.8.17"
-    },
-    "exports": {
-        ".": {
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.cjs",
-            "types": "./dist/index.d.ts"
-        }
-    },
-    "files": [
-        "dist/**",
-        "dist"
-    ],
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
-    "name": "@mutualzz/ui-web",
-    "peerDependencies": {
-        "@emotion/react": "11.14.0",
-        "@emotion/styled": "11.14.1",
-        "@floating-ui/react": "0.27.16",
-        "@types/react": "19.2.10",
-        "react": "19.2.0",
-        "react-dom": "19.2.0",
-        "react-i18next": "^17.0.9"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Mutualzz/ui.git"
-    },
-    "scripts": {
-        "build": "pnpm typecheck && bunchee",
-        "dev": "bunchee --watch",
-        "test": "jest",
-        "test:coverage": "jest --coverage",
-        "test:watch": "jest --watch",
-        "typecheck": "tsc --noEmit",
-        "lint": "eslint ."
-    },
-    "types": "./dist/index.d.ts",
-    "version": "5.0.0"
+  "bugs": {
+    "url": "https://github.com/Mutualzz/ui/issues"
+  },
+  "dependencies": {
+    "@mutualzz/color-picker": "workspace:*",
+    "@mutualzz/ui-core": "workspace:*",
+    "color": "^5.0.3",
+    "react-best-gradient-color-picker": "^3.0.14",
+    "react-icons": "^5.6.0"
+  },
+  "devDependencies": {
+    "@mutualzz/eslint-config": "workspace:*",
+    "@types/react": "19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "bunchee": "^6.10.0",
+    "csstype": "^3.2.3",
+    "eslint": "^10.4.1",
+    "ts-jest": "^29.4.11",
+    "tsc-alias": "^1.8.17"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**",
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "name": "@mutualzz/ui-web",
+  "peerDependencies": {
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@floating-ui/react": "0.27.16",
+    "@types/react": "19.2.10",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-i18next": "^17.0.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mutualzz/ui.git"
+  },
+  "scripts": {
+    "build": "pnpm typecheck && bunchee",
+    "dev": "bunchee --watch",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "types": "./dist/index.d.ts",
+  "version": "5.1.0"
 }
