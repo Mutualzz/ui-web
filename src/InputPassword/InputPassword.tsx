@@ -139,7 +139,7 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                     {...props}
                     ref={ref}
                     type={visible ? "text" : "password"}
-                    size={size as any}
+                    size={size}
                     fullWidth={fullWidth}
                 />
 

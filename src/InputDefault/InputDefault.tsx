@@ -43,7 +43,7 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
 
             <InputBase
                 {...props}
-                size={size as any}
+                size={size}
                 fullWidth={fullWidth}
                 ref={ref}
                 type={type}

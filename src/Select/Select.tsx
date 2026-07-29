@@ -533,8 +533,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         ref={ref}
                         value={
                             multiple
-                                ? (currentValue as string[])
-                                : (currentValue as string)
+                                ? (currentValue)
+                                : (currentValue)
                         }
                         onChange={handleChange}
                         onFocus={handleFocus}

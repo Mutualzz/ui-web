@@ -2,9 +2,9 @@ import {
     type Color,
     type ColorLike,
     type Responsive,
+    type SurfaceRole,
     type TypographyColor,
     type Variant,
-    type WallpaperSurfaceRole,
 } from "@mutualzz/ui-core";
 import type { BoxProps } from "../Box/Box.types";
 
@@ -40,7 +40,5 @@ export interface PaperProps extends Omit<BoxProps, "color"> {
      */
     elevation?: Responsive<number>;
 
-    transparency?: Responsive<number>;
-
-    surfaceRole?: WallpaperSurfaceRole;
+    surfaceRole?: Responsive<SurfaceRole>;
 }

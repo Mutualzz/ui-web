@@ -145,7 +145,7 @@ const ModalCloseButton = styled(IconButton)<
                 lineHeight: 1,
                 fontWeight: "bold",
             },
-        }) as CSSObject,
+        }),
 );
 
 ModalCloseButton.displayName = "ModalCloseButton";
