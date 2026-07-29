@@ -2,18 +2,19 @@ import type { Theme } from "@emotion/react";
 import {
     createColor,
     dynamicElevation,
-    flipNumber,
     formatColor,
     isValidGradient,
     resolveColor,
+    resolvePanelFill,
     resolveTypographyColor,
     resolveWallpaperSurfaceStyles,
+    isWallpaperSurfaceRole,
     type Color,
     type ColorLike,
+    type PaperVariant,
+    type SurfaceRole,
     type TypographyColor,
-    type WallpaperSurfaceRole,
 } from "@mutualzz/ui-core";
-import type { PaperVariant } from "./Paper.types";
 
 export const resolvePaperStyles = (
     theme: Theme,
@@ -21,12 +22,13 @@ export const resolvePaperStyles = (
     textColor: TypographyColor | ColorLike,
     variant: PaperVariant,
     elevation: number,
-    transparency: number,
-    surfaceRole?: WallpaperSurfaceRole,
+    surfaceRole?: SurfaceRole,
 ) => {
     const { colors } = theme;
     const surface =
-        surfaceRole && theme.backgroundImageUrl
+        surfaceRole &&
+        theme.backgroundImageUrl &&
+        isWallpaperSurfaceRole(surfaceRole)
             ? resolveWallpaperSurfaceStyles(theme, surfaceRole)
             : null;
 
@@ -43,29 +45,13 @@ export const resolvePaperStyles = (
         elevation,
     );
 
-    const isGradient = isValidGradient(elevatedColor);
-
-    const gradientLayer = isGradient
-        ? formatColor(elevatedColor, {
-              alpha: flipNumber(transparency),
-              format: "hexa",
-          })
-        : null;
-
-    const opaqueBase = formatColor(colors.background, { format: "hexa" });
-
-    const elevatedBackgroundStyles = isGradient
-        ? {
-              backgroundColor: opaqueBase,
-              backgroundImage: gradientLayer,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-          }
-        : {
-              background: elevatedColor,
-          };
-
-    const transparentPanel = { background: "transparent" };
+    const elevatedBackgroundStyles = resolvePanelFill(
+        theme,
+        elevatedColor,
+        variant === "elevation" ? "elevation" : variant,
+        elevation,
+        surfaceRole,
+    );
 
     const applySurface = (base: Record<string, unknown>) =>
         surface ? { ...base, ...surface } : base;
@@ -78,7 +64,17 @@ export const resolvePaperStyles = (
           };
 
     const panelBackground =
-        elevation === 0 ? transparentPanel : elevatedBackgroundStyles;
+        elevation === 0 && (variant === "outlined" || variant === "plain")
+            ? { background: "transparent" }
+            : elevatedBackgroundStyles;
+
+    const softFill = formatColor(
+        elevation === 0 ? resolvedColor : elevatedColor,
+        {
+            alpha: 10,
+            format: "hexa",
+        },
+    );
 
     return {
         elevation: elevationStyles,
@@ -98,15 +94,7 @@ export const resolvePaperStyles = (
             color: resolvedTextColor,
         }),
         soft: applySurface({
-            background: formatColor(
-                elevation === 0
-                    ? resolvedColor
-                    : (gradientLayer ?? resolvedColor),
-                {
-                    alpha: 10,
-                    format: "hexa",
-                },
-            ),
+            background: softFill,
             border: "none",
             color: resolvedTextColor,
         }),

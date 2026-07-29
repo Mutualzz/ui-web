@@ -17,7 +17,6 @@ const Paper = styled("div")<PaperProps>(
         elevation = 0,
         color = "neutral",
         textColor = "inherit",
-        transparency = 0,
         surfaceRole,
     }) => ({
         transition: "background 0.2s ease",
@@ -29,7 +28,7 @@ const Paper = styled("div")<PaperProps>(
                 elevation,
                 color,
                 textColor,
-                transparency,
+                surfaceRole,
             },
             ({
                 display: d,
@@ -37,11 +36,11 @@ const Paper = styled("div")<PaperProps>(
                 elevation: e,
                 color: c,
                 textColor: tc,
-                transparency: trans,
+                surfaceRole: role,
             }) => {
                 return {
                     display: d,
-                    ...resolvePaperStyles(theme, c, tc, v, e, trans, surfaceRole)[
+                    ...resolvePaperStyles(theme, c, tc, v, e, role)[
                         v
                     ],
                 };

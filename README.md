@@ -2,7 +2,7 @@
 
 React + Emotion component library for the Mutualzz **desktop / web** app.
 
-Built with [Emotion](https://emotion.sh/), sharing tokens and helpers with [`@mutualzz/ui-core`](../ui-core). Themed surfaces and controls are meant to feel consistent with Mutualzz across platforms (see also [`@mutualzz/ui-native`](../ui-native)).
+Built with [Emotion](https://emotion.sh/), sharing tokens and helpers with [`@mutualzz/ui-core`](https://github.com/mutualzz/ui-core). Themed surfaces and controls are meant to feel consistent with Mutualzz across platforms (see also [`@mutualzz/ui-native`](https://github.com/mutualzz/ui-native)).
 
 Docs site: [mutualzz.com/ui](https://mutualzz.com/ui)
 
@@ -51,11 +51,11 @@ Peer dependencies include React, Emotion (`@emotion/react`, `@emotion/styled`), 
 ## Authors & credit
 
 - [Azrael](https://github.com/mateie) — original author
-- Community contributors are credited via git authorship, PR attribution, and changelogs (see [`CONTRIBUTING.md`](./CONTRIBUTING.md))
+- Community contributors are credited via git authorship, PR attribution, and changelogs (see [`CONTRIBUTING.md`](https://github.com/mutualzz/ui-web/blob/master/CONTRIBUTING.md))
 
 ## License & contributions
 
 Source is available for transparency and community contributions. Contributors get credit for merged work.
 
-- [`LICENSE`](./LICENSE) — no unofficial redistribution / competing hosted services without permission
-- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — how to fork, open PRs, and how credit works
+- [`LICENSE`](https://github.com/mutualzz/ui-web/blob/master/LICENSE) — no unofficial redistribution / competing hosted services without permission
+- [`CONTRIBUTING.md`](https://github.com/mutualzz/ui-web/blob/master/CONTRIBUTING.md) — how to fork, open PRs, and how credit works

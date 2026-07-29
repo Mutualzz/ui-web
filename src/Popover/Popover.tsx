@@ -36,7 +36,6 @@ const PopoverContent = styled(Paper)<{
     left?: number;
     placement?: "top" | "bottom" | "left" | "right";
     size: Responsive<Size | SizeValue | number>;
-    transparency: Responsive<number>;
 }>(({
     theme,
     disablePortal,
@@ -48,7 +47,7 @@ const PopoverContent = styled(Paper)<{
     variant = "elevation",
     elevation = 0,
     placement = "bottom",
-    transparency,
+    surfaceRole = "popover",
 }) => {
     const baseStyles: CSSObject = {
         position: disablePortal ? "absolute" : "fixed",
@@ -96,7 +95,7 @@ const PopoverContent = styled(Paper)<{
                 elevation,
                 variant,
                 size,
-                transparency,
+                surfaceRole,
             },
             ({
                 color: c,
@@ -104,10 +103,10 @@ const PopoverContent = styled(Paper)<{
                 elevation: e,
                 size: s,
                 variant: v,
-                transparency: trans,
+                surfaceRole: role,
             }) => ({
                 ...resolvePopoverSize(theme, s),
-                ...resolvePopoverStyles(theme, c, tc, v, e, trans)[v],
+                ...resolvePopoverStyles(theme, c, tc, v, e, role)[v],
             }),
         ),
     };
@@ -128,7 +127,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             closeOnInteract = false,
             placement: placementProp,
             elevation = 0,
-            transparency = 80,
+            surfaceRole = "popover",
             ...props
         },
         ref,
@@ -252,7 +251,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
                 color={color}
                 variant={variant}
                 size={size}
-                transparency={transparency}
+                surfaceRole={surfaceRole}
                 disablePortal={disablePortal}
                 top={position.top}
                 elevation={elevation}

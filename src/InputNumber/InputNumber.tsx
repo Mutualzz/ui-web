@@ -322,7 +322,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
                     onPaste={handlePaste}
-                    size={size as any}
+                    size={size}
                     fullWidth={fullWidth}
                     disabled={disabled}
                 />

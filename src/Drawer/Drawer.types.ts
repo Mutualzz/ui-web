@@ -33,8 +33,6 @@ export interface DrawerProps extends Omit<
 
     disablePortal?: boolean;
 
-    transparency?: Responsive<number>;
-
     swipeArea?: Responsive<number | Size | SizeValue>;
     threshold?: Responsive<number | Size | SizeValue>;
 }

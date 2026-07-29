@@ -19,5 +19,5 @@ export interface PopoverProps extends Omit<PaperProps, "content"> {
 
     placement?: PopoverPlacement;
 
-    nonTranslucent?: Responsive<boolean>;
+    surfaceRole?: PaperProps["surfaceRole"];
 }
