@@ -1,6 +1,6 @@
 <div align="center">
 
-# Mutualzz development moved to [git.mutualzz.com](https://git.mutualzz.com/mutualzz/mutualzz)
+# Mutualzz is developed at [git.mutualzz.com](https://git.mutualzz.com/mutualzz/ui-web)
 
 **GitHub is a read-only mirror. Issues and pull requests opened on GitHub are not monitored.**
 
@@ -12,7 +12,7 @@ Sign in with your GitHub account. No new password needed.
 
 React + Emotion component library for the Mutualzz **desktop / web** app.
 
-Built with [Emotion](https://emotion.sh/), sharing tokens and helpers with [`@mutualzz/ui-core`](https://github.com/mutualzz/ui-core). Themed surfaces and controls are meant to feel consistent with Mutualzz across platforms (see also [`@mutualzz/ui-native`](https://github.com/mutualzz/ui-native)).
+Built with [Emotion](https://emotion.sh/), sharing tokens and helpers with [`@mutualzz/ui-core`](https://git.mutualzz.com/mutualzz/ui-core). Themed surfaces and controls are meant to feel consistent with Mutualzz across platforms (see also [`@mutualzz/ui-native`](https://git.mutualzz.com/mutualzz/ui-native)).
 
 Docs site: [mutualzz.com/ui](https://mutualzz.com/ui)
 
@@ -61,11 +61,11 @@ Peer dependencies include React, Emotion (`@emotion/react`, `@emotion/styled`), 
 ## Authors & credit
 
 - [Azrael](https://github.com/mateie) — original author
-- Community contributors are credited via git authorship, PR attribution, and changelogs (see [`CONTRIBUTING.md`](https://github.com/mutualzz/ui-web/blob/master/CONTRIBUTING.md))
+- Community contributors are credited via git authorship, PR attribution, and changelogs (see [`CONTRIBUTING.md`](https://git.mutualzz.com/mutualzz/ui-web/src/branch/master/CONTRIBUTING.md))
 
 ## License & contributions
 
 Source is available for transparency and community contributions. Contributors get credit for merged work.
 
-- [`LICENSE`](https://github.com/mutualzz/ui-web/blob/master/LICENSE) — no unofficial redistribution / competing hosted services without permission
-- [`CONTRIBUTING.md`](https://github.com/mutualzz/ui-web/blob/master/CONTRIBUTING.md) — how to fork, open PRs, and how credit works
+- [`LICENSE`](https://git.mutualzz.com/mutualzz/ui-web/src/branch/master/LICENSE) — no unofficial redistribution / competing hosted services without permission
+- [`CONTRIBUTING.md`](https://git.mutualzz.com/mutualzz/ui-web/src/branch/master/CONTRIBUTING.md) — how to fork, open PRs, and how credit works
