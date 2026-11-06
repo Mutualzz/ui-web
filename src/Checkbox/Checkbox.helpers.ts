@@ -1,8 +1,6 @@
 import { type CSSObject, type Theme } from "@emotion/react";
 import {
-    createColor,
-    formatColor,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
     type Color,
     type ColorLike,
@@ -33,100 +31,57 @@ export const resolveCheckboxStyles = (
     color: Color | ColorLike,
     checked?: boolean,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
-    const hexColor = formatColor(resolvedColor);
-
-    const solidTextColor = formatColor(theme.typography.colors.primary, {
-        negate: createColor(resolvedColor).isLight(),
-    });
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         solid: {
-            backgroundColor: hexColor,
-            color: solidTextColor,
-            border: `1px solid ${hexColor}`,
+            backgroundColor: colorTokens.base,
+            color: colorTokens.on,
+            border: `1px solid ${colorTokens.base}`,
             "&:hover": {
                 backgroundColor: checked
-                    ? formatColor(resolvedColor, {
-                          alpha: 80,
-                          format: "hexa",
-                      })
-                    : formatColor(resolvedColor, {
-                          alpha: 10,
-                          format: "hexa",
-                      }),
-                borderColor: hexColor,
+                    ? colorTokens.alpha(80)
+                    : colorTokens.alpha(10),
+                borderColor: colorTokens.base,
             },
             "&:active": {
                 backgroundColor: checked
-                    ? formatColor(resolvedColor, {
-                          alpha: 70,
-                          format: "hexa",
-                      })
-                    : formatColor(resolvedColor, {
-                          alpha: 20,
-                          format: "hexa",
-                      }),
+                    ? colorTokens.alpha(70)
+                    : colorTokens.alpha(20),
             },
         },
         outlined: {
-            backgroundColor: checked
-                ? formatColor(resolvedColor, {
-                      alpha: 10,
-                      format: "hexa",
-                  })
-                : "transparent",
-            color: formatColor(resolvedColor),
-            border: `1px solid ${formatColor(resolvedColor)}`,
+            backgroundColor: checked ? colorTokens.alpha(10) : "transparent",
+            color: colorTokens.base,
+            border: `1px solid ${colorTokens.base}`,
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 20,
-                    format: "hexa",
-                }),
-                borderColor: formatColor(resolvedColor),
+                backgroundColor: colorTokens.alpha(20),
+                borderColor: colorTokens.base,
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 30,
-                }),
+                backgroundColor: colorTokens.alpha(30),
             },
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                alpha: checked ? 30 : 10,
-                format: "hexa",
-            }),
-            color: formatColor(resolvedColor),
+            backgroundColor: colorTokens.alpha(checked ? 30 : 10),
+            color: colorTokens.base,
             border: "none",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: checked ? 40 : 20,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(checked ? 40 : 20),
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: checked ? 50 : 30,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(checked ? 50 : 30),
             },
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatColor(resolvedColor),
+            color: colorTokens.base,
             border: "none",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: checked ? 20 : 10,
-                }),
+                backgroundColor: colorTokens.alpha(checked ? 20 : 10),
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: checked ? 30 : 20,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(checked ? 30 : 20),
             },
         },
     };

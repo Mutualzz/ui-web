@@ -5,13 +5,7 @@ import type {
     TypographyColor,
     Variant,
 } from "@mutualzz/ui-core";
-import {
-    createColor,
-    formatColor,
-    isValidColorInput,
-    resolveColor,
-    resolveTypographyColor,
-} from "@mutualzz/ui-core";
+import { resolveColorTokens, resolveTextColorToken } from "@mutualzz/ui-core";
 
 export const resolveInputRootStyles = (
     theme: Theme,
@@ -20,104 +14,51 @@ export const resolveInputRootStyles = (
     error: boolean,
     readonly: boolean,
 ): Record<Variant, CSSObject> => {
-    const { colors } = theme;
-    const resolvedColor = resolveColor(color, theme);
-
-    const parsedTextColor =
-        textColor === "inherit"
-            ? theme.typography.colors.primary
-            : resolveTypographyColor(textColor, theme);
-
-    const errorColor = colors.danger;
-    const activeColor = error ? errorColor : resolvedColor;
-    const isColorLike = isValidColorInput(parsedTextColor);
-
-    const isDark = createColor(activeColor).isDark();
-    const solidTextColor = isDark
-        ? formatColor(theme.typography.colors.primary)
-        : formatColor(activeColor, {
-              darken: 70,
-          });
-
-    const textColorFinal = isColorLike
-        ? parsedTextColor
-        : theme.typography.colors.primary;
+    const colorTokens = resolveColorTokens(error ? "danger" : color, theme);
+    const textColorFinal = resolveTextColorToken(textColor, theme);
 
     return {
         outlined: {
             backgroundColor: "transparent",
             color: textColorFinal,
-            border: `1px solid ${formatColor(activeColor)}`,
+            border: `1px solid ${colorTokens.base}`,
             ...(!readonly && {
                 "&:hover": {
-                    borderColor: formatColor(activeColor, {
-                        alpha: 50,
-                        format: "hexa",
-                    }),
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 5,
-                        format: "hexa",
-                    }),
+                    borderColor: colorTokens.alpha(50),
+                    backgroundColor: colorTokens.alpha(5),
                 },
                 "&:focus-within": {
-                    borderColor: formatColor(activeColor),
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 5,
-                        format: "hexa",
-                    }),
-                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                        alpha: 20,
-                        format: "hexa",
-                    })}`,
+                    borderColor: colorTokens.base,
+                    backgroundColor: colorTokens.alpha(5),
+                    boxShadow: `0 0 0 2px ${colorTokens.alpha(20)}`,
                 },
             }),
         },
         solid: {
-            backgroundColor: formatColor(activeColor),
-            color: solidTextColor,
+            backgroundColor: colorTokens.base,
+            color: colorTokens.contrast,
             border: "none",
             ...(!readonly && {
                 "&:hover": {
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 90,
-                        format: "hexa",
-                    }),
+                    backgroundColor: colorTokens.alpha(90),
                 },
                 "&:focus-within": {
-                    backgroundColor: formatColor(activeColor, {
-                        format: "hexa",
-                        alpha: 80,
-                    }),
-                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                        alpha: 30,
-                        format: "hexa",
-                    })}`,
+                    backgroundColor: colorTokens.alpha(80),
+                    boxShadow: `0 0 0 2px ${colorTokens.alpha(30)}`,
                 },
             }),
         },
         soft: {
-            backgroundColor: formatColor(activeColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
-            color: formatColor(activeColor),
+            backgroundColor: colorTokens.alpha(10),
+            color: colorTokens.base,
             border: "none",
             ...(!readonly && {
                 "&:hover": {
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 15,
-                        format: "hexa",
-                    }),
+                    backgroundColor: colorTokens.alpha(15),
                 },
                 "&:focus-within": {
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 20,
-                        format: "hexa",
-                    }),
-                    boxShadow: `0 0 0 2px ${formatColor(activeColor, {
-                        format: "hexa",
-                        alpha: 20,
-                    })}`,
+                    backgroundColor: colorTokens.alpha(20),
+                    boxShadow: `0 0 0 2px ${colorTokens.alpha(20)}`,
                 },
             }),
         },
@@ -127,17 +68,11 @@ export const resolveInputRootStyles = (
             border: "none",
             ...(!readonly && {
                 "&:hover": {
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 5,
-                        format: "hexa",
-                    }),
+                    backgroundColor: colorTokens.alpha(5),
                 },
                 "&:focus-within": {
-                    backgroundColor: formatColor(activeColor, {
-                        alpha: 10,
-                        format: "hexa",
-                    }),
-                    boxShadow: `0 0 0 2px ${formatColor(activeColor, { alpha: 20, format: "hexa" })}`,
+                    backgroundColor: colorTokens.alpha(10),
+                    boxShadow: `0 0 0 2px ${colorTokens.alpha(20)}`,
                 },
             }),
         },

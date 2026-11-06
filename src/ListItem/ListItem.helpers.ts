@@ -6,7 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import { resolveColorTokens, resolveSize } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -31,25 +31,19 @@ export const resolveListItemStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor),
+            backgroundColor: colorTokens.base,
             border: "none",
         },
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatColor(resolvedColor, {
-                alpha: 30,
-                format: "hexa",
-            })}`,
+            border: `1px solid ${colorTokens.alpha(30)}`,
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
+            backgroundColor: colorTokens.alpha(10),
             border: "none",
         },
         plain: {

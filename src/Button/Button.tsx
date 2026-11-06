@@ -1,15 +1,20 @@
 import type React from "react";
 import { forwardRef, useContext } from "react";
 import {
+    type Color,
+    type ColorLike,
     resolveResponsiveMerge,
     resolveShapeValue,
     resolveSize,
+    resolveTextColorAlias,
+    type Responsive,
     type Size,
     styled,
 } from "@mutualzz/ui-core";
 import { ButtonGroupContext } from "../ButtonGroup/ButtonGroup.context";
 import { CircularProgress } from "../CircularProgress/CircularProgress";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
+import { useTheme } from "../useTheme";
 import {
     resolveButtonContainerSize,
     resolveButtonContainerStyles,
@@ -208,6 +213,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         const variant = propVariant ?? group?.variant ?? "solid";
         const color = propColor ?? group?.color ?? "primary";
+        const { theme } = useTheme();
+        const spinnerColor: Responsive<Color | ColorLike> =
+            typeof color === "object"
+                ? Object.fromEntries(
+                      Object.entries(color).map(([breakpoint, value]) => [
+                          breakpoint,
+                          resolveTextColorAlias(value, theme),
+                      ]),
+                  )
+                : resolveTextColorAlias(color, theme);
         const size = propSize ?? group?.size ?? "md";
         const verticalAlign =
             propVerticalAlign ?? group?.verticalAlign ?? "center";
@@ -281,7 +296,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                                         ? "plain"
                                         : "soft"
                                 }
-                                color={color}
+                                color={spinnerColor}
                                 size="sm"
                             />
                         )}

@@ -8,12 +8,10 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    createColor,
-    formatColor,
-    isValidColorInput,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
-    resolveTypographyColor,
+    resolveTextColorToken,
+    themeBackgroundVar,
 } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
@@ -51,60 +49,33 @@ export const resolveTextareaStyles = (
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
 ): Record<Variant, CSSObject> => {
-    const { colors } = theme;
-    const resolvedColor = resolveColor(color, theme);
-
-    const parsedTextColor = resolveTypographyColor(textColor, theme);
-
-    const isColorLike = isValidColorInput(parsedTextColor);
-
-    const isDark = createColor(resolvedColor).isDark();
-    const solidTextColor = isDark
-        ? theme.typography.colors.primary
-        : formatColor(resolvedColor, {
-              darken: 70,
-          });
-
-    const textColorFinal = isColorLike
-        ? parsedTextColor
-        : theme.typography.colors.primary;
+    const colorTokens = resolveColorTokens(color, theme);
+    const textColorFinal = resolveTextColorToken(textColor, theme);
 
     return {
         solid: {
-            backgroundColor: resolvedColor,
-            color: solidTextColor,
+            backgroundColor: colorTokens.base,
+            color: colorTokens.contrast,
             border: "none",
             "&:focus-within": {
-                backgroundColor: formatColor(resolvedColor, {
-                    format: "hexa",
-                    alpha: 90,
-                }),
+                backgroundColor: colorTokens.alpha(90),
             },
         },
         outlined: {
-            backgroundColor: colors.background,
-            border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
+            backgroundColor: themeBackgroundVar(),
+            border: `1px solid ${colorTokens.alpha(30)}`,
             color: textColorFinal,
             "&:focus-within": {
-                borderColor: resolvedColor,
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 5,
-                    format: "hexa",
-                }),
+                borderColor: colorTokens.base,
+                backgroundColor: colorTokens.alpha(5),
             },
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
+            backgroundColor: colorTokens.alpha(10),
             border: "none",
             color: textColorFinal,
             "&:focus-within": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 15,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(15),
             },
         },
         plain: {
@@ -112,10 +83,7 @@ export const resolveTextareaStyles = (
             border: "none",
             color: textColorFinal,
             "&:focus-within": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 5,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(5),
             },
         },
     };

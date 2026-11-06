@@ -6,7 +6,13 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { formatColor, resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
+import {
+    formatColor,
+    resolveResponsiveMerge,
+    styled,
+    themeColorVar,
+    typographyColorVar,
+} from "@mutualzz/ui-core";
 import {
     forwardRef,
     useCallback,
@@ -292,8 +298,8 @@ const ValueLabel = styled("span")<{
         bottom:
             resolvedOrientation === "vertical" ? `${clampPercent}%` : undefined,
         fontSize,
-        color: theme.typography.colors.primary,
-        backgroundColor: theme.colors.neutral,
+        color: typographyColorVar("primary"),
+        backgroundColor: themeColorVar("neutral"),
         padding: "2px 6px",
         borderRadius: 4,
         whiteSpace: "nowrap",
@@ -313,7 +319,7 @@ const ValueLabel = styled("span")<{
                       transform: "translateX(-50%)",
                       borderLeft: "5px solid transparent",
                       borderRight: "5px solid transparent",
-                      borderTop: `5px solid ${theme.colors.neutral}`,
+                      borderTop: `5px solid ${themeColorVar("neutral")}`,
                   }
                 : {
                       top: "50%",
@@ -321,7 +327,7 @@ const ValueLabel = styled("span")<{
                       transform: "translate(100%, -50%)",
                       borderTop: "5px solid transparent",
                       borderBottom: "5px solid transparent",
-                      borderLeft: `5px solid ${theme.colors.neutral}`,
+                      borderLeft: `5px solid ${themeColorVar("neutral")}`,
                   }),
         },
     };
@@ -339,7 +345,7 @@ const MarkLabel = styled("span")<{
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 4,
-    color: theme.typography.colors.accent,
+    color: typographyColorVar("accent"),
     whiteSpace: "nowrap",
     backgroundColor: "transparent",
     pointerEvents: "none",

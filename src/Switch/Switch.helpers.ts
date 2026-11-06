@@ -2,9 +2,7 @@ import { type CSSObject, type Theme } from "@emotion/react";
 import {
     type Color,
     type ColorLike,
-    createColor,
-    formatColor,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
     type Size,
     type SizeValue,
@@ -34,96 +32,52 @@ export const resolveSwitchTrackStyles = (
     color: Color | ColorLike,
     checked: boolean,
 ): Record<Variant, CSSObject> => {
-    const onColor = resolveColor(color, theme);
-    const offColor = resolveColor("neutral", theme);
-
-    const trackColor = checked ? onColor : offColor;
-    const trackHex = formatColor(trackColor);
-
-    const thumbColor = formatColor(theme.typography.colors.primary, {
-        negate: createColor(trackColor).isLight(),
-    });
-
-    const hoverBg = formatColor(trackColor, {
-        alpha: checked ? 70 : 35,
-        format: "hexa",
-    });
-
-    const activeBg = formatColor(trackColor, {
-        alpha: checked ? 80 : 45,
-        format: "hexa",
-    });
+    const trackTokens = resolveColorTokens(checked ? color : "neutral", theme);
 
     return {
         solid: {
-            backgroundColor: formatColor(trackColor, {
-                alpha: checked ? 100 : 35,
-                format: checked ? "hex" : "hexa",
-            }),
-            border: `1px solid ${trackHex}`,
+            backgroundColor: checked ? trackTokens.base : trackTokens.alpha(35),
+            border: `1px solid ${trackTokens.base}`,
             "&:hover": {
-                backgroundColor: hoverBg,
+                backgroundColor: trackTokens.alpha(checked ? 70 : 35),
             },
             "&:active": {
-                backgroundColor: activeBg,
+                backgroundColor: trackTokens.alpha(checked ? 80 : 45),
             },
-            "--switch-thumb": thumbColor,
+            "--switch-thumb": trackTokens.on,
         },
         outlined: {
-            backgroundColor: checked
-                ? formatColor(onColor, { alpha: 12, format: "hexa" })
-                : "transparent",
-            border: `1px solid ${formatColor(trackColor)}`,
+            backgroundColor: checked ? trackTokens.alpha(12) : "transparent",
+            border: `1px solid ${trackTokens.base}`,
             "&:hover": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: 18,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(18),
             },
             "&:active": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: 26,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(26),
             },
-            "--switch-thumb": thumbColor,
+            "--switch-thumb": trackTokens.on,
         },
         soft: {
-            backgroundColor: formatColor(trackColor, {
-                alpha: checked ? 45 : 22,
-                format: "hexa",
-            }),
+            backgroundColor: trackTokens.alpha(checked ? 45 : 22),
             border: "none",
             "&:hover": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: checked ? 55 : 30,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(checked ? 55 : 30),
             },
             "&:active": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: checked ? 65 : 38,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(checked ? 65 : 38),
             },
-            "--switch-thumb": thumbColor,
+            "--switch-thumb": trackTokens.on,
         },
         plain: {
             backgroundColor: "transparent",
             border: "none",
             "&:hover": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: checked ? 22 : 14,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(checked ? 22 : 14),
             },
             "&:active": {
-                backgroundColor: formatColor(trackColor, {
-                    alpha: checked ? 30 : 20,
-                    format: "hexa",
-                }),
+                backgroundColor: trackTokens.alpha(checked ? 30 : 20),
             },
-            "--switch-thumb": thumbColor,
+            "--switch-thumb": trackTokens.on,
         },
     };
 };

@@ -4,7 +4,7 @@ import {
     extractColors,
     formatColor,
     randomColor,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
     type Color,
     type ColorLike,
@@ -60,90 +60,52 @@ export const resolveColorPickerButtonStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ) => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
+    const textTokens = resolveColorTokens("text", theme);
 
     return {
         solid: {
-            background: resolvedColor,
-            border: `2px solid ${theme.typography.colors.primary}`,
+            background: colorTokens.base,
+            border: `2px solid ${textTokens.base}`,
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 90,
-                    format: "hexa",
-                }),
-                borderColor: theme.typography.colors.primary,
+                backgroundColor: colorTokens.alpha(90),
+                borderColor: textTokens.base,
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(80),
             },
         },
         outlined: {
-            background: resolvedColor,
-            border: `2px solid ${formatColor(resolvedColor, {
-                format: "hexa",
-                alpha: 60,
-            })}`,
+            background: colorTokens.base,
+            border: `2px solid ${colorTokens.alpha(60)}`,
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 90,
-                    format: "hexa",
-                }),
-                borderColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(90),
+                borderColor: colorTokens.alpha(80),
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(80),
             },
         },
         soft: {
-            background: resolvedColor,
-            border: `2px solid ${formatColor(theme.typography.colors.primary, {
-                format: "hexa",
-                alpha: 30,
-            })}`,
+            background: colorTokens.base,
+            border: `2px solid ${textTokens.alpha(30)}`,
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 90,
-                    format: "hexa",
-                }),
-                borderColor: formatColor(theme.typography.colors.primary, {
-                    alpha: 50,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(90),
+                borderColor: textTokens.alpha(50),
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(80),
             },
         },
         plain: {
-            background: resolvedColor,
+            background: colorTokens.base,
             border: "2px solid transparent",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 90,
-                    format: "hexa",
-                }),
-                borderColor: formatColor(theme.typography.colors.primary, {
-                    alpha: 20,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(90),
+                borderColor: textTokens.alpha(20),
             },
             "&:active": {
-                backgroundColor: formatColor(resolvedColor, {
-                    alpha: 80,
-                    format: "hexa",
-                }),
+                backgroundColor: colorTokens.alpha(80),
             },
         },
     };

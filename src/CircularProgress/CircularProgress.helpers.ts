@@ -6,7 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import { resolveColorTokens, resolveSize } from "@mutualzz/ui-core";
 
 export const baseSizeMap: Record<Size, number> = {
     sm: 32,
@@ -24,23 +24,17 @@ export const resolveCircularProgressOuterStroke = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         plain: {
             stroke: "transparent",
         },
         solid: {
-            stroke: formatColor(resolvedColor, {
-                alpha: 50,
-                format: "hexa",
-            }),
+            stroke: colorTokens.alpha(50),
         },
         soft: {
-            stroke: formatColor(resolvedColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
+            stroke: colorTokens.alpha(10),
         },
         outlined: {
             stroke: "transparent",

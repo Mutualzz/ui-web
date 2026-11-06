@@ -18,6 +18,7 @@ import {
     randomColor,
     resolveResponsiveMerge,
     resolveSize,
+    resolveTextColorAlias,
     styled,
     useColorInput,
 } from "@mutualzz/ui-core";
@@ -93,7 +94,10 @@ const ColorPickerButton = styled(Button)(
             theme,
             { color, variant, size },
             ({ color: c, variant: v, size: s }) => ({
-                ...resolveColorPickerButtonStyles(theme, c)[v],
+                ...resolveColorPickerButtonStyles(
+                    theme,
+                    resolveTextColorAlias(c, theme),
+                )[v],
                 ...resolveColorPickerButtonSize(theme, s),
             }),
         ),
@@ -323,7 +327,11 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             let newColor = randomColor("hex");
             if (typeof pickerColor === "string" && isValidGradient(pickerColor))
                 newColor = randomColor("linear-gradient");
-            if (allowGradient && Array.isArray(pickerColor) && pickerColor.length > 1)
+            if (
+                allowGradient &&
+                Array.isArray(pickerColor) &&
+                pickerColor.length > 1
+            )
                 newColor = randomColor("linear-gradient");
             setColorDirectly(newColor);
 

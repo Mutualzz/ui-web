@@ -5,6 +5,7 @@ import {
     type Shape,
     type Size,
     type SizeValue,
+    type ThemeVarColor,
     type Variant,
 } from "@mutualzz/ui-core";
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
@@ -27,7 +28,7 @@ export interface ButtonProps extends Omit<
      * @default "primary"
      * @example "primary", "neutral", "success", "info", "warning", "danger", "#ff5733"
      */
-    color?: Responsive<Color | ColorLike>;
+    color?: Responsive<ThemeVarColor | ColorLike>;
     /**
      * The size of the button, which can be a predefined size or a custom size in pixels.
      * @default "md"

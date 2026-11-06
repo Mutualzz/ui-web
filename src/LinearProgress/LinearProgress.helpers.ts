@@ -1,23 +1,17 @@
 import type { Theme } from "@emotion/react";
 import type { Color, ColorLike, Size, SizeValue } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import { resolveColorTokens, resolveSize } from "@mutualzz/ui-core";
 
 export const resolveLinearProgressStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ) => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         plain: "transparent",
-        solid: formatColor(resolvedColor, {
-            alpha: 20,
-            format: "hexa",
-        }),
-        soft: formatColor(resolvedColor, {
-            alpha: 15,
-            format: "hexa",
-        }),
+        solid: colorTokens.alpha(20),
+        soft: colorTokens.alpha(15),
         outlined: "transparent",
     };
 };

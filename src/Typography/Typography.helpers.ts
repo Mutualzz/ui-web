@@ -1,10 +1,7 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import {
-    createColor,
-    formatColor,
-    isValidColorInput,
-    resolveColor,
-    resolveTypographyColor,
+    resolveColorTokens,
+    resolveTextColorToken,
     type Color,
     type ColorLike,
     type TypographyColor,
@@ -17,50 +14,34 @@ export const resolveTypographStyles = (
     textColor: TypographyColor | ColorLike | "inherit",
     colorOnNone = false,
 ): Record<TypographyVariant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
-
-    const parsedTextColor = resolveTypographyColor(textColor, theme);
-
-    const isColorLike = isValidColorInput(parsedTextColor);
-    const isDark = createColor(resolvedColor).isDark();
-    const solidTextColor = isDark
-        ? theme.typography.colors.primary
-        : formatColor(resolvedColor, {
-              darken: 70,
-          });
-
-    const textColorFinal = isColorLike
-        ? parsedTextColor
-        : theme.typography.colors.primary;
+    const colorTokens = resolveColorTokens(color, theme);
+    const textColorFinal = resolveTextColorToken(textColor, theme);
 
     return {
         solid: {
-            backgroundColor: resolvedColor,
-            color: solidTextColor,
+            backgroundColor: colorTokens.base,
+            color: colorTokens.contrast,
             border: "none",
         },
         outlined: {
             backgroundColor: "transparent",
-            color: resolvedColor,
-            border: `1px solid ${resolvedColor}`,
+            color: colorTokens.base,
+            border: `1px solid ${colorTokens.base}`,
         },
         plain: {
             backgroundColor: "transparent",
-            color: resolvedColor,
+            color: colorTokens.base,
             border: "none",
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-                alpha: 40,
-            }),
-            color: resolvedColor,
+            backgroundColor: colorTokens.alpha(40),
+            color: colorTokens.base,
             border: "none",
         },
         none: {
             backgroundColor: "transparent",
             border: "none",
-            color: colorOnNone ? resolvedColor : textColorFinal,
+            color: colorOnNone ? colorTokens.base : textColorFinal,
         },
     };
 };

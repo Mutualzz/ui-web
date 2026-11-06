@@ -6,7 +6,12 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { formatColor, resolveColor, resolveSize } from "@mutualzz/ui-core";
+import {
+    formatColor,
+    resolveColor,
+    resolveColorTokens,
+    resolveSize,
+} from "@mutualzz/ui-core";
 
 const thumbSizeMap: Record<Size, number> = {
     sm: 16,
@@ -68,43 +73,21 @@ export const resolveSliderTrackStyles = (
     color: Color | ColorLike,
     hovered: boolean,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         solid: {
-            backgroundColor: hovered
-                ? formatColor(resolvedColor, { alpha: 90, format: "hexa" })
-                : formatColor(resolvedColor),
+            backgroundColor: hovered ? colorTokens.alpha(90) : colorTokens.base,
         },
         outlined: {
-            border: hovered
-                ? `1px solid ${formatColor(resolvedColor, { format: "hexa", alpha: 70 })}`
-                : `1px solid ${formatColor(resolvedColor)}`,
-            backgroundColor: hovered
-                ? formatColor(resolvedColor, {
-                      alpha: 10,
-                      format: "hexa",
-                  })
-                : "transparent",
+            border: `1px solid ${hovered ? colorTokens.alpha(70) : colorTokens.base}`,
+            backgroundColor: hovered ? colorTokens.alpha(10) : "transparent",
         },
         plain: {
-            backgroundColor: hovered
-                ? formatColor(resolvedColor, {
-                      alpha: 20,
-                      format: "hexa",
-                  })
-                : "transparent",
+            backgroundColor: hovered ? colorTokens.alpha(20) : "transparent",
         },
         soft: {
-            backgroundColor: hovered
-                ? formatColor(resolvedColor, {
-                      alpha: 20,
-                      format: "hexa",
-                  })
-                : formatColor(resolvedColor, {
-                      format: "hexa",
-                      alpha: 10,
-                  }),
+            backgroundColor: colorTokens.alpha(hovered ? 20 : 10),
         },
     };
 };
@@ -116,39 +99,25 @@ export const resolveSliderThumbStyles = (
 ): Record<Variant, CSSObject> => {
     const { colors } = theme;
 
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         solid: {
             backgroundColor: colors.common.white,
-            border: hovered
-                ? `2px solid ${formatColor(resolvedColor, {
-                      format: "hexa",
-                      alpha: 90,
-                  })}`
-                : `2px solid ${formatColor(resolvedColor)}`,
+            border: `2px solid ${hovered ? colorTokens.alpha(90) : colorTokens.base}`,
         },
         outlined: {
             backgroundColor: colors.common.white,
-            border: `2px solid ${formatColor(resolvedColor)}`,
+            border: `2px solid ${colorTokens.base}`,
         },
         plain: {
-            backgroundColor: formatColor(resolvedColor, {
-                format: "hexa",
-                alpha: 80,
-            }),
+            backgroundColor: colorTokens.alpha(80),
         },
         soft: {
-            backgroundColor: hovered
-                ? formatColor(resolvedColor, {
-                      lighten: 50,
-                  })
-                : formatColor(resolvedColor, {
-                      lighten: 70,
-                  }),
-            border: hovered
-                ? `2px solid ${formatColor(resolvedColor, { alpha: 85, format: "hexa" })}`
-                : `2px solid ${formatColor(resolvedColor)}`,
+            backgroundColor: formatColor(resolveColor(color, theme), {
+                lighten: hovered ? 50 : 70,
+            }),
+            border: `2px solid ${hovered ? colorTokens.alpha(85) : colorTokens.base}`,
         },
     };
 };

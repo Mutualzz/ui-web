@@ -6,7 +6,7 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    resolveColor,
+    resolveColorTokens,
     resolveResponsiveMerge,
     resolveSize,
     styled,
@@ -47,7 +47,7 @@ const CircularProgressWrapper = styled("div")<{
                     right: strokeWidth / 2,
                     bottom: strokeWidth / 2,
                     borderRadius: "50%",
-                    border: `1px solid ${resolveColor(c, theme)}`,
+                    border: `1px solid ${resolveColorTokens(c, theme).base}`,
                     boxSizing: "border-box",
                 },
                 "::after": {
@@ -58,7 +58,7 @@ const CircularProgressWrapper = styled("div")<{
                     right: -1,
                     bottom: -1,
                     borderRadius: "50%",
-                    border: `1px solid ${resolveColor(c, theme)}`,
+                    border: `1px solid ${resolveColorTokens(c, theme).base}`,
                     boxSizing: "border-box",
                 },
             }),
@@ -127,7 +127,7 @@ const CircularProgressCircleInner = styled("circle")<{
         : `${circumference * 0.25} ${circumference}`,
 
     ...resolveResponsiveMerge(theme, { color }, ({ color: c }) => ({
-        stroke: resolveColor(c, theme),
+        stroke: resolveColorTokens(c, theme).base,
     })),
 }));
 

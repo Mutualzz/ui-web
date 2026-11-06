@@ -1,6 +1,6 @@
 import type { Variant } from "@mutualzz/ui-core";
 import {
-    resolveColor,
+    resolveColorTokens,
     resolveResponsiveMerge,
     styled,
 } from "@mutualzz/ui-core";
@@ -125,7 +125,7 @@ const LinearProgress = forwardRef<HTMLDivElement, LinearProgressProps>(
                 thickness: resolveLinearProgressThickness(theme, t),
                 length: resolveLinearProgressLength(theme, l),
                 background: resolveLinearProgressStyles(theme, c)[v],
-                sharedColor: resolveColor(c, theme),
+                sharedColor: resolveColorTokens(c, theme).base,
                 variant: v,
             }),
         );

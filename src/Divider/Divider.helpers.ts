@@ -5,7 +5,8 @@ import {
     isThemeColor,
     isTypographyColor,
     resolveColor,
-    resolveTypographyColor,
+    themeColorVar,
+    typographyColorVar,
 } from "@mutualzz/ui-core";
 import type { DividerVariant } from "./Divider.types";
 
@@ -13,17 +14,11 @@ export const resolveDividerColor = (
     theme: Theme,
     color: Color | ColorLike | TypographyColor,
 ) => {
-    const resolvedColor = isThemeColor(color)
-        ? resolveColor(color, theme)
-        : isTypographyColor(color)
-          ? resolveTypographyColor(color, theme)
-          : color === "inherit" || color === "transparent"
-            ? color
-            : resolveColor(color, theme);
+    if (isThemeColor(color)) return themeColorVar(color);
+    if (isTypographyColor(color)) return typographyColorVar(color);
+    if (color === "inherit" || color === "transparent") return color;
 
-    return resolvedColor === "inherit" || resolvedColor === "transparent"
-        ? resolvedColor
-        : formatColor(resolvedColor);
+    return formatColor(resolveColor(color, theme));
 };
 
 export const resolveDividerStyles = (

@@ -1,9 +1,14 @@
 import {
     ThemeProvider as EmotionThemeProvder,
+    Global,
     type Theme,
 } from "@emotion/react";
 import type { ThemeType } from "@mutualzz/ui-core";
-import { baseDarkTheme, baseLightTheme } from "@mutualzz/ui-core";
+import {
+    baseDarkTheme,
+    baseLightTheme,
+    themeToCssVars,
+} from "@mutualzz/ui-core";
 import {
     createContext,
     forwardRef,
@@ -91,11 +96,21 @@ const ThemeProvider = forwardRef<
         [type, theme],
     );
 
+    const cssVars = useMemo(
+        () => ({
+            ":root": themeToCssVars(theme),
+        }),
+        [theme],
+    );
+
     if (!mounted) return null;
 
     return (
         <ThemeContext.Provider value={value}>
-            <EmotionThemeProvder theme={theme}>{children}</EmotionThemeProvder>
+            <EmotionThemeProvder theme={theme}>
+                <Global styles={cssVars} />
+                {children}
+            </EmotionThemeProvder>
         </ThemeContext.Provider>
     );
 });

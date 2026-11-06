@@ -1,27 +1,24 @@
 import type { CSSObject, Theme } from "@emotion/react";
 import type { Color, ColorLike, Variant } from "@mutualzz/ui-core";
-import { formatColor, resolveColor } from "@mutualzz/ui-core";
+import { resolveColorTokens } from "@mutualzz/ui-core";
 
 export const resolveListStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor),
+            backgroundColor: colorTokens.base,
             border: "none",
         },
         outlined: {
             backgroundColor: "transparent",
-            border: `1px solid ${formatColor(resolvedColor, { alpha: 30, format: "hexa" })}`,
+            border: `1px solid ${colorTokens.alpha(30)}`,
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                alpha: 10,
-                format: "hexa",
-            }),
+            backgroundColor: colorTokens.alpha(10),
             border: "none",
         },
         plain: {
