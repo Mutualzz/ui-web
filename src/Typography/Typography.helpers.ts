@@ -15,6 +15,7 @@ export const resolveTypographStyles = (
     theme: Theme,
     color: Color | ColorLike,
     textColor: TypographyColor | ColorLike | "inherit",
+    colorOnNone = false,
 ): Record<TypographyVariant, CSSObject> => {
     const resolvedColor = resolveColor(color, theme);
 
@@ -59,7 +60,7 @@ export const resolveTypographStyles = (
         none: {
             backgroundColor: "transparent",
             border: "none",
-            color: textColorFinal,
+            color: colorOnNone ? resolvedColor : textColorFinal,
         },
     };
 };

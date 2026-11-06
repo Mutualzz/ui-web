@@ -36,7 +36,7 @@ const InputRoot = styled("div")<InputRootProps>(
         width: fullWidth ? "100%" : "auto",
         minWidth: 0,
         flexShrink: 1,
-        flexGrow: fullWidth ? 1 : 0,
+        flexGrow: 0,
         boxSizing: "border-box",
         overflow: "hidden",
         lineHeight: 1,
