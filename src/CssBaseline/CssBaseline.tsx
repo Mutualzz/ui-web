@@ -14,9 +14,7 @@ interface CssBaselineProps {
 export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
     const { theme } = useTheme();
     const backgroundImageUrl = theme.backgroundImageUrl;
-    const dim = backgroundImageUrl
-        ? resolveWallpaperDimOverlay(theme)
-        : null;
+    const dim = backgroundImageUrl ? resolveWallpaperDimOverlay(theme) : null;
     const scrim = backgroundImageUrl ? resolveWallpaperScrim(theme) : null;
     const imageFilter = backgroundImageUrl
         ? resolveWallpaperImageFilter(theme)
@@ -104,23 +102,28 @@ export const CssBaseline = ({ adaptiveScrollbar }: CssBaselineProps) => {
     }
 
     if (adaptiveScrollbar) {
-        styles["*"] = {
-            scrollbarWidth: "thin",
-            scrollbarColor: `${theme.colors.primary} transparent`,
+        styles["@supports not selector(::-webkit-scrollbar)"] = {
+            "*": {
+                scrollbarWidth: "thin",
+                scrollbarColor: `${theme.colors.primary} transparent`,
+            },
         };
         styles["::-webkit-scrollbar"] = {
             width: 8,
             height: 8,
         };
+        styles["::-webkit-scrollbar-button"] = {
+            display: "none",
+        };
         styles["::-webkit-scrollbar-thumb"] = {
-            background: theme.colors.neutral,
+            background: theme.colors.primary,
             borderRadius: 4,
         };
         styles["::-webkit-scrollbar-track"] = {
-            background: theme.colors.primary,
+            background: "transparent",
         };
         styles["::-webkit-scrollbar-thumb:hover"] = {
-            background: formatColor(theme.colors.neutral, {
+            background: formatColor(theme.colors.primary, {
                 lighten: 20,
                 format: "hexa",
             }),
