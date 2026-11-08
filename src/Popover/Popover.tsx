@@ -122,10 +122,12 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             triggerCss,
             children,
             isOpen: isOpenProp,
+            onOpenChange,
             disablePortal = false,
             closeOnClickOutside = true,
             closeOnInteract = false,
             placement: placementProp,
+            align = "center",
             elevation = 0,
             surfaceRole = "popover",
             ...props
@@ -181,6 +183,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
                 popoverRect,
                 scrollTopForPosition,
                 scrollLeftForPosition,
+                align,
             );
 
             const clampedPosition = {
@@ -198,7 +201,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
             setPosition(clampedPosition);
             setMeasured(true);
-        }, [placementProp, disablePortal]);
+        }, [placementProp, disablePortal, align]);
 
         useLayoutEffect(() => {
             if (!isOpen) {
@@ -232,16 +235,20 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         }, [isOpen, updatePosition]);
 
         const toggleVisibility = () => {
-            if (!isControlled) setVisible((prev) => !prev);
+            if (isControlled) onOpenChange?.(!isOpenProp);
+            else setVisible((prev) => !prev);
         };
 
         useOnClickOutside([triggerRef, contentRef] as any[], () => {
             if (!closeOnClickOutside) return;
-            setVisible(false);
+            if (isControlled) onOpenChange?.(false);
+            else setVisible(false);
         });
 
         const handleContentClick = () => {
-            if (closeOnInteract) setVisible(false);
+            if (!closeOnInteract) return;
+            if (isControlled) onOpenChange?.(false);
+            else setVisible(false);
         };
 
         const popoverContent = isOpen && (

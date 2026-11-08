@@ -1,6 +1,7 @@
 import type { Theme } from "@emotion/react";
 import type { Size, SizeValue } from "@mutualzz/ui-core";
 import { resolveSize } from "@mutualzz/ui-core";
+import type { PopoverAlign, PopoverPlacement } from "./Popover.types";
 
 const baseSizeMap: Record<Size, number> = {
     sm: 12,
@@ -28,45 +29,58 @@ export const getBestPlacement = (
     return "bottom"; // fallback
 };
 
+const alignOnAxis = (
+    start: number,
+    triggerSize: number,
+    popoverSize: number,
+    align: PopoverAlign,
+) => {
+    if (align === "start") return start;
+    if (align === "end") return start + triggerSize - popoverSize;
+    return start + (triggerSize - popoverSize) / 2;
+};
+
 export const getPopoverPosition = (
-    placement: "top" | "bottom" | "left" | "right",
+    placement: PopoverPlacement,
     triggerRect: DOMRect,
     popoverRect: DOMRect,
     scrollTop: number,
     scrollLeft: number,
+    align: PopoverAlign = "center",
     offset = 10,
 ) => {
+    const horizontal = alignOnAxis(
+        triggerRect.left + scrollLeft,
+        triggerRect.width,
+        popoverRect.width,
+        align,
+    );
+    const vertical = alignOnAxis(
+        triggerRect.top + scrollTop,
+        triggerRect.height,
+        popoverRect.height,
+        align,
+    );
+
     switch (placement) {
         case "bottom":
             return {
                 top: triggerRect.bottom + scrollTop + offset,
-                left:
-                    triggerRect.left +
-                    scrollLeft +
-                    (triggerRect.width - popoverRect.width) / 2,
+                left: horizontal,
             };
         case "top":
             return {
                 top: triggerRect.top + scrollTop - popoverRect.height - offset,
-                left:
-                    triggerRect.left +
-                    scrollLeft +
-                    (triggerRect.width - popoverRect.width) / 2,
+                left: horizontal,
             };
         case "right":
             return {
-                top:
-                    triggerRect.top +
-                    scrollTop +
-                    (triggerRect.height - popoverRect.height) / 2,
+                top: vertical,
                 left: triggerRect.right + scrollLeft + offset,
             };
         case "left":
             return {
-                top:
-                    triggerRect.top +
-                    scrollTop +
-                    (triggerRect.height - popoverRect.height) / 2,
+                top: vertical,
                 left:
                     triggerRect.left + scrollLeft - popoverRect.width - offset,
             };

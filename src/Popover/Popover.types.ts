@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { PaperProps } from "../Paper/Paper.types";
 
 export type PopoverPlacement = "top" | "bottom" | "left" | "right";
+export type PopoverAlign = "start" | "center" | "end";
 
 export interface PopoverProps extends Omit<PaperProps, "content"> {
     size?: Responsive<Size | SizeValue | number>;
@@ -11,6 +12,7 @@ export interface PopoverProps extends Omit<PaperProps, "content"> {
     triggerCss?: CSSObject;
 
     isOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
 
     disablePortal?: boolean;
 
@@ -18,6 +20,7 @@ export interface PopoverProps extends Omit<PaperProps, "content"> {
     closeOnInteract?: boolean;
 
     placement?: PopoverPlacement;
+    align?: PopoverAlign;
 
     surfaceRole?: PaperProps["surfaceRole"];
 }
