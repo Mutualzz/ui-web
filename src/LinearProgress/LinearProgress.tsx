@@ -20,9 +20,10 @@ const LinearProgressWrapper = styled("div")<{
     background: string;
     outlinedColor: string;
     variant: Variant;
-}>(({ width, background, outlinedColor, variant }) => ({
+}>(({ width, height, background, outlinedColor, variant }) => ({
     position: "relative",
     width,
+    height,
     background,
     borderRadius: "0.5rem",
     overflow: "hidden",

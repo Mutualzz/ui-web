@@ -36,4 +36,7 @@ export const resolveLinearProgressThickness = (
 export const resolveLinearProgressLength = (
     theme: Theme,
     length: Size | SizeValue | number,
-) => resolveSize(theme, length, lengthMap);
+): string | number =>
+    typeof length === "string" && length.endsWith("%")
+        ? length
+        : resolveSize(theme, length, lengthMap);
