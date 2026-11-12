@@ -5,23 +5,26 @@ import {
     resolveResponsiveMerge,
     type Responsive,
     styled,
+    useForkRef,
     useOnClickOutside,
     type Variant,
 } from "@mutualzz/ui-core";
 import {
     Children,
-    type ChangeEvent,
-    type FocusEvent,
     forwardRef,
     isValidElement,
+    type KeyboardEvent,
+    type ReactNode,
     useCallback,
     useEffect,
+    useId,
     useRef,
     useState,
 } from "react";
-import { useTranslation } from "react-i18next";
+import type { OptionProps } from "../Option/Option.types";
 import { DecoratorWrapper } from "../DecoratorWrapper/DecoratorWrapper";
 import { Portal } from "../Portal/Portal";
+import { useUiLabels } from "../UiLabels/UiLabels";
 import { SelectContext } from "./Select.context";
 import {
     resolveSelectContentStyles,
@@ -72,43 +75,6 @@ const SelectWrapper = styled("div")<SelectProps>(
     }),
 );
 
-const HiddenSelect = styled("select")<SelectProps>({
-    flex: 1,
-    minWidth: 0,
-    width: "100%",
-    border: "none",
-    outline: "none",
-    background: "transparent",
-    color: "inherit",
-    font: "inherit",
-    padding: 0,
-    position: "absolute",
-    inset: 0,
-    height: "100%",
-    cursor: "pointer",
-    margin: 0,
-    opacity: 0,
-
-    appearance: "none",
-    WebkitAppearance: "none",
-    MozAppearance: "none",
-
-    pointerEvents: "none",
-
-    "&:focus": {
-        outline: "none",
-        boxShadow: "none",
-    },
-
-    "&:hover, &:active": {
-        outline: "none",
-    },
-
-    "&::-ms-expand": {
-        display: "none",
-    },
-});
-
 const SelectPlaceholder = styled("span")<{
     color: Responsive<Color | ColorLike>;
     variant: Responsive<Variant>;
@@ -118,7 +84,8 @@ const SelectPlaceholder = styled("span")<{
     overflow: "hidden",
     textOverflow: "ellipsis",
     background: "transparent",
-    whiteSpace: "wrap",
+    whiteSpace: "nowrap",
+    minWidth: 0,
 
     ...resolveResponsiveMerge(
         theme,
@@ -194,7 +161,24 @@ const SelectContent = styled("div")<
     }),
 );
 
-const Select = forwardRef<HTMLSelectElement, SelectProps>(
+type OptionValue = string | number;
+
+interface OptionEntry {
+    value: OptionValue;
+    disabled: boolean;
+    content: ReactNode;
+}
+
+interface DropdownPosition {
+    top?: number;
+    bottom?: number;
+    left: number;
+    width: number;
+}
+
+const dropdownOffset = 5;
+
+const Select = forwardRef<HTMLDivElement, SelectProps>(
     (
         {
             size = "md",
@@ -209,300 +193,273 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             placeholder,
             value,
             defaultValue,
-            onChange,
             onValueChange,
-            onFocus,
-            onBlur,
+            onKeyDown,
+            name,
             children,
             closeOnClickOutside = true,
             ...props
         },
         ref,
     ) => {
-        const { t } = useTranslation("common");
-        const resolvedPlaceholder =
-            placeholder ??
-            t("select.placeholder", { defaultValue: "Select an option" });
+        const labels = useUiLabels();
+        const resolvedPlaceholder = placeholder ?? labels.selectPlaceholder;
         const selectRef = useRef<HTMLDivElement>(null);
         const selectContentRef = useRef<HTMLDivElement>(null);
+        const handleRef = useForkRef(selectRef, ref);
+        const listboxId = useId();
 
         const [internalValue, setInternalValue] = useState(
             defaultValue ?? (multiple ? [] : ""),
         );
         const isControlled = value !== undefined;
-        const [focusedIndex, setFocusedIndex] = useState(-1);
-        const [dropdownPosition, setDropdownPosition] = useState({
-            top: 0,
-            left: 0,
-            width: 0,
-        });
+        const currentValue = isControlled ? value : internalValue;
+
+        const [isOpen, setIsOpen] = useState(false);
+        const [highlightedValue, setHighlightedValue] =
+            useState<OptionValue | null>(null);
+        const [dropdownPosition, setDropdownPosition] =
+            useState<DropdownPosition>({ top: 0, left: 0, width: 0 });
         const [placement, setPlacement] = useState<"top" | "bottom">("bottom");
 
-        const currentValue = isControlled ? value : internalValue;
-        const [isOpen, setIsOpen] = useState(false);
+        const optionEntries: OptionEntry[] = Children.toArray(children)
+            .filter(isValidElement<OptionProps>)
+            .filter((element) => element.props.value !== undefined)
+            .map((element) => ({
+                value: element.props.value as OptionValue,
+                disabled: Boolean(element.props.disabled),
+                content: element.props.children ?? element.props.label,
+            }));
+        const enabledEntries = optionEntries.filter((entry) => !entry.disabled);
+
+        const isValueSelected = (optionValue: OptionValue) =>
+            multiple
+                ? Array.isArray(currentValue) &&
+                  currentValue.includes(optionValue)
+                : currentValue === optionValue;
+
+        const getOptionId = useCallback(
+            (optionValue: OptionValue) =>
+                `${listboxId}-option-${String(optionValue).replace(/\s+/g, "-")}`,
+            [listboxId],
+        );
 
         const updateDropdownPosition = useCallback(() => {
-            if (selectRef.current) {
-                const rect = selectRef.current.getBoundingClientRect();
-                const dropdownHeight =
-                    selectContentRef.current?.offsetHeight ?? 200; // fallback height
-                const spaceBelow = window.innerHeight - rect.bottom;
-                const spaceAbove = rect.top;
+            const selectNode = selectRef.current;
+            if (!selectNode) return;
 
-                const offset = 5;
-                let positionStyles: any = {
-                    left: rect.left + window.scrollX,
-                    width: rect.width,
-                };
-                let newPlacement: "top" | "bottom" = "bottom";
+            const rect = selectNode.getBoundingClientRect();
+            const dropdownHeight =
+                selectContentRef.current?.offsetHeight ?? 200;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const opensUpward =
+                spaceBelow < dropdownHeight && spaceAbove > dropdownHeight;
 
-                if (
-                    spaceBelow < dropdownHeight &&
-                    spaceAbove > dropdownHeight
-                ) {
-                    // Place the dropdown just above the select, with a small gap
-                    positionStyles = {
-                        ...positionStyles,
-                        bottom:
-                            window.innerHeight -
-                            rect.top +
-                            offset +
-                            window.scrollY,
-                    };
-                    newPlacement = "top";
-                } else {
-                    positionStyles = {
-                        ...positionStyles,
-                        top: rect.bottom + window.scrollY + offset,
-                    };
-                }
-
-                setDropdownPosition(positionStyles);
-                setPlacement(newPlacement);
-            }
+            setPlacement(opensUpward ? "top" : "bottom");
+            setDropdownPosition(
+                opensUpward
+                    ? {
+                          bottom:
+                              window.innerHeight - rect.top + dropdownOffset,
+                          left: rect.left,
+                          width: rect.width,
+                      }
+                    : {
+                          top: rect.bottom + dropdownOffset,
+                          left: rect.left,
+                          width: rect.width,
+                      },
+            );
         }, []);
+
+        const closeDropdown = useCallback(() => {
+            setIsOpen(false);
+            setHighlightedValue(null);
+        }, []);
+
+        const openDropdown = (
+            highlightFrom: "selected" | "last" = "selected",
+        ) => {
+            if (disabled) return;
+            updateDropdownPosition();
+            setIsOpen(true);
+
+            const selectedEntry =
+                highlightFrom === "selected"
+                    ? enabledEntries.find((entry) =>
+                          isValueSelected(entry.value),
+                      )
+                    : undefined;
+            const fallbackEntry =
+                highlightFrom === "last"
+                    ? enabledEntries[enabledEntries.length - 1]
+                    : enabledEntries[0];
+            setHighlightedValue(
+                selectedEntry?.value ?? fallbackEntry?.value ?? null,
+            );
+        };
 
         useEffect(() => {
-            updateDropdownPosition();
+            if (autoFocus) selectRef.current?.focus();
         }, []);
 
-        useOnClickOutside(selectRef as any, () => {
+        useOnClickOutside([selectRef, selectContentRef], () => {
             if (!closeOnClickOutside) return;
-            setIsOpen(false);
-            setFocusedIndex(-1);
+            closeDropdown();
         });
 
         useEffect(() => {
-            if (isOpen && selectRef.current) {
-                updateDropdownPosition();
+            const selectNode = selectRef.current;
+            if (!isOpen || !selectNode) return;
 
-                const handleResize = () => updateDropdownPosition();
-                const handleScroll = () => {
-                    setIsOpen(false);
-                    setFocusedIndex(-1);
-                };
+            updateDropdownPosition();
 
-                window.addEventListener("resize", handleResize);
+            const handleResize = () => updateDropdownPosition();
+            const scrollableAncestors = getScrollableAncestors(selectNode);
 
-                const scrollableAncestors = getScrollableAncestors(
-                    selectRef.current,
-                );
+            window.addEventListener("resize", handleResize);
+            scrollableAncestors.forEach((ancestor) =>
+                ancestor.addEventListener("scroll", closeDropdown, {
+                    passive: true,
+                }),
+            );
+
+            return () => {
+                window.removeEventListener("resize", handleResize);
                 scrollableAncestors.forEach((ancestor) =>
-                    ancestor.addEventListener("scroll", handleScroll, {
-                        passive: true,
-                    }),
+                    ancestor.removeEventListener("scroll", closeDropdown),
                 );
-
-                return () => {
-                    window.removeEventListener("resize", handleResize);
-                    scrollableAncestors.forEach((ancestor) =>
-                        ancestor.removeEventListener("scroll", handleScroll),
-                    );
-                };
-            }
-        }, [isOpen]);
+            };
+        }, [isOpen, updateDropdownPosition, closeDropdown]);
 
         useEffect(() => {
-            if (!isOpen) setFocusedIndex(-1);
-        }, [isOpen]);
+            if (!isOpen || highlightedValue === null) return;
+            document
+                .getElementById(getOptionId(highlightedValue))
+                ?.scrollIntoView({ block: "nearest" });
+        }, [isOpen, highlightedValue, getOptionId]);
 
-        const getOptions = useCallback(() => {
-            if (!selectContentRef.current) return [];
-            const optionElements =
-                selectContentRef.current.querySelectorAll('[role="option"]');
-            return Array.from(optionElements);
-        }, []);
-
-        const navigateToOption = useCallback(
-            (index: number) => {
-                const options = getOptions();
-                if (options.length === 0) return;
-
-                const clampedIndex = Math.max(
-                    0,
-                    Math.min(index, options.length - 1),
-                );
-                setFocusedIndex(clampedIndex);
-
-                // Scroll focused option into view
-                const focusedOption = options[clampedIndex] as
-                    | HTMLElement
-                    | undefined;
-                focusedOption?.scrollIntoView({
-                    block: "nearest",
-                    behavior: "smooth",
-                });
-
-                // Add visual focus state
-                options.forEach((option, i) => {
-                    (option as HTMLElement).setAttribute(
-                        "data-focused",
-                        i === clampedIndex ? "true" : "false",
-                    );
-                });
-            },
-            [getOptions],
-        );
-
-        const handleChange = useCallback(
-            (e: ChangeEvent<HTMLSelectElement>) => {
-                const newValue = multiple
-                    ? Array.from(
-                          e.target.selectedOptions,
-                          (option) => option.value,
-                      )
-                    : e.target.value;
-
-                if (!isControlled) setInternalValue(newValue);
-
-                // Only call the native onChange if provided
-                onChange?.(e);
-
-                // Call your custom handler
-                onValueChange?.(newValue);
-            },
-            [isControlled, multiple, onValueChange, onChange],
-        );
-
-        const handleWrapperClick = useCallback(() => {
-            if (disabled) return;
-            updateDropdownPosition();
-            setIsOpen((prev) => !prev);
-        }, [disabled]);
-
-        const handleFocus = useCallback(
-            (event: React.FocusEvent<HTMLSelectElement>) => {
-                setIsOpen(true);
-                onFocus?.(event);
-            },
-            [onFocus],
-        );
-
-        const handleBlur = useCallback(
-            (event: FocusEvent<HTMLSelectElement>) => {
-                setIsOpen(false);
-                onBlur?.(event);
-            },
-            [onBlur],
-        );
-
-        const handleKeyDown = useCallback(
-            (event: React.KeyboardEvent) => {
+        const handleOptionSelect = useCallback(
+            (optionValue: OptionValue) => {
                 if (disabled) return;
 
-                switch (event.key) {
-                    case "Enter":
-                    case " ":
-                        event.preventDefault();
-                        if (isOpen && focusedIndex >= 0) {
-                            const options = getOptions();
-                            const focusedOption = options[focusedIndex] as
-                                | HTMLElement
-                                | undefined;
-                            if (focusedOption) {
-                                focusedOption.click();
-                            }
-                        } else {
-                            setIsOpen((prev) => !prev);
-                        }
-                        break;
-                    case "Escape":
-                        setIsOpen(false);
-                        setFocusedIndex(-1);
-                        break;
-                    case "ArrowDown":
-                        event.preventDefault();
-                        if (!isOpen) {
-                            setIsOpen(true);
-                            setFocusedIndex(0);
-                        } else {
-                            navigateToOption(focusedIndex + 1);
-                        }
-                        break;
-                    case "ArrowUp":
-                        event.preventDefault();
-                        if (!isOpen) {
-                            setIsOpen(true);
-                            const options = getOptions();
-                            setFocusedIndex(Math.max(0, options.length - 1));
-                        } else {
-                            navigateToOption(focusedIndex - 1);
-                        }
-                        break;
+                let nextValue: OptionValue | OptionValue[];
+                if (multiple) {
+                    const selectedValues = Array.isArray(currentValue)
+                        ? currentValue
+                        : [];
+                    nextValue = selectedValues.includes(optionValue)
+                        ? selectedValues.filter(
+                              (selectedValue) => selectedValue !== optionValue,
+                          )
+                        : [...selectedValues, optionValue];
+                } else {
+                    nextValue = optionValue;
+                    closeDropdown();
                 }
+
+                if (!isControlled) setInternalValue(nextValue);
+                onValueChange?.(nextValue);
             },
-            [disabled, isOpen, focusedIndex, getOptions, navigateToOption],
+            [
+                disabled,
+                multiple,
+                currentValue,
+                isControlled,
+                onValueChange,
+                closeDropdown,
+            ],
         );
 
-        const getSelectedOptionContent = () => {
-            // Flatten mapped/fragment children so Option values resolve correctly.
-            const opts = Children.toArray(children).filter(isValidElement) as {
-                props: { value?: unknown; children?: React.ReactNode; label?: React.ReactNode };
-            }[];
-
-            if (multiple && Array.isArray(currentValue)) {
-                return opts
-                    .filter(
-                        (opt) =>
-                            opt.props.value != null &&
-                            currentValue.includes(opt.props.value as never),
-                    )
-                    .map((opt) => opt.props.children ?? opt.props.label);
-            }
-
-            const selected = opts.find(
-                (opt) => opt.props.value === currentValue,
+        const moveHighlight = (direction: 1 | -1) => {
+            if (enabledEntries.length === 0) return;
+            const currentIndex = enabledEntries.findIndex(
+                (entry) => entry.value === highlightedValue,
             );
-            return selected
-                ? (selected.props.children ?? selected.props.label ?? null)
-                : null;
+            const nextIndex =
+                currentIndex === -1
+                    ? 0
+                    : Math.min(
+                          Math.max(currentIndex + direction, 0),
+                          enabledEntries.length - 1,
+                      );
+            setHighlightedValue(enabledEntries[nextIndex].value);
         };
 
-        const displayValue = getSelectedOptionContent() ?? resolvedPlaceholder;
+        const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+            onKeyDown?.(event);
+            if (disabled || event.defaultPrevented) return;
+
+            switch (event.key) {
+                case "Enter":
+                case " ":
+                    event.preventDefault();
+                    if (isOpen && highlightedValue !== null) {
+                        handleOptionSelect(highlightedValue);
+                    } else if (isOpen) {
+                        closeDropdown();
+                    } else {
+                        openDropdown();
+                    }
+                    break;
+                case "Escape":
+                    if (!isOpen) break;
+                    event.stopPropagation();
+                    closeDropdown();
+                    break;
+                case "Tab":
+                    if (isOpen) closeDropdown();
+                    break;
+                case "ArrowDown":
+                    event.preventDefault();
+                    if (isOpen) moveHighlight(1);
+                    else openDropdown();
+                    break;
+                case "ArrowUp":
+                    event.preventDefault();
+                    if (isOpen) moveHighlight(-1);
+                    else openDropdown("last");
+                    break;
+                case "Home":
+                    if (!isOpen || enabledEntries.length === 0) break;
+                    event.preventDefault();
+                    setHighlightedValue(enabledEntries[0].value);
+                    break;
+                case "End":
+                    if (!isOpen || enabledEntries.length === 0) break;
+                    event.preventDefault();
+                    setHighlightedValue(
+                        enabledEntries[enabledEntries.length - 1].value,
+                    );
+                    break;
+            }
+        };
+
+        const handleWrapperClick = () => {
+            if (disabled) return;
+            if (isOpen) closeDropdown();
+            else openDropdown();
+        };
+
+        const selectedContent = multiple
+            ? optionEntries
+                  .filter((entry) => isValueSelected(entry.value))
+                  .map((entry) => entry.content)
+            : (optionEntries.find((entry) => isValueSelected(entry.value))
+                  ?.content ?? null);
+
         const hasValue = multiple
             ? Array.isArray(currentValue) && currentValue.length > 0
             : currentValue !== undefined &&
               currentValue !== null &&
               currentValue !== "";
 
-        const handleOptionSelect = useCallback(
-            (optionValue: string | number) => {
-                if (disabled) return;
-                let newValue: any;
-                if (multiple) {
-                    const arr = Array.isArray(currentValue) ? currentValue : [];
-                    newValue = arr.includes(optionValue)
-                        ? arr.filter((v) => v !== optionValue)
-                        : [...arr, optionValue];
-                } else {
-                    newValue = optionValue;
-                    setIsOpen(false);
-                }
-                if (!isControlled) setInternalValue(newValue);
-                onValueChange?.(newValue);
-            },
-            [disabled, multiple, currentValue, isControlled, onValueChange],
-        );
+        const formValues: OptionValue[] = Array.isArray(currentValue)
+            ? currentValue
+            : hasValue
+              ? [currentValue]
+              : [];
 
         return (
             <SelectContext.Provider
@@ -514,10 +471,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     variant,
                     size,
                     disabled,
+                    highlightedValue,
+                    onHighlight: setHighlightedValue,
+                    getOptionId,
                 }}
             >
                 <SelectWrapper
-                    ref={selectRef}
+                    {...props}
+                    ref={handleRef}
                     color={color}
                     size={size}
                     variant={variant}
@@ -528,24 +489,26 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     role="combobox"
                     aria-expanded={isOpen}
                     aria-haspopup="listbox"
+                    aria-controls={isOpen ? listboxId : undefined}
+                    aria-activedescendant={
+                        isOpen && highlightedValue !== null
+                            ? getOptionId(highlightedValue)
+                            : undefined
+                    }
+                    aria-disabled={disabled || undefined}
+                    aria-required={required || undefined}
                 >
-                    <HiddenSelect
-                        ref={ref}
-                        value={
-                            multiple
-                                ? (currentValue)
-                                : (currentValue)
-                        }
-                        onChange={handleChange}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        disabled={disabled}
-                        required={required}
-                        autoFocus={autoFocus}
-                        multiple={multiple}
-                        tabIndex={-1}
-                        {...props}
-                    />
+                    {name &&
+                        formValues.map((formValue) => (
+                            <input
+                                key={String(formValue)}
+                                type="hidden"
+                                name={name}
+                                value={String(formValue)}
+                                disabled={disabled}
+                            />
+                        ))}
+
                     {startDecorator && (
                         <DecoratorWrapper position="start">
                             {startDecorator}
@@ -553,7 +516,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     )}
 
                     <SelectPlaceholder variant={variant} color={color}>
-                        {hasValue ? displayValue : resolvedPlaceholder}
+                        {hasValue && selectedContent
+                            ? selectedContent
+                            : resolvedPlaceholder}
                     </SelectPlaceholder>
 
                     <DecoratorWrapper position="end">
@@ -561,6 +526,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                             <DropdownIcon
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
+                                aria-hidden
                             >
                                 <path d="m12 5.83 2.46 2.46c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L12.7 3.7a.9959.9959 0 0 0-1.41 0L8.12 6.88c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 5.83zm0 12.34-2.46-2.46a.9959.9959 0 0 0-1.41 0c-.39.39-.39 1.02 0 1.41l3.17 3.18c.39.39 1.02.39 1.41 0l3.17-3.17c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L12 18.17z"></path>
                             </DropdownIcon>
@@ -572,10 +538,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                             <SelectContent
                                 placement={placement}
                                 ref={selectContentRef}
+                                id={listboxId}
                                 color={color}
                                 variant="outlined"
                                 isOpen={isOpen}
                                 role="listbox"
+                                aria-multiselectable={multiple || undefined}
                                 portalPosition={dropdownPosition}
                             >
                                 {children}

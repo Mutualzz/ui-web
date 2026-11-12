@@ -4,6 +4,7 @@ import {
     type ChangeEvent,
     forwardRef,
     useContext,
+    useEffect,
     useRef,
     useState,
 } from "react";
@@ -15,7 +16,7 @@ import {
 } from "./Checkbox.helpers";
 import { type CheckboxProps } from "./Checkbox.types";
 
-const CheckboxWrapper = styled("div")<CheckboxProps>(
+const CheckboxWrapper = styled("label")<CheckboxProps>(
     ({ theme, disabled, size = "md" }) => ({
         position: "relative",
         display: "inline-flex",
@@ -68,8 +69,6 @@ const CheckboxBox = styled("span")<Omit<CheckboxProps, "value">>(({
         padding: 0,
     };
 
-    // const variantStyles = resolveCheckboxStyles(theme, color, checked)[variant];
-
     const variantStyles = resolveResponsiveMerge(
         theme,
         {
@@ -93,9 +92,7 @@ const CheckboxBox = styled("span")<Omit<CheckboxProps, "value">>(({
         ...base,
         ...variantStyles,
 
-        'input[type="checkbox"]:hover + &': checkedStyles,
-        'input[type="checkbox"]:active + &': checkedStyles,
-        'input[type="checkbox"]:focus-visible + &': {
+        'input[type="checkbox"]:focus-visible ~ &': {
             boxShadow: `0 0 0 3px ${checkedStyles.backgroundColor}`,
             outline: "none",
         },
@@ -175,6 +172,12 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         );
         const inputRef = useRef<HTMLInputElement>(null);
 
+        useEffect(() => {
+            if (inputRef.current) {
+                inputRef.current.indeterminate = Boolean(indeterminate);
+            }
+        }, [indeterminate]);
+
         const isChecked =
             group && value
                 ? Array.isArray(group.value) && group.value.includes(value)
@@ -199,13 +202,6 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             propOnChange?.(e);
         };
 
-        const handleWrapperClick = (e: React.MouseEvent) => {
-            e.stopPropagation();
-            if (!disabled && inputRef.current) {
-                inputRef.current.click();
-            }
-        };
-
         const color = colorProp ?? group?.color ?? "neutral";
         const variant = variantProp ?? group?.variant ?? "solid";
         const size = sizeProp ?? group?.size ?? "md";
@@ -213,14 +209,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         const disabled = group?.disabled ?? propDisabled;
 
         return (
-            <CheckboxWrapper
-                role="checkbox"
-                aria-checked={isChecked}
-                tabIndex={disabled ? -1 : 0}
-                disabled={disabled}
-                size={size}
-                onClick={handleWrapperClick}
-            >
+            <CheckboxWrapper disabled={disabled} size={size}>
                 <HiddenCheckbox
                     type="checkbox"
                     name={name}
@@ -228,32 +217,19 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                     checked={isChecked}
                     onChange={handleChange}
                     disabled={disabled}
-                    onClick={(e) => e.stopPropagation()}
                     ref={(node) => {
                         inputRef.current = node;
                         if (typeof ref === "function") ref(node);
                         else if (ref) ref.current = node;
                     }}
                     {...props}
-                    css={{
-                        pointerEvents: "none",
-                    }}
                 />
                 {rtl && label && (
                     <CheckboxLabel disabled={disabled} rtl={rtl}>
                         {label}
                     </CheckboxLabel>
                 )}
-                <CheckboxBox
-                    name={name}
-                    role="checkbox"
-                    aria-checked={isChecked}
-                    color={color}
-                    variant={variant}
-                    checked={isChecked}
-                    disabled={disabled}
-                    size={size}
-                >
+                <CheckboxBox aria-hidden color={color} variant={variant}>
                     {indeterminate ? (
                         indeterminateIcon ? (
                             <IconWrapper size={size}>

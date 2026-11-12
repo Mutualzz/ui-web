@@ -1,8 +1,10 @@
 import type { CSSObject } from "@emotion/react";
-import type { ReactNode } from "react";
-import type { PaperProps } from "../Paper/Paper.types";
+import type { HTMLAttributes, ReactNode } from "react";
 
-export interface ModalProps extends Omit<PaperProps, "height"> {
+export interface ModalProps extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "color"
+> {
     open: boolean;
 
     container?: HTMLDivElement | (() => HTMLDivElement);

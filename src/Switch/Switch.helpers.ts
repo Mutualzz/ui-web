@@ -38,10 +38,10 @@ export const resolveSwitchTrackStyles = (
         solid: {
             backgroundColor: checked ? trackTokens.base : trackTokens.alpha(35),
             border: `1px solid ${trackTokens.base}`,
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: trackTokens.alpha(checked ? 70 : 35),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: trackTokens.alpha(checked ? 80 : 45),
             },
             "--switch-thumb": trackTokens.on,
@@ -49,10 +49,10 @@ export const resolveSwitchTrackStyles = (
         outlined: {
             backgroundColor: checked ? trackTokens.alpha(12) : "transparent",
             border: `1px solid ${trackTokens.base}`,
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: trackTokens.alpha(18),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: trackTokens.alpha(26),
             },
             "--switch-thumb": trackTokens.on,
@@ -60,10 +60,10 @@ export const resolveSwitchTrackStyles = (
         soft: {
             backgroundColor: trackTokens.alpha(checked ? 45 : 22),
             border: "none",
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: trackTokens.alpha(checked ? 55 : 30),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: trackTokens.alpha(checked ? 65 : 38),
             },
             "--switch-thumb": trackTokens.on,
@@ -71,10 +71,10 @@ export const resolveSwitchTrackStyles = (
         plain: {
             backgroundColor: "transparent",
             border: "none",
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: trackTokens.alpha(checked ? 22 : 14),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: trackTokens.alpha(checked ? 30 : 20),
             },
             "--switch-thumb": trackTokens.on,

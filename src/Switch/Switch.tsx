@@ -1,4 +1,4 @@
-import { type ChangeEvent, forwardRef, useMemo, useRef, useState } from "react";
+import { type ChangeEvent, forwardRef, useState } from "react";
 import type { SwitchProps } from "./Switch.types";
 import {
     resolveResponsiveMerge,
@@ -10,7 +10,7 @@ import {
     resolveSwitchTrackStyles,
 } from "./Switch.helpers";
 
-const SwitchWrapper = styled("div")<SwitchProps>(
+const SwitchWrapper = styled("label")<SwitchProps>(
     ({ theme, shape = "rounded", disabled }) => ({
         position: "relative",
         display: "inline-flex",
@@ -50,14 +50,14 @@ const Track = styled("span")<SwitchProps>(({
             variant,
         },
         ({ color: c, variant: v }) =>
-            resolveSwitchTrackStyles(theme, c as any, !!checked)[v],
+            resolveSwitchTrackStyles(theme, c, !!checked)[v],
     );
 
     const checkedStyles = resolveResponsiveMerge(
         theme,
         { color, variant },
         ({ color: c, variant: v }) =>
-            resolveSwitchTrackStyles(theme, c as any, true)[v],
+            resolveSwitchTrackStyles(theme, c, true)[v],
     );
 
     const shapeStyles = resolveResponsiveMerge(
@@ -80,8 +80,6 @@ const Track = styled("span")<SwitchProps>(({
         ...shapeStyles,
         ...variantStyles,
 
-        'input[type="checkbox"]:hover + &': checkedStyles,
-        'input[type="checkbox"]:active + &': checkedStyles,
         'input[type="checkbox"]:focus-visible + &': {
             outline: "none",
             boxShadow: `0 0 0 3px ${
@@ -174,7 +172,6 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
         const [uncontrolledChecked, setUncontrolledChecked] = useState(
             defaultChecked ?? false,
         );
-        const inputRef = useRef<HTMLInputElement>(null);
 
         const isChecked =
             controlledChecked !== undefined
@@ -188,41 +185,19 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             propOnChange?.(e);
         };
 
-        const handleWrapperClick = () => {
-            if (!disabled && inputRef.current) inputRef.current.click();
-        };
-
-        const ariaChecked = useMemo(
-            () => ({
-                role: "switch",
-                "aria-checked": isChecked,
-            }),
-            [isChecked],
-        );
-
         return (
-            <SwitchWrapper
-                {...ariaChecked}
-                tabIndex={disabled ? -1 : 0}
-                disabled={disabled}
-                onClick={handleWrapperClick}
-                shape={shape}
-            >
+            <SwitchWrapper disabled={disabled} shape={shape}>
                 {startDecorator && <Decorator>{startDecorator}</Decorator>}
 
                 <span style={{ position: "relative", display: "inline-flex" }}>
                     <HiddenInput
                         {...props}
-                        ref={(node) => {
-                            inputRef.current = node;
-                            if (typeof ref === "function") ref(node);
-                            else if (ref) ref.current = node;
-                        }}
+                        ref={ref}
                         type="checkbox"
+                        role="switch"
                         checked={isChecked}
                         onChange={handleChange}
                         disabled={disabled}
-                        css={{ pointerEvents: "none" }}
                     />
 
                     <Track

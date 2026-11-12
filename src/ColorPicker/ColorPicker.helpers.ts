@@ -9,7 +9,7 @@ import {
 const MIN_STOP_GAP_PERCENT = 1;
 
 export const newStopId = () =>
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+     
     globalThis.crypto?.randomUUID?.() ??
     `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 

@@ -12,8 +12,10 @@ import type { AnchorHTMLAttributes, ReactNode } from "react";
 export type LinkVariant = Variant | "none";
 export type LinkUnderline = "always" | "hover" | "none";
 
-export interface LinkProps
-    extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "color"> {
+export interface LinkProps extends Omit<
+    AnchorHTMLAttributes<HTMLAnchorElement>,
+    "color"
+> {
     /**
      * Typography Level.
      * This can be a predefined level like "h1", "h2", and etc.

@@ -8,12 +8,14 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import type { HTMLProps } from "react";
+import type { HTMLAttributes } from "react";
 
 export type AllowedListStyleTypes = (typeof allowedListStyleTypes)[number];
 
-export interface ListProps
-    extends Omit<HTMLProps<HTMLUListElement>, "size" | "wrap" | "color"> {
+export interface ListProps extends Omit<
+    HTMLAttributes<HTMLUListElement>,
+    "color"
+> {
     /**
      * Color of the list
      * Can be a predefined color or a custom color.

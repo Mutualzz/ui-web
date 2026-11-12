@@ -6,13 +6,27 @@ import type {
     Size,
     SizeValue,
 } from "@mutualzz/ui-core";
-import type { ImgHTMLAttributes } from "react";
+import type { HTMLAttributes, ImgHTMLAttributes } from "react";
 import type { PaperVariant } from "../Paper/Paper.types";
 
-export interface AvatarProps extends Omit<
+type AvatarImageProps = Pick<
     ImgHTMLAttributes<HTMLImageElement>,
-    "color" | "size" | "variant"
-> {
+    | "src"
+    | "alt"
+    | "loading"
+    | "decoding"
+    | "crossOrigin"
+    | "referrerPolicy"
+    | "srcSet"
+    | "sizes"
+    | "onLoad"
+    | "onError"
+>;
+
+export interface AvatarProps
+    extends
+        Omit<HTMLAttributes<HTMLDivElement>, "color" | "onLoad" | "onError">,
+        AvatarImageProps {
     color?: Responsive<Color | ColorLike>;
     variant?: Responsive<PaperVariant>;
     size?: Responsive<Size | SizeValue | number>;

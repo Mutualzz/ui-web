@@ -30,6 +30,7 @@ const IconButtonWrapper = styled("button")<IconButtonProps>(
         shape = "rounded",
         padding,
     }) => ({
+        position: "relative",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
@@ -146,11 +147,12 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             <IconButtonWrapper
                 {...props}
                 type={type}
-                ref={ref as any}
+                ref={ref}
                 variant={variant}
                 color={color}
                 size={size}
                 disabled={loading || disabled}
+                aria-busy={loading || undefined}
                 padding={padding}
                 loading={loading}
                 shape={shape}
@@ -185,6 +187,6 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     },
 );
 
-IconButton.displayName = "Button";
+IconButton.displayName = "IconButton";
 
 export { IconButton };

@@ -27,6 +27,13 @@ export const ThemeContext = createContext({
     type: null as ThemeType | null,
 });
 
+const getSystemTheme = () => {
+    if (typeof window === "undefined") return baseDarkTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? baseDarkTheme
+        : baseLightTheme;
+};
+
 export interface ThemeProviderRef {
     theme: Theme;
     type: ThemeType | null;
@@ -41,34 +48,22 @@ const ThemeProvider = forwardRef<
 >(({ children, onThemeChange }, ref) => {
     const [type, setType] = useState<ThemeType | null>(null);
 
-    const [theme, setTheme] = useState<Theme>(baseDarkTheme);
-    const [mounted, setMounted] = useState(false);
+    const [theme, setTheme] = useState<Theme>(getSystemTheme);
 
     useEffect(() => {
-        setMounted(true);
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || type) return;
 
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        const updatePrefersDark = () => {
-            const isDark = mediaQuery.matches;
-            if (!type) {
-                setTheme(isDark ? baseDarkTheme : baseLightTheme);
-            }
-        };
+        const followSystemTheme = () => setTheme(getSystemTheme());
 
-        updatePrefersDark(); // initialize on mount
-        mediaQuery.addEventListener("change", updatePrefersDark);
+        mediaQuery.addEventListener("change", followSystemTheme);
         return () =>
-            mediaQuery.removeEventListener("change", updatePrefersDark);
+            mediaQuery.removeEventListener("change", followSystemTheme);
     }, [type]);
 
     const changeTheme = (newTheme: Theme | null) => {
         if (!newTheme) {
-            const mediaQuery =
-                window?.matchMedia("(prefers-color-scheme: dark)") ?? true;
-            const preferredTheme = mediaQuery.matches
-                ? baseDarkTheme
-                : baseLightTheme;
+            const preferredTheme = getSystemTheme();
             setTheme(preferredTheme);
             setType(null);
             onThemeChange?.(preferredTheme, null);
@@ -102,8 +97,6 @@ const ThemeProvider = forwardRef<
         }),
         [theme],
     );
-
-    if (!mounted) return null;
 
     return (
         <ThemeContext.Provider value={value}>

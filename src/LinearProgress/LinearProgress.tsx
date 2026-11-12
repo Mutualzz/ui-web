@@ -11,7 +11,13 @@ import {
     resolveLinearProgressStyles,
     resolveLinearProgressThickness,
 } from "./LinearProgress.helpers";
-import { bounce, scaleInOut, slide, wave } from "./LinearProgress.keyframes";
+import {
+    bounce,
+    breathe,
+    scaleInOut,
+    slide,
+    wave,
+} from "./LinearProgress.keyframes";
 import type { LinearProgressProps } from "./LinearProgress.types";
 
 const LinearProgressWrapper = styled("div")<{
@@ -49,40 +55,51 @@ const IndeterminateBar = styled("div")<{
     barColor: string;
     animation: LinearProgressProps["animation"];
 }>(({ barColor, animation }) => {
-    const base: Record<string, any> = {
+    const reducedMotionStyles = {
+        left: 0,
+        width: "100%",
+        transform: "none",
+        animation: `${breathe} 2s ease-in-out infinite`,
+    };
+
+    return {
         height: "100%",
         background: barColor,
         position: "absolute",
         transition: "all 0.3s ease",
+        ...resolveIndeterminateAnimation(animation),
+        "@media (prefers-reduced-motion: reduce)": reducedMotionStyles,
+        "[data-reduced-motion] &": reducedMotionStyles,
     };
+});
 
+const resolveIndeterminateAnimation = (
+    animation: LinearProgressProps["animation"],
+) => {
     switch (animation) {
-        case "bounce":
-            return {
-                ...base,
-                width: "30%",
-                animation: `${bounce} 1.5s infinite ease-in-out`,
-            };
         case "slide":
             return {
-                ...base,
                 width: "40%",
                 animation: `${slide} 1.5s infinite ease-in-out`,
             };
         case "wave":
             return {
-                ...base,
                 width: "100%",
                 animation: `${wave} 1.5s infinite ease-in-out`,
             };
         case "scale-in-out":
             return {
-                ...base,
                 width: "100%",
                 animation: `${scaleInOut} 1.5s infinite ease-in-out`,
             };
+        case "bounce":
+        default:
+            return {
+                width: "30%",
+                animation: `${bounce} 1.5s infinite ease-in-out`,
+            };
     }
-});
+};
 
 IndeterminateBar.displayName = "IndeterminateBar";
 
@@ -103,6 +120,8 @@ const LinearProgress = forwardRef<HTMLDivElement, LinearProgressProps>(
             animation = "bounce",
             determinate = false,
             value = 0,
+            "aria-label": ariaLabel,
+            "aria-labelledby": ariaLabelledBy,
         },
         ref,
     ) => {
@@ -139,11 +158,20 @@ const LinearProgress = forwardRef<HTMLDivElement, LinearProgressProps>(
                 background={background}
                 outlinedColor={sharedColor}
                 variant={resolvedVariant}
+                role="progressbar"
+                aria-label={ariaLabel}
+                aria-labelledby={ariaLabelledBy}
+                aria-valuemin={determinate ? 0 : undefined}
+                aria-valuemax={determinate ? 100 : undefined}
+                aria-valuenow={
+                    determinate ? Math.min(Math.max(value, 0), 100) : undefined
+                }
             >
                 {determinate ? (
                     <DeterminateBar barColor={sharedColor} value={value} />
                 ) : (
                     <IndeterminateBar
+                        data-motion="essential"
                         barColor={sharedColor}
                         animation={animation}
                     />

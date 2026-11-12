@@ -1,12 +1,6 @@
 import type { Responsive, Size, SizeValue } from "@mutualzz/ui-core";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import {
-    type ChangeEvent,
-    forwardRef,
-    useContext,
-    useRef,
-    useState,
-} from "react";
+import { type ChangeEvent, forwardRef, useContext, useState } from "react";
 import { RadioGroupContext } from "../RadioGroup/RadioGroup.context";
 import {
     resolveIconScaling,
@@ -15,7 +9,7 @@ import {
 } from "./Radio.helpers";
 import type { RadioProps } from "./Radio.types";
 
-const RadioWrapper = styled("div")<RadioProps>(
+const RadioWrapper = styled("label")<RadioProps>(
     ({ theme, disabled, size = "md" }) => ({
         position: "relative",
         display: "inline-flex",
@@ -84,11 +78,7 @@ const RadioControl = styled("span")<RadioProps>(({
         ...baseStyles,
         ...variantStyle,
 
-        'input[type="radio"]:hover + &': checkedStyle,
-
-        'input[type="radio"]:active + &': checkedStyle,
-
-        'input[type="radio"]:focus-visible + &': {
+        'input[type="radio"]:focus-visible ~ &': {
             boxShadow: `0 0 0 3px ${checkedStyle.backgroundColor}`,
             outline: "none",
         },
@@ -163,7 +153,6 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         const group = useContext(RadioGroupContext);
         const [internalChecked, setInternalChecked] =
             useState(!!defaultChecked);
-        const inputRef = useRef<HTMLInputElement>(null);
 
         let isChecked: boolean;
         if (group && value !== undefined) isChecked = group.value === value;
@@ -184,21 +173,8 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             propOnChange?.(e);
         };
 
-        const handleWrapperClick = () => {
-            if (!disabled && inputRef.current) {
-                inputRef.current.click();
-            }
-        };
-
         return (
-            <RadioWrapper
-                aria-checked={isChecked}
-                role="radio"
-                disabled={disabled}
-                tabIndex={disabled ? -1 : 0}
-                size={size}
-                onClick={handleWrapperClick}
-            >
+            <RadioWrapper disabled={disabled} size={size}>
                 <HiddenRadio
                     type="radio"
                     name={name}
@@ -206,31 +182,15 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
                     checked={isChecked}
                     onChange={handleChange}
                     disabled={disabled}
-                    ref={(node) => {
-                        inputRef.current = node;
-                        if (typeof ref === "function") ref(node);
-                        else if (ref) ref.current = node;
-                    }}
+                    ref={ref}
                     {...props}
-                    css={{
-                        pointerEvents: "none",
-                    }}
                 />
                 {rtl && label && (
                     <RadioLabel rtl={rtl} disabled={disabled}>
                         {label}
                     </RadioLabel>
                 )}
-                <RadioControl
-                    name={name}
-                    role="radio"
-                    aria-checked={isChecked}
-                    color={color}
-                    variant={variant}
-                    checked={isChecked}
-                    disabled={disabled}
-                    size={size}
-                >
+                <RadioControl aria-hidden color={color} variant={variant}>
                     {isChecked ? (
                         checkedIcon ? (
                             <IconWrapper size={size}>{checkedIcon}</IconWrapper>

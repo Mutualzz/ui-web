@@ -6,13 +6,12 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import type { ReactNode, SelectHTMLAttributes } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 
-export interface SelectProps<T = string | number>
-    extends Omit<
-        SelectHTMLAttributes<HTMLSelectElement>,
-        "size" | "value" | "defaultValue" | "color"
-    > {
+export interface SelectProps<T = string | number> extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "color" | "defaultValue" | "onChange" | "placeholder"
+> {
     size?: Responsive<Size | SizeValue | number>;
     variant?: Responsive<Variant>;
     color?: Responsive<Color | ColorLike>;
@@ -26,6 +25,8 @@ export interface SelectProps<T = string | number>
     disabled?: boolean;
     required?: boolean;
     autoFocus?: boolean;
+
+    name?: string;
 
     value?: T | T[];
     defaultValue?: T | T[];

@@ -60,7 +60,7 @@ const List = forwardRef<HTMLUListElement, ListProps>(
                 }}
             >
                 <ListRoot
-                    {...(props as any)}
+                    {...props}
                     ref={ref}
                     nesting={parentNesting}
                     cssMarker={cssMarker}

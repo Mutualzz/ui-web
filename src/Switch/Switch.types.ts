@@ -1,13 +1,13 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import type {
     Color,
+    ColorLike,
     Responsive,
     Shape,
     Size,
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import type { ColorLike } from "color";
 
 export interface SwitchProps extends Omit<
     InputHTMLAttributes<HTMLInputElement>,

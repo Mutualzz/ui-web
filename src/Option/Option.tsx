@@ -55,7 +55,7 @@ const Option: FC<OptionProps> = ({
     const color = colorProp ?? parent?.color ?? "primary";
     const variant = variantProp ?? parent?.variant ?? "solid";
     const size = sizeProp ?? parent?.size ?? "md";
-    const disabled = parent?.disabled ?? disabledProp;
+    const disabled = Boolean(disabledProp || parent?.disabled);
 
     const isSelected = parent?.multiple
         ? Array.isArray(parent.value) && parent.value.includes(value)
@@ -64,6 +64,7 @@ const Option: FC<OptionProps> = ({
     return (
         <OptionWrapper
             role="option"
+            id={parent?.getOptionId(value)}
             aria-selected={isSelected}
             color={color}
             variant={variant}
@@ -75,7 +76,15 @@ const Option: FC<OptionProps> = ({
             data-label={label}
             data-selected={isSelected}
             data-disabled={disabled}
-            onMouseDown={() => {
+            data-focused={parent?.highlightedValue === value}
+            onMouseDown={(event) => event.preventDefault()}
+            onMouseMove={() => {
+                if (!disabled && parent?.highlightedValue !== value) {
+                    parent?.onHighlight(value);
+                }
+            }}
+            onClick={(event) => {
+                event.stopPropagation();
                 if (!disabled) parent?.onSelect(value);
             }}
             {...props}

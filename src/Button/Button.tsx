@@ -277,6 +277,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 verticalAlign={verticalAlign}
                 horizontalAlign={horizontalAlign}
                 disabled={loading || disabled}
+                aria-busy={loading || undefined}
+                aria-pressed={
+                    group?.toggleable && props.value !== undefined
+                        ? selected
+                        : props["aria-pressed"]
+                }
                 loading={loading}
                 onClick={handleClick}
                 padding={padding}

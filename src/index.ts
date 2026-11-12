@@ -96,6 +96,9 @@ export type * from "./Slider/Slider.types";
 export * from "./Select/Select";
 export type * from "./Select/Select.types";
 
+export * from "./Skeleton/Skeleton";
+export type * from "./Skeleton/Skeleton.types";
+
 export * from "./Switch/Switch";
 export type * from "./Switch/Switch.types";
 
@@ -116,4 +119,5 @@ export * from "./Typography/Typography";
 export type * from "./Typography/Typography.types";
 
 export * from "./ThemeProvider";
+export * from "./UiLabels/UiLabels";
 export * from "./useTheme";

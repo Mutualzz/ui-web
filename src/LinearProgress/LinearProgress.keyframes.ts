@@ -21,3 +21,8 @@ export const scaleInOut = keyframes`
     0%, 100% { transform: scaleX(0.5); opacity: 0.5; }
     50% { transform: scaleX(1); opacity: 1; }
 `;
+
+export const breathe = keyframes`
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+`;

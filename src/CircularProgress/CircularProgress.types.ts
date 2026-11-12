@@ -60,4 +60,7 @@ export interface CircularProgressProps {
      * If provided, the circular progress will adjust its size to accommodate the content.
      */
     children?: ReactNode;
+
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
 }

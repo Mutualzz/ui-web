@@ -8,8 +8,10 @@ import type {
 } from "@mutualzz/ui-core";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-export interface ListItemButtonProps
-    extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "size" | "color"> {
+export interface ListItemButtonProps extends Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    "size" | "color"
+> {
     /**
      * The variant of the button, which determines its style.
      *

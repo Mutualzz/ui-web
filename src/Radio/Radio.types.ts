@@ -12,11 +12,10 @@ import {
     type ReactNode,
 } from "react";
 
-export interface RadioProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        "size" | "type" | "value" | "color"
-    > {
+export interface RadioProps extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "size" | "type" | "value" | "color"
+> {
     /**
      * Whether the radio is checked. If not provided, it will be controlled internally.
      *

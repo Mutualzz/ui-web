@@ -3,8 +3,10 @@ import type {
     OffsetOptions,
     ShiftOptions,
 } from "@floating-ui/react";
-import type { Responsive, Variant } from "@mutualzz/ui-core";
+import type { Responsive } from "@mutualzz/ui-core";
 import type { HTMLAttributes, ReactNode } from "react";
+import type { PaperProps } from "../Paper/Paper.types";
+import type { TypographyProps } from "../Typography/Typography.types";
 
 export type TooltipPlacement =
     | "top"
@@ -19,8 +21,6 @@ export type TooltipPlacement =
     | "left-end"
     | "right-start"
     | "right-end";
-
-export type TooltipVariant = Variant | "none";
 
 export interface TooltipProps extends Omit<
     HTMLAttributes<HTMLDivElement>,
@@ -53,4 +53,9 @@ export interface TooltipProps extends Omit<
     disablePortal?: boolean;
 
     id?: string;
+
+    unstyled?: boolean;
+    elevation?: number;
+    paperProps?: Omit<PaperProps, "color">;
+    typographyProps?: TypographyProps;
 }

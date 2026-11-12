@@ -9,7 +9,6 @@ import {
     clamp,
     type ColorLike,
     computeInsertedStopPosition,
-    constructLinearGradient,
     createColor,
     handleColor,
     type HsvaColor,
@@ -85,8 +84,8 @@ const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
             return idx === -1 ? 0 : idx;
         }, [stops, selectedStopId]);
 
-        const [rotation, setRotation] = useState(() =>
-            createPickerGradientStops(color).angle,
+        const [rotation, setRotation] = useState(
+            () => createPickerGradientStops(color).angle,
         );
         const rotationRef = useRef(rotation);
         rotationRef.current = rotation;

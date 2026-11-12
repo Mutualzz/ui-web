@@ -123,6 +123,11 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
             onChange,
             onChangeResult,
             defaultValue,
+            color: colorOverride,
+            textColor: textColorOverride,
+            error = false,
+            className,
+            style,
             ...props
         },
         ref,
@@ -386,14 +391,18 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
         return (
             <InputRoot
-                color={isInvalid ? "danger" : colorToShow}
-                textColor={isInvalid ? theme.colors.danger : formattedTextColor}
+                className={className}
+                style={style}
+                color={colorOverride ?? (isInvalid ? "danger" : colorToShow)}
+                textColor={
+                    textColorOverride ??
+                    (isInvalid ? theme.colors.danger : formattedTextColor)
+                }
                 variant={variant}
                 size={size}
                 fullWidth={fullWidth}
-                error={isInvalid}
+                error={isInvalid || error}
                 disabled={disabled}
-                {...props}
             >
                 <InputDecoratorWrapper position="start">
                     {startDecorator ??
@@ -427,7 +436,7 @@ const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
                 </InputDecoratorWrapper>
 
                 <InputBase
-                    {...(props as any)}
+                    {...props}
                     type="text"
                     value={inputValue}
                     onChange={handleOnChange}

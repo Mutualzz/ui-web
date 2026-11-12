@@ -86,6 +86,12 @@ const CircularProgressSvg = styled("svg")<{
     transition: "all 0.3s ease",
     ...(!determinate && {
         animation: `${spin} 1s linear infinite`,
+        "@media (prefers-reduced-motion: reduce)": {
+            animationDuration: "2.4s",
+        },
+        "[data-reduced-motion] &": {
+            animationDuration: "2.4s",
+        },
     }),
 }));
 
@@ -214,6 +220,13 @@ const CircularProgress = forwardRef<HTMLDivElement, CircularProgressProps>(
                 strokeWidth={strokeWidth}
                 variant={variant}
                 color={color}
+                role="progressbar"
+                aria-valuemin={determinate ? 0 : undefined}
+                aria-valuemax={determinate ? 100 : undefined}
+                aria-valuenow={
+                    determinate ? Math.min(Math.max(value, 0), 100) : undefined
+                }
+                {...props}
             >
                 <CircularProgressContent ref={contentRef}>
                     {children}
@@ -221,8 +234,8 @@ const CircularProgress = forwardRef<HTMLDivElement, CircularProgressProps>(
 
                 {diameter > 0 && (
                     <CircularProgressSvg
-                        {...props}
-                        role="progressbar"
+                        aria-hidden
+                        data-motion={determinate ? undefined : "essential"}
                         diameter={diameter}
                         determinate={determinate}
                         viewBox={`0 0 ${diameter} ${diameter}`}

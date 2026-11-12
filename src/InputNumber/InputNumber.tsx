@@ -13,14 +13,23 @@ import {
     type FocusEvent,
     type KeyboardEvent,
 } from "react";
-import { useTranslation } from "react-i18next";
 import { InputBase } from "../InputBase/InputBase";
 import { baseSizeMap } from "../InputBase/InputBase.helpers";
 import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 import { InputRoot } from "../InputRoot/InputRoot";
 import { Stack } from "../Stack/Stack";
+import { useUiLabels } from "../UiLabels/UiLabels";
 import { useTheme } from "../useTheme";
 import type { InputNumberProps } from "./InputNumber.types";
+
+const setNativeInputValue = (input: HTMLInputElement, value: string) => {
+    const valueSetter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+    )?.set;
+    valueSetter?.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+};
 
 const SpinnerButtons = ({
     onIncrement,
@@ -28,7 +37,7 @@ const SpinnerButtons = ({
     disabled,
     size = "md",
 }: InputNumberProps) => {
-    const { t } = useTranslation("common");
+    const labels = useUiLabels();
     const { theme } = useTheme();
 
     const { resolvedSize } = resolveResponsiveMerge(
@@ -59,11 +68,10 @@ const SpinnerButtons = ({
         >
             <button
                 type="button"
+                tabIndex={-1}
                 onClick={onIncrement}
                 disabled={disabled}
-                aria-label={t("a11y.increment", {
-                    defaultValue: "Increment",
-                })}
+                aria-label={labels.increment}
                 css={{
                     all: "unset",
                     display: "flex",
@@ -98,11 +106,10 @@ const SpinnerButtons = ({
             </button>
             <button
                 type="button"
+                tabIndex={-1}
                 onClick={onDecrement}
                 disabled={disabled}
-                aria-label={t("a11y.decrement", {
-                    defaultValue: "Decrement",
-                })}
+                aria-label={labels.decrement}
                 css={{
                     all: "unset",
                     display: "flex",
@@ -166,6 +173,8 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             startDecorator,
             endDecorator,
             children,
+            className,
+            style,
             ...props
         },
         ref,
@@ -235,10 +244,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             if (isNaN(parsed)) return;
 
             const clamped = clamp(parsed, min, max);
-            if (parsed !== clamped) {
-                input.value = String(clamped);
-                input.dispatchEvent(new Event("input", { bubbles: true }));
-            }
+            if (parsed !== clamped) setNativeInputValue(input, String(clamped));
         };
 
         const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
@@ -255,11 +261,10 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             }
 
             if (!isFinite(parsed) || parsed < min || parsed > max) {
-                const clamped = clamp(parsed, min, max);
-                inputRef.current!.value = String(clamped);
                 e.preventDefault();
-                inputRef.current!.dispatchEvent(
-                    new Event("input", { bubbles: true }),
+                setNativeInputValue(
+                    e.currentTarget,
+                    String(clamp(parsed, min, max)),
                 );
             }
         };
@@ -270,13 +275,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             const current = parseFloat(input.value) || 0;
             const delta = direction === "up" ? step : -step;
             const next = clamp(current + delta, min, max);
-
-            const setter = Object.getOwnPropertyDescriptor(
-                HTMLInputElement.prototype,
-                "value",
-            )?.set;
-            setter?.call(input, String(next));
-            input.dispatchEvent(new Event("input", { bubbles: true }));
+            setNativeInputValue(input, String(next));
         };
 
         const handleOnIncrement = () => {
@@ -295,6 +294,8 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
 
         return (
             <InputRoot
+                className={className}
+                style={style}
                 color={color}
                 textColor={textColor}
                 variant={variant}
@@ -302,7 +303,6 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
                 fullWidth={fullWidth}
                 error={error}
                 disabled={disabled}
-                {...props}
             >
                 {startDecorator && (
                     <InputDecoratorWrapper position="start">
@@ -325,6 +325,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
                     size={size}
                     fullWidth={fullWidth}
                     disabled={disabled}
+                    aria-invalid={error || undefined}
                 />
 
                 <InputDecoratorWrapper position="end">

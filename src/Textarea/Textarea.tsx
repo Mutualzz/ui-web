@@ -3,7 +3,14 @@ import {
     resolveShapeValue,
     styled,
 } from "@mutualzz/ui-core";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import {
+    forwardRef,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useLayoutEffect,
+    useRef,
+} from "react";
 import {
     resolveTextareaInputSize,
     resolveTextareaSize,
@@ -104,44 +111,41 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             () => internalRef.current as HTMLTextAreaElement,
         );
 
-        useEffect(() => {
-            if (resizable) return;
-            const el = internalRef.current;
-            if (!el) return;
+        const updateHeight = useCallback(() => {
+            const textareaNode = internalRef.current;
+            if (resizable || !textareaNode) return;
 
-            const updateHeight = () => {
-                const computed = getComputedStyle(el);
-                const lineHeight = parseFloat(computed.lineHeight);
+            const lineHeight = parseFloat(
+                getComputedStyle(textareaNode).lineHeight,
+            );
+            if (minRows) {
+                textareaNode.style.minHeight = `${lineHeight * minRows}px`;
+            }
+            if (maxRows) {
+                textareaNode.style.maxHeight = `${lineHeight * maxRows}px`;
+            }
 
-                const minHeight = minRows
-                    ? `${lineHeight * minRows}px`
-                    : undefined;
-                const maxHeight = maxRows
-                    ? `${lineHeight * maxRows}px`
-                    : undefined;
+            textareaNode.style.height = "auto";
+            textareaNode.style.height = `${textareaNode.scrollHeight}px`;
+        }, [minRows, maxRows, resizable]);
 
-                if (minHeight) el.style.minHeight = minHeight;
-                if (maxHeight) el.style.maxHeight = maxHeight;
-
-                el.style.height = "auto";
-                el.style.height = `${el.scrollHeight}px`;
-            };
-
+        useLayoutEffect(() => {
             updateHeight();
+        }, [updateHeight, props.value]);
 
-            el.addEventListener("input", updateHeight);
+        useEffect(() => {
+            const textareaNode = internalRef.current;
+            if (resizable || !textareaNode) return;
 
-            const resizeObserver = new ResizeObserver(() => {
-                updateHeight();
-            });
-
-            resizeObserver.observe(el);
+            textareaNode.addEventListener("input", updateHeight);
+            const resizeObserver = new ResizeObserver(updateHeight);
+            resizeObserver.observe(textareaNode);
 
             return () => {
-                el.removeEventListener("input", updateHeight);
+                textareaNode.removeEventListener("input", updateHeight);
                 resizeObserver.disconnect();
             };
-        }, [minRows, maxRows, resizable]);
+        }, [updateHeight, resizable]);
 
         return (
             <TextareaRoot

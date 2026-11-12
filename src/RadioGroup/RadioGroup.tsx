@@ -5,7 +5,7 @@ import type {
     SizeValue,
 } from "@mutualzz/ui-core";
 import { resolveResponsiveMerge, resolveSize, styled } from "@mutualzz/ui-core";
-import { type ChangeEvent, forwardRef, useState } from "react";
+import { type ChangeEvent, forwardRef, useId, useState } from "react";
 import { RadioGroupContext } from "./RadioGroup.context";
 import type { RadioGroupProps } from "./RadioGroup.types";
 
@@ -73,6 +73,8 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
         ref,
     ) => {
         const [internalValue, setInternalValue] = useState(defaultValue ?? "");
+        const generatedName = useId();
+        const groupName = name ?? generatedName;
         const isControlled = controlledValue !== undefined;
         const currentValue = isControlled ? controlledValue : internalValue;
 
@@ -90,7 +92,7 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                     color,
                     size,
                     variant,
-                    name,
+                    name: groupName,
                     orientation,
                     value: currentValue,
                     onChange: handleChange,
@@ -98,6 +100,7 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                 }}
             >
                 <RadioGroupWrapper
+                    role="radiogroup"
                     ref={ref}
                     spacing={spacing}
                     orientation={orientation}

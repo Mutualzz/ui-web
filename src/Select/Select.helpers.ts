@@ -7,10 +7,10 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    createColor,
-    formatColor,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
+    themeBackgroundVar,
+    typographyColorVar,
 } from "@mutualzz/ui-core";
 
 export const baseSizeMap: Record<Size, number> = {
@@ -39,56 +39,52 @@ export const resolveSelectStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
-
-    const solidTextColor = formatColor(theme.typography.colors.primary, {
-        negate: createColor(resolvedColor).isLight(),
-    });
+    const colorTokens = resolveColorTokens(color, theme);
+    const textColor = typographyColorVar("primary");
+    const focusRing = {
+        "&:focus-visible": {
+            outline: "none",
+            boxShadow: `0 0 0 2px ${colorTokens.alpha(30)}`,
+        },
+    };
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor),
-            color: solidTextColor,
+            backgroundColor: colorTokens.base,
+            color: colorTokens.contrast,
+            border: "none",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    darken: 30,
-                }),
+                backgroundColor: colorTokens.alpha(90),
             },
+            ...focusRing,
         },
         outlined: {
-            border: `1px solid ${formatColor(resolvedColor)}`,
-            color: formatColor(resolvedColor, {
-                lighten: 75,
-            }),
+            backgroundColor: "transparent",
+            color: textColor,
+            border: `1px solid ${colorTokens.base}`,
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    darken: 30,
-                }),
+                borderColor: colorTokens.alpha(50),
+                backgroundColor: colorTokens.alpha(5),
             },
+            ...focusRing,
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                darken: 50,
-            }),
-            color: formatColor(resolvedColor, {
-                lighten: 75,
-            }),
+            backgroundColor: colorTokens.alpha(10),
+            color: textColor,
+            border: "none",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    lighten: 5,
-                }),
+                backgroundColor: colorTokens.alpha(15),
             },
+            ...focusRing,
         },
         plain: {
             backgroundColor: "transparent",
-            color: formatColor(resolvedColor, {
-                lighten: 75,
-            }),
+            color: textColor,
+            border: "none",
             "&:hover": {
-                backgroundColor: formatColor(resolvedColor, {
-                    darken: 30,
-                }),
+                backgroundColor: colorTokens.alpha(5),
             },
+            ...focusRing,
         },
     };
 };
@@ -97,30 +93,25 @@ export const resolveSelectContentStyles = (
     theme: Theme,
     color: Color | ColorLike,
 ): Record<Variant, CSSObject> => {
-    const { colors } = theme;
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
+    const listSurface = {
+        backgroundColor: themeBackgroundVar(),
+        color: typographyColorVar("primary"),
+    };
 
     return {
         solid: {
-            backgroundColor: formatColor(resolvedColor),
-            color: formatColor(theme.typography.colors.primary, {
-                negate: createColor(resolvedColor).isLight(),
-            }),
+            backgroundColor: colorTokens.base,
+            color: colorTokens.contrast,
         },
         outlined: {
-            backgroundColor: colors.background,
-            border: `1px solid ${formatColor(resolvedColor)}`,
-            color: formatColor(resolvedColor, { lighten: 80 }),
+            ...listSurface,
+            border: `1px solid ${colorTokens.base}`,
         },
         soft: {
-            backgroundColor: formatColor(resolvedColor, {
-                darken: 50,
-            }),
-            color: formatColor(resolvedColor, { lighten: 20 }),
+            ...listSurface,
+            border: `1px solid ${colorTokens.alpha(30)}`,
         },
-        plain: {
-            backgroundColor: colors.background,
-            color: formatColor(resolvedColor),
-        },
+        plain: listSurface,
     };
 };

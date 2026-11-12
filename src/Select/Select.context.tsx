@@ -17,6 +17,9 @@ export interface SelectContextValue {
     variant?: Responsive<Variant>;
     size?: Responsive<Size | SizeValue | number>;
     disabled?: boolean;
+    highlightedValue?: string | number | null;
+    onHighlight: (value: string | number) => void;
+    getOptionId: (value: string | number) => string;
 }
 
 export const SelectContext = createContext<SelectContextValue | null>(null);

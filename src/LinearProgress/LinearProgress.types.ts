@@ -72,4 +72,7 @@ export interface LinearProgressProps {
      * @remarks This prop is only used when `determinate` is true.
      */
     value?: number;
+
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
 }

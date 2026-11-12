@@ -10,18 +10,18 @@ import {
     useFocus,
     useHover,
     useInteractions,
+    useMergeRefs,
     useRole,
 } from "@floating-ui/react";
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import { Portal } from "../Portal/Portal";
 import {
-    Children,
-    cloneElement,
-    forwardRef,
-    useEffect,
-    useId,
-    useState,
-} from "react";
+    getReactElementRef,
+    resolveResponsiveMerge,
+    styled,
+} from "@mutualzz/ui-core";
+import { Paper } from "../Paper/Paper";
+import { Portal } from "../Portal/Portal";
+import { Typography } from "../Typography/Typography";
+import { Children, cloneElement, forwardRef, useEffect, useState } from "react";
 import { useTheme } from "../useTheme";
 import type { TooltipProps } from "./Tooltip.types";
 
@@ -52,7 +52,6 @@ TooltipContent.displayName = "TooltipContent";
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     (
         {
-            id,
             title,
             content,
             children,
@@ -70,12 +69,15 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             disableTouchListener,
             followCursor,
             disablePortal = false,
+            unstyled = false,
+            elevation = 2,
+            paperProps,
+            typographyProps,
             ...props
         },
         ref,
     ) => {
         const { theme } = useTheme();
-        const tipId = id || useId();
         const isControlled = openProp !== undefined;
         const [uncontrolled, setUncontrolled] = useState(!!defaultOpen);
         const open = isControlled ? !!openProp : uncontrolled;
@@ -142,11 +144,14 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         useEffect(() => setMounted(true), []);
 
         const child = children ? Children.only<any>(children) : null;
+        const referenceRef = useMergeRefs([
+            refs.setReference,
+            child ? getReactElementRef(child) : null,
+        ]);
 
         const tooltipEl = (
             <TooltipRoot
                 ref={refs.setFloating}
-                id={tipId}
                 role="tooltip"
                 // Inline style required: floating position updates every frame.
                 style={floatingStyles}
@@ -155,7 +160,22 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
                 }}
                 {...getFloatingProps(props)}
             >
-                <TooltipContent>{label ?? title}</TooltipContent>
+                {unstyled ? (
+                    <TooltipContent>{label}</TooltipContent>
+                ) : (
+                    <Paper
+                        variant="plain"
+                        surfaceRole="tooltip"
+                        elevation={elevation}
+                        p={2}
+                        borderRadius={8}
+                        {...paperProps}
+                    >
+                        <Typography level="body-xs" {...typographyProps}>
+                            {label}
+                        </Typography>
+                    </Paper>
+                )}
             </TooltipRoot>
         );
 
@@ -168,8 +188,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             >
                 {child &&
                     cloneElement(child, {
-                        ref: refs.setReference,
-                        "aria-describedby": open ? tipId : undefined,
+                        ref: referenceRef,
                         ...getReferenceProps(child.props),
                     })}
 

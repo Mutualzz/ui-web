@@ -7,13 +7,18 @@ import {
     useOnClickOutside,
 } from "@mutualzz/ui-core";
 import {
+    cloneElement,
     forwardRef,
+    isValidElement,
+    type KeyboardEvent,
     useCallback,
     useEffect,
+    useId,
     useLayoutEffect,
     useRef,
     useState,
 } from "react";
+import { focusableSelector } from "../FocusTrap/FocusTrap";
 import { Paper } from "../Paper/Paper";
 import { Portal } from "../Portal/Portal";
 import { Stack } from "../Stack/Stack";
@@ -55,7 +60,8 @@ const PopoverContent = styled(Paper)<{
             "opacity 0.2s ease, transform 0.2s cubic-bezier(0.4,0,0.2,1)",
         borderRadius: 4,
         zIndex: theme.zIndex.tooltip,
-        whiteSpace: "nowrap",
+        maxWidth: "calc(100vw - 16px)",
+        overflowWrap: "anywhere",
     };
 
     if (!disablePortal) {
@@ -141,6 +147,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             useState<PopoverPlacement>("bottom");
         const triggerRef = useRef<HTMLDivElement>(null);
         const contentRef = useRef<HTMLDivElement>(null);
+        const popoverId = useId();
 
         const isControlled = isOpenProp !== undefined;
         const isOpen = isControlled ? isOpenProp : visible;
@@ -239,22 +246,53 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             else setVisible((prev) => !prev);
         };
 
-        useOnClickOutside([triggerRef, contentRef] as any[], () => {
-            if (!closeOnClickOutside) return;
-            if (isControlled) onOpenChange?.(false);
-            else setVisible(false);
-        });
-
-        const handleContentClick = () => {
-            if (!closeOnInteract) return;
+        const closePopover = () => {
             if (isControlled) onOpenChange?.(false);
             else setVisible(false);
         };
+
+        useOnClickOutside([triggerRef, contentRef], () => {
+            if (!closeOnClickOutside) return;
+            closePopover();
+        });
+
+        useEffect(() => {
+            const contentNode = contentRef.current;
+            if (!isOpen || !measured || !contentNode) return;
+            if (!contentNode.contains(document.activeElement)) {
+                contentNode.focus();
+            }
+        }, [isOpen, measured]);
+
+        const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.key !== "Escape" || !isOpen) return;
+            event.stopPropagation();
+            closePopover();
+            triggerRef.current
+                ?.querySelector<HTMLElement>(focusableSelector)
+                ?.focus();
+        };
+
+        const handleContentClick = () => {
+            if (!closeOnInteract) return;
+            closePopover();
+        };
+
+        const triggerElement = isValidElement<Record<string, unknown>>(trigger)
+            ? cloneElement(trigger, {
+                  "aria-haspopup": "dialog",
+                  "aria-expanded": isOpen,
+                  "aria-controls": isOpen ? popoverId : undefined,
+              })
+            : trigger;
 
         const popoverContent = isOpen && (
             <PopoverContent
                 {...props}
                 ref={contentRef}
+                id={popoverId}
+                role="dialog"
+                tabIndex={-1}
                 color={color}
                 variant={variant}
                 size={size}
@@ -264,17 +302,20 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
                 elevation={elevation}
                 left={position.left}
                 placement={placement}
-                onClick={() => closeOnInteract && handleContentClick()}
-                css={{ visibility: measured ? "visible" : "hidden" }}
+                onClick={handleContentClick}
+                css={{
+                    visibility: measured ? "visible" : "hidden",
+                    outline: "none",
+                }}
             >
                 {children}
             </PopoverContent>
         );
 
         return (
-            <PopoverRoot ref={ref} css={triggerCss}>
+            <PopoverRoot ref={ref} css={triggerCss} onKeyDown={handleKeyDown}>
                 <Stack ref={triggerRef} onClick={toggleVisibility}>
-                    {trigger}
+                    {triggerElement}
                 </Stack>
 
                 {!disablePortal ? (

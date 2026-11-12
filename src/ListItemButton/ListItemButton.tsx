@@ -74,6 +74,7 @@ const ListItemButton = forwardRef<HTMLButtonElement, ListItemButtonProps>(
         return (
             <ListItemButtonRoot
                 ref={ref}
+                type="button"
                 nesting={nesting}
                 color={colorOverride ?? color}
                 variant={variantOverride ?? variant}

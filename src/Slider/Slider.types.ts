@@ -6,13 +6,7 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import type {
-    ChangeEvent,
-    InputHTMLAttributes,
-    MouseEvent,
-    ReactNode,
-    TouchEvent,
-} from "react";
+import type { ChangeEvent, HTMLAttributes, ReactNode } from "react";
 
 export interface SliderMark {
     /**
@@ -31,17 +25,10 @@ export interface SliderMark {
 export type SliderOrientation = "horizontal" | "vertical";
 export type SliderValueLabelDisplay = "off" | "on" | "auto";
 
-export interface SliderProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        | "size"
-        | "step"
-        | "onChange"
-        | "value"
-        | "defaultValue"
-        | "type"
-        | "color"
-    > {
+export interface SliderProps extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "onChange" | "defaultValue" | "color"
+> {
     /**
      * Slider color or color-like value.
      * This can be a color name, hex code, or any valid color format.
@@ -173,7 +160,7 @@ export interface SliderProps
      * This is useful for committing the value to a state or performing side effects.
      */
     onChangeCommitted?: (
-        event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>,
+        event: PointerEvent | KeyboardEvent,
         value: number | number[],
     ) => void;
 

@@ -3,7 +3,7 @@ import {
     resolveShapeValue,
     styled,
 } from "@mutualzz/ui-core";
-import { forwardRef } from "react";
+import { forwardRef, type KeyboardEvent, useEffect, useState } from "react";
 import { resolveAvatarSize, resolveAvatarStyles } from "./Avatar.helpers";
 import type { AvatarProps } from "./Avatar.types";
 
@@ -49,6 +49,15 @@ const AvatarImage = styled("img")<AvatarProps>(() => ({
     borderRadius: "inherit",
 }));
 
+const getInitials = (text: string) =>
+    text
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((word) => word[0])
+        .join("")
+        .toUpperCase();
+
 const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     (
         {
@@ -60,10 +69,39 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
             size = "md",
             variant = "plain",
             elevation = 1,
+            loading,
+            decoding,
+            crossOrigin,
+            referrerPolicy,
+            srcSet,
+            sizes,
+            onLoad,
+            onError,
+            onClick,
+            onKeyDown,
             ...props
         },
         ref,
     ) => {
+        const [imageFailed, setImageFailed] = useState(false);
+
+        useEffect(() => {
+            setImageFailed(false);
+        }, [src]);
+
+        const showImage = Boolean(src) && !imageFailed;
+        const fallbackContent = children ?? (alt ? getInitials(alt) : null);
+        const isClickable = Boolean(onClick);
+
+        const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+            onKeyDown?.(event);
+            if (!isClickable || event.target !== event.currentTarget) return;
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.currentTarget.click();
+            }
+        };
+
         return (
             <AvatarWrapper
                 {...props}
@@ -73,15 +111,35 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
                 size={size}
                 variant={variant}
                 elevation={elevation}
-                hasText={!src && Boolean(children)}
-                tabIndex={0}
+                hasText={!showImage && Boolean(fallbackContent)}
+                role={isClickable ? "button" : props.role}
+                tabIndex={isClickable ? 0 : props.tabIndex}
+                aria-label={
+                    isClickable
+                        ? (props["aria-label"] ?? alt)
+                        : props["aria-label"]
+                }
+                onClick={onClick}
+                onKeyDown={handleKeyDown}
             >
-                {src ? (
-                    <AvatarImage {...props} src={src} alt={alt} />
-                ) : alt ? (
-                    alt.split(" ").join("")
+                {showImage ? (
+                    <AvatarImage
+                        src={src}
+                        alt={alt ?? ""}
+                        loading={loading}
+                        decoding={decoding}
+                        crossOrigin={crossOrigin}
+                        referrerPolicy={referrerPolicy}
+                        srcSet={srcSet}
+                        sizes={sizes}
+                        onLoad={onLoad}
+                        onError={(event) => {
+                            setImageFailed(true);
+                            onError?.(event);
+                        }}
+                    />
                 ) : (
-                    children
+                    fallbackContent
                 )}
             </AvatarWrapper>
         );

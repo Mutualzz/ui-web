@@ -166,6 +166,7 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
             >
                 <ButtonGroupRoot
                     ref={ref}
+                    role="group"
                     spacing={spacing}
                     orientation={orientation}
                     color={color}

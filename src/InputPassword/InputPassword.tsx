@@ -1,9 +1,10 @@
 import type { Size, SizeValue } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge } from "@mutualzz/ui-core";
+import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import { forwardRef, useCallback, useEffect, useState } from "react";
 import { InputBase } from "../InputBase/InputBase";
 import { InputDecoratorWrapper } from "../InputDecoratorWrapper/InputDecoratorWrapper";
 import { InputRoot } from "../InputRoot/InputRoot";
+import { useUiLabels } from "../UiLabels/UiLabels";
 import { useTheme } from "../useTheme";
 import { resolvePasswordIconStyles } from "./InputPassword.helpers";
 import type { InputPasswordProps } from "./InputPassword.types";
@@ -44,6 +45,22 @@ const HidePasswordIcon = ({ size, strokeColor }: IconProps) => (
     </svg>
 );
 
+const PasswordToggleButton = styled("button")({
+    all: "unset",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    borderRadius: 4,
+    "&:focus-visible": {
+        outline: "2px solid currentColor",
+        outlineOffset: 2,
+    },
+    "&:disabled": {
+        cursor: "not-allowed",
+    },
+});
+
 /**
  * InputPassword component for entering passwords.
  * It includes a toggle button to show or hide the password.
@@ -71,11 +88,14 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
             onHidePassword,
             visible: visibleProp,
             children,
+            className,
+            style,
             ...props
         },
         ref,
     ) => {
         const { theme } = useTheme();
+        const labels = useUiLabels();
         const [visibleInternal, setVisibleInternal] = useState(false);
 
         const isControlled = visibleProp !== undefined;
@@ -120,6 +140,8 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
 
         return (
             <InputRoot
+                className={className}
+                style={style}
                 color={color}
                 textColor={textColor}
                 variant={variant}
@@ -127,7 +149,6 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                 fullWidth={fullWidth}
                 error={error}
                 disabled={disabled}
-                {...props}
             >
                 {startDecorator && (
                     <InputDecoratorWrapper position="start">
@@ -141,6 +162,8 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                     type={visible ? "text" : "password"}
                     size={size}
                     fullWidth={fullWidth}
+                    disabled={disabled}
+                    aria-invalid={error || undefined}
                 />
 
                 {endDecorator ? (
@@ -148,24 +171,28 @@ const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
                         {endDecorator}
                     </InputDecoratorWrapper>
                 ) : showToggleIcon ? (
-                    <InputDecoratorWrapper
-                        position="end"
-                        onClick={togglePassword}
-                        css={{ cursor: "pointer", userSelect: "none" }}
-                    >
-                        {visible
-                            ? (hidePasswordIcon ?? (
-                                  <HidePasswordIcon
-                                      size={resolvedSize}
-                                      strokeColor={strokeColor}
-                                  />
-                              ))
-                            : (showPasswordIcon ?? (
-                                  <ShowPasswordIcon
-                                      size={resolvedSize}
-                                      strokeColor={strokeColor}
-                                  />
-                              ))}
+                    <InputDecoratorWrapper position="end">
+                        <PasswordToggleButton
+                            type="button"
+                            onClick={togglePassword}
+                            disabled={disabled}
+                            aria-pressed={visible}
+                            aria-label={labels.showPassword}
+                        >
+                            {visible
+                                ? (hidePasswordIcon ?? (
+                                      <HidePasswordIcon
+                                          size={resolvedSize}
+                                          strokeColor={strokeColor}
+                                      />
+                                  ))
+                                : (showPasswordIcon ?? (
+                                      <ShowPasswordIcon
+                                          size={resolvedSize}
+                                          strokeColor={strokeColor}
+                                      />
+                                  ))}
+                        </PasswordToggleButton>
                     </InputDecoratorWrapper>
                 ) : null}
             </InputRoot>

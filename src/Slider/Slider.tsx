@@ -22,7 +22,8 @@ import {
     useRef,
     useState,
     type ChangeEvent,
-    type MouseEvent,
+    type KeyboardEvent,
+    type PointerEvent as ReactPointerEvent,
     Fragment,
 } from "react";
 import {
@@ -238,6 +239,11 @@ const Thumb = styled("div")<{
         boxSizing: "border-box",
         transform: "translate(-50%, -50%)",
         zIndex: 1,
+        outline: "none",
+        "&:focus-visible": {
+            outline: `2px solid ${typographyColorVar("primary")}`,
+            outlineOffset: 2,
+        },
         ...resolveResponsiveMerge(
             theme,
             {
@@ -367,18 +373,6 @@ const MarkLabel = styled("span")<{
 
 MarkLabel.displayName = "MarkLabel";
 
-const HiddenInput = styled("input")({
-    position: "absolute",
-    width: 0,
-    height: 0,
-    opacity: 0,
-    margin: 0,
-    padding: 0,
-    pointerEvents: "none",
-});
-
-HiddenInput.displayName = "HiddenInput";
-
 /**
  * Slider component for selecting a value within a range.
  * It supports both single and range selection.
@@ -414,6 +408,8 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
             getAriaLabel,
             getAriaValueText,
             disableSwap,
+            "aria-label": ariaLabel,
+            "aria-labelledby": ariaLabelledBy,
             ...rest
         },
         ref,
@@ -436,6 +432,8 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
         const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
         const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+        const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+        const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
 
         const percents = currentValue.map(
             (v) => ((v - min) / (max - min)) * 100,
@@ -481,27 +479,42 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
         );
 
         const updateValue = useCallback(
-            (index: number, newVal: number) => {
-                if (disabled) return;
-                if (newVal < min) newVal = min;
-                if (newVal > max) newVal = max;
-                if (step === null) newVal = snapToMarks(newVal);
+            (index: number, requestedValue: number) => {
+                if (disabled) return null;
+
+                let nextThumbValue = Math.min(
+                    Math.max(requestedValue, min),
+                    max,
+                );
+                if (step === null) nextThumbValue = snapToMarks(nextThumbValue);
 
                 if (isRange && disableSwap) {
-                    if (index === 0 && newVal > currentValue[1]) return;
-                    if (index === 1 && newVal < currentValue[0]) return;
+                    if (index === 0 && nextThumbValue > currentValue[1])
+                        return null;
+                    if (index === 1 && nextThumbValue < currentValue[0])
+                        return null;
                 }
 
-                const newValue: number[] = [...currentValue];
-                newValue[index] = newVal;
-                if (!isControlled) setInternalValue(newValue);
-                const fakeEvent = {
-                    target: { value: isRange ? newValue : newValue[0] },
+                const nextValues = [...currentValue];
+                nextValues[index] = nextThumbValue;
+                if (!isControlled) setInternalValue(nextValues);
+
+                const syntheticEvent = {
+                    target: { value: isRange ? nextValues : nextValues[0] },
                 } as unknown as ChangeEvent<HTMLInputElement>;
-                onChange?.(fakeEvent, isRange ? newValue : newValue[0]);
+                onChange?.(
+                    syntheticEvent,
+                    isRange ? nextValues : nextValues[0],
+                );
+
+                return nextValues;
             },
             [
                 currentValue,
+                disabled,
+                min,
+                max,
+                step,
                 isControlled,
                 isRange,
                 snapToMarks,
@@ -533,42 +546,34 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
         );
 
         useEffect(() => {
-            const handleMove = (e: MouseEvent | TouchEvent) => {
-                if (draggingIndex === null) return;
-                const clientX =
-                    "touches" in e ? e.touches[0].clientX : e.clientX;
-                const clientY =
-                    "touches" in e ? e.touches[0].clientY : e.clientY;
-                const newValue = getPositionValue(clientX, clientY);
-                if (newValue !== null) updateValue(draggingIndex, newValue);
-            };
+            if (draggingIndex === null) return;
 
-            const handleUp = (e: MouseEvent | TouchEvent) => {
-                if (draggingIndex !== null) {
-                    setDraggingIndex(null);
-                    onChangeCommitted?.(
-                        e as any,
-                        isRange ? [...currentValue] : currentValue[0],
-                    );
+            const handlePointerMove = (event: PointerEvent) => {
+                const pointerValue = getPositionValue(
+                    event.clientX,
+                    event.clientY,
+                );
+                if (pointerValue !== null) {
+                    updateValue(draggingIndex, pointerValue);
                 }
-                window.removeEventListener("mousemove", handleMove as any);
-                window.removeEventListener("mouseup", handleUp as any);
-                window.removeEventListener("touchmove", handleMove);
-                window.removeEventListener("touchend", handleUp);
             };
 
-            if (draggingIndex !== null) {
-                window.addEventListener("mousemove", handleMove as any);
-                window.addEventListener("mouseup", handleUp as any);
-                window.addEventListener("touchmove", handleMove);
-                window.addEventListener("touchend", handleUp);
-            }
+            const handlePointerUp = (event: PointerEvent) => {
+                setDraggingIndex(null);
+                onChangeCommitted?.(
+                    event,
+                    isRange ? [...currentValue] : currentValue[0],
+                );
+            };
+
+            window.addEventListener("pointermove", handlePointerMove);
+            window.addEventListener("pointerup", handlePointerUp);
+            window.addEventListener("pointercancel", handlePointerUp);
 
             return () => {
-                window.removeEventListener("mousemove", handleMove as any);
-                window.removeEventListener("mouseup", handleUp as any);
-                window.removeEventListener("touchmove", handleMove);
-                window.removeEventListener("touchend", handleUp);
+                window.removeEventListener("pointermove", handlePointerMove);
+                window.removeEventListener("pointerup", handlePointerUp);
+                window.removeEventListener("pointercancel", handlePointerUp);
             };
         }, [
             draggingIndex,
@@ -579,34 +584,100 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
             isRange,
         ]);
 
-        const handleTrackStart = (e: MouseEvent | TouchEvent) => {
-            e.preventDefault();
-            const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-            const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-            const clickedVal = getPositionValue(clientX, clientY);
-            if (clickedVal === null) return;
+        const handleTrackPointerDown = (
+            event: ReactPointerEvent<HTMLDivElement>,
+        ) => {
+            if (disabled || event.button !== 0) return;
+            event.preventDefault();
 
-            let indexToDrag = 0;
+            const clickedValue = getPositionValue(event.clientX, event.clientY);
+            if (clickedValue === null) return;
 
-            if (isRange) {
-                const dist = currentValue.map((v) => Math.abs(v - clickedVal));
-                indexToDrag = dist[0] <= dist[1] ? 0 : 1;
+            const indexToDrag =
+                isRange &&
+                Math.abs(currentValue[1] - clickedValue) <
+                    Math.abs(currentValue[0] - clickedValue)
+                    ? 1
+                    : 0;
 
-                updateValue(indexToDrag, clickedVal);
-            } else {
-                updateValue(0, clickedVal);
+            updateValue(indexToDrag, clickedValue);
+            setDraggingIndex(indexToDrag);
+            thumbRefs.current[indexToDrag]?.focus();
+        };
+
+        const getNeighborMarkValue = (fromValue: number, direction: 1 | -1) => {
+            const candidates = [
+                min,
+                max,
+                ...resolvedMarks.map((mark) => mark.value),
+            ]
+                .filter((markValue) =>
+                    direction === 1
+                        ? markValue > fromValue
+                        : markValue < fromValue,
+                )
+                .sort((first, second) => direction * (first - second));
+            return candidates[0] ?? fromValue;
+        };
+
+        const handleThumbKeyDown = (
+            event: KeyboardEvent<HTMLDivElement>,
+            index: number,
+        ) => {
+            if (disabled) return;
+
+            const thumbValue = currentValue[index];
+            const keyboardStep = step ?? 1;
+            const largeStep = Math.max(keyboardStep, (max - min) / 10);
+            const usesMarks = step === null && Array.isArray(marks);
+
+            let requestedValue: number;
+            switch (event.key) {
+                case "ArrowRight":
+                case "ArrowUp":
+                    requestedValue = usesMarks
+                        ? getNeighborMarkValue(thumbValue, 1)
+                        : thumbValue + keyboardStep;
+                    break;
+                case "ArrowLeft":
+                case "ArrowDown":
+                    requestedValue = usesMarks
+                        ? getNeighborMarkValue(thumbValue, -1)
+                        : thumbValue - keyboardStep;
+                    break;
+                case "PageUp":
+                    requestedValue = thumbValue + largeStep;
+                    break;
+                case "PageDown":
+                    requestedValue = thumbValue - largeStep;
+                    break;
+                case "Home":
+                    requestedValue = min;
+                    break;
+                case "End":
+                    requestedValue = max;
+                    break;
+                default:
+                    return;
             }
 
-            setDraggingIndex(indexToDrag);
+            event.preventDefault();
+            const nextValues = updateValue(index, requestedValue);
+            if (nextValues) {
+                onChangeCommitted?.(
+                    event.nativeEvent,
+                    isRange ? nextValues : nextValues[0],
+                );
+            }
         };
 
         return (
             <SliderRoot
+                {...rest}
                 ref={internalRef}
                 disabled={disabled}
                 orientation={orientation}
-                onMouseDown={handleTrackStart}
-                onTouchStart={handleTrackStart as any}
+                onPointerDown={handleTrackPointerDown}
             >
                 <TrackContainer orientation={orientation} size={size}>
                     {isRange ? (
@@ -679,28 +750,47 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                     {currentValue.map((val, i) => (
                         <Fragment key={`thumb-${i}`}>
                             <Thumb
+                                ref={(node) => {
+                                    thumbRefs.current[i] = node;
+                                }}
+                                role="slider"
+                                tabIndex={disabled ? -1 : 0}
+                                aria-label={getAriaLabel?.(i) ?? ariaLabel}
+                                aria-labelledby={ariaLabelledBy}
+                                aria-valuemin={min}
+                                aria-valuemax={max}
+                                aria-valuenow={val}
+                                aria-valuetext={getAriaValueText?.(val, i)}
+                                aria-orientation={
+                                    typeof orientation === "string"
+                                        ? orientation
+                                        : undefined
+                                }
+                                aria-disabled={disabled || undefined}
                                 color={color}
                                 variant={variant}
                                 size={size}
-                                key={i}
                                 percent={percents[i]}
                                 hovered={hoveredIndex === i}
+                                orientation={orientation}
                                 onMouseEnter={() => setHoveredIndex(i)}
                                 onMouseLeave={() => setHoveredIndex(null)}
-                                orientation={orientation}
-                                onMouseDown={(e) => {
-                                    e.stopPropagation();
-                                    setDraggingIndex(i);
-                                }}
-                                onTouchStart={(e) => {
-                                    e.stopPropagation();
+                                onFocus={() => setFocusedIndex(i)}
+                                onBlur={() => setFocusedIndex(null)}
+                                onKeyDown={(event) =>
+                                    handleThumbKeyDown(event, i)
+                                }
+                                onPointerDown={(event) => {
+                                    if (disabled || event.button !== 0) return;
+                                    event.stopPropagation();
                                     setDraggingIndex(i);
                                 }}
                             />
                             {(valueLabelDisplay === "on" ||
                                 (valueLabelDisplay === "auto" &&
                                     (draggingIndex === i ||
-                                        hoveredIndex === i))) && (
+                                        hoveredIndex === i ||
+                                        focusedIndex === i))) && (
                                 <ValueLabel
                                     orientation={orientation}
                                     percent={percents[i]}
@@ -728,9 +818,6 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                                         if (getAriaValueText)
                                             return getAriaValueText(val, i);
 
-                                        if (getAriaLabel)
-                                            return getAriaLabel(i);
-
                                         return typeof val === "number"
                                             ? val.toFixed(0)
                                             : val;
@@ -740,19 +827,6 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
                         </Fragment>
                     ))}
                 </TrackContainer>
-                <HiddenInput
-                    type="range"
-                    min={min}
-                    max={max}
-                    step={step ?? 1}
-                    value={isRange ? undefined : currentValue[0]}
-                    onChange={(e: any) => {
-                        const newVal = parseFloat(e.target.value);
-                        updateValue(0, newVal);
-                    }}
-                    disabled={disabled}
-                    {...rest}
-                />
             </SliderRoot>
         );
     },

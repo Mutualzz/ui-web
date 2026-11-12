@@ -6,8 +6,8 @@ import type {
     SizeValue,
     Variant,
 } from "@mutualzz/ui-core";
-import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
-import { forwardRef, useEffect, useRef } from "react";
+import { resolveResponsiveMerge, styled, useForkRef } from "@mutualzz/ui-core";
+import { forwardRef, useEffect, useRef, type KeyboardEvent } from "react";
 import { resolvePaperStyles } from "../Paper/Paper.helpers";
 import { Portal } from "../Portal/Portal";
 import { useTheme } from "../useTheme";
@@ -17,6 +17,7 @@ import {
     useSwipeableDrawer,
 } from "./Drawer.helpers";
 import type { DrawerAnchor, DrawerProps } from "./Drawer.types";
+import { FocusTrap } from "../FocusTrap/FocusTrap";
 
 const DrawerRoot = styled("div")<{
     color: Responsive<Color | ColorLike>;
@@ -25,50 +26,37 @@ const DrawerRoot = styled("div")<{
     anchor: Responsive<DrawerAnchor>;
     elevation: Responsive<number>;
     size: Responsive<number | Size | SizeValue>;
-}>(
-    ({
-        theme,
-        open,
-        anchor,
-        color,
-        variant,
-        elevation,
-        size,
-    }) => ({
-        position: "fixed",
-        zIndex: theme.zIndex.drawer,
-        background: theme.colors.surface,
-        boxShadow: theme.shadows[4],
-        transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
-        outline: 0,
-        overflowY: "auto",
+}>(({ theme, open, anchor, color, variant, elevation, size }) => ({
+    position: "fixed",
+    zIndex: theme.zIndex.drawer,
+    background: theme.colors.surface,
+    boxShadow: theme.shadows[4],
+    transition: open
+        ? "transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s"
+        : "transform 0.3s cubic-bezier(0.4,0,0.2,1), visibility 0s linear 0.3s",
+    visibility: open ? "visible" : "hidden",
+    outline: 0,
+    overflowY: "auto",
 
-        ...resolveResponsiveMerge(
-            theme,
-            {
-                anchor,
-                color,
-                variant,
-                elevation,
-                size,
-            },
-            ({
-                anchor: a,
-                color: c,
-                variant: v,
-                elevation: e,
-                size: s,
-            }) => ({
-                ...resolveAnchorStyles(theme, a, s),
-                ...resolvePaperStyles(theme, c, "primary", v, e, "modal")[v],
-                flexDirection: a === "left" || a === "right" ? "column" : "row",
-                ...(open && {
-                    transform: "none",
-                }),
+    ...resolveResponsiveMerge(
+        theme,
+        {
+            anchor,
+            color,
+            variant,
+            elevation,
+            size,
+        },
+        ({ anchor: a, color: c, variant: v, elevation: e, size: s }) => ({
+            ...resolveAnchorStyles(theme, a, s),
+            ...resolvePaperStyles(theme, c, "primary", v, e, "modal")[v],
+            flexDirection: a === "left" || a === "right" ? "column" : "row",
+            ...(open && {
+                transform: "none",
             }),
-        ),
-    }),
-);
+        }),
+    ),
+}));
 
 const DrawerBackdrop = styled("div")(({ theme }) => ({
     position: "fixed",
@@ -81,45 +69,6 @@ const DrawerBackdrop = styled("div")(({ theme }) => ({
     WebkitTapHighlightColor: "transparent",
     backdropFilter: "blur(4px)",
 }));
-
-const FocusTrap = ({
-    active,
-    children,
-}: {
-    active: boolean;
-    children: React.ReactNode;
-}) => {
-    const ref = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        if (!active) return;
-        const node = ref.current;
-        if (!node) return;
-        const focusable = node.querySelectorAll<HTMLElement>(
-            'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])',
-        );
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== "Tab") return;
-            if (e.shiftKey) {
-                if (document.activeElement === first) {
-                    e.preventDefault();
-                    last.focus();
-                }
-            } else {
-                if (document.activeElement === last) {
-                    e.preventDefault();
-                    first.focus();
-                }
-            }
-        };
-        node.addEventListener("keydown", handleKeyDown);
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        (first ?? node).focus();
-        return () => node.removeEventListener("keydown", handleKeyDown);
-    }, [active]);
-    return <div ref={ref}>{children}</div>;
-};
 
 const SwipeableArea = styled("div")<{
     anchor: DrawerAnchor;
@@ -144,12 +93,30 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
             disablePortal = false,
             swipeArea = "md",
             threshold = "md",
+            onKeyDown,
             children,
             ...props
         },
         ref,
     ) => {
         const { theme } = useTheme();
+
+        const drawerRef = useRef<HTMLDivElement>(null);
+        const handleRef = useForkRef(drawerRef, ref);
+
+        useEffect(() => {
+            const drawerNode = drawerRef.current;
+            if (!open || !drawerNode) return;
+            if (!drawerNode.contains(document.activeElement))
+                drawerNode.focus();
+        }, [open]);
+
+        const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+            onKeyDown?.(event);
+            if (event.key !== "Escape" || !open) return;
+            event.stopPropagation();
+            onClose();
+        };
 
         useEffect(() => {
             if (open) {
@@ -191,9 +158,10 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
                         open={open}
                         anchor={anchor}
                         tabIndex={-1}
-                        ref={ref}
+                        ref={handleRef}
                         role="dialog"
-                        aria-modal="true"
+                        aria-modal={open ? "true" : undefined}
+                        onKeyDown={handleKeyDown}
                         onTouchStart={handleTouchStart}
                         onTouchEnd={handleTouchEnd}
                         {...props}

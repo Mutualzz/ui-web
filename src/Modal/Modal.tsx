@@ -1,19 +1,18 @@
-import type { CSSObject } from "@emotion/react";
 import { resolveResponsiveMerge, styled } from "@mutualzz/ui-core";
 import { IconButton } from "../IconButton/IconButton";
 import {
     forwardRef,
     type KeyboardEvent as ReactKeyboardEvent,
-    type ReactNode,
     useCallback,
     useEffect,
     useRef,
 } from "react";
-import { useTranslation } from "react-i18next";
 import { resolveButtonContainerStyles } from "../Button/Button.helpers";
 import type { ButtonProps } from "../Button/Button.types";
 import { Portal } from "../Portal/Portal";
+import { useUiLabels } from "../UiLabels/UiLabels";
 import type { ModalProps } from "./Modal.types";
+import { FocusTrap } from "../FocusTrap/FocusTrap";
 
 const ModalRoot = styled("div")<{
     open?: boolean;
@@ -33,7 +32,6 @@ const ModalRoot = styled("div")<{
     bottom: 0,
     top: 0,
     left: 0,
-    display: open ? "block" : "none",
     ...(layout === "center" && {
         display: "grid",
         placeItems: "center",
@@ -46,6 +44,7 @@ const ModalRoot = styled("div")<{
         width: "100%",
         height: "100%",
     }),
+    ...(!open && { display: "none" }),
 }));
 
 ModalRoot.displayName = "ModalRoot";
@@ -109,101 +108,42 @@ const ModalCloseButton = styled(IconButton)<
     ButtonProps & {
         layout: "center" | "fullscreen";
     }
->(
-    ({ theme, color = "neutral", variant = "plain", layout }) =>
-        ({
-            ...resolveResponsiveMerge(
-                theme,
-                { color, variant },
-                ({ color: c, variant: v }) => ({
-                    ...resolveButtonContainerStyles(theme, c)[v],
-                }),
-            ),
-
-            position: "relative",
-            alignSelf: "flex-end",
-            marginTop: layout === "fullscreen" ? "3em" : "1.5em",
-            marginRight: layout === "fullscreen" ? "3em" : "1.5em",
-            marginBottom: "-3em",
-            zIndex: 1,
-            borderRadius: 16,
-
-            aspectRatio: "1",
-            minWidth: layout === "fullscreen" ? "44px" : "40px",
-            width: layout === "fullscreen" ? "44px" : "40px",
-            height: layout === "fullscreen" ? "44px" : "40px",
-            padding: 0,
-
-            // Center the X
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-
-            "&::before": {
-                content: '"✕"',
-                fontSize: layout === "fullscreen" ? "18px" : "16px",
-                lineHeight: 1,
-                fontWeight: "bold",
-            },
+>(({ theme, color = "neutral", variant = "plain", layout }) => ({
+    ...resolveResponsiveMerge(
+        theme,
+        { color, variant },
+        ({ color: resolvedColor, variant: resolvedVariant }) => ({
+            ...resolveButtonContainerStyles(theme, resolvedColor)[
+                resolvedVariant
+            ],
         }),
-);
+    ),
+
+    position: "absolute",
+    top: layout === "fullscreen" ? 16 : 10,
+    right: layout === "fullscreen" ? 16 : 10,
+    zIndex: 1,
+    borderRadius: 10,
+
+    aspectRatio: "1",
+    minWidth: layout === "fullscreen" ? "40px" : "32px",
+    width: layout === "fullscreen" ? "40px" : "32px",
+    height: layout === "fullscreen" ? "40px" : "32px",
+    padding: 0,
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    "&::before": {
+        content: '"✕"',
+        fontSize: layout === "fullscreen" ? "16px" : "13px",
+        lineHeight: 1,
+        fontWeight: "bold",
+    },
+}));
 
 ModalCloseButton.displayName = "ModalCloseButton";
-
-const FocusTrap = ({
-    active,
-    children,
-    disableEnforceFocus,
-}: {
-    active: boolean;
-    children: ReactNode;
-    disableEnforceFocus?: boolean;
-}) => {
-    const rootRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!active || disableEnforceFocus) return;
-
-        const node = rootRef.current;
-        if (!node) return;
-
-        const focusableElements = node.querySelectorAll<HTMLElement>(
-            'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])',
-        );
-
-        const firstElement: HTMLElement | null = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== "Tab") return;
-
-            if (e.shiftKey) {
-                if (document.activeElement === firstElement) {
-                    e.preventDefault();
-                    (lastElement ?? node).focus();
-                }
-            } else {
-                if (document.activeElement === lastElement) {
-                    e.preventDefault();
-                    (firstElement ?? node).focus();
-                }
-            }
-        };
-
-        node.addEventListener("keydown", handleKeyDown);
-        (firstElement ?? node).focus();
-
-        return () => {
-            node.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [active, disableEnforceFocus]);
-
-    return (
-        <div ref={rootRef} tabIndex={-1}>
-            {children}
-        </div>
-    );
-};
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
     (
@@ -230,23 +170,14 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         },
         ref,
     ) => {
-        const { t } = useTranslation("common");
+        const labels = useUiLabels();
         const modalRef = useRef<HTMLDivElement>(null);
-        const lastFocusedElementRef = useRef<Element | null>(null);
 
         useEffect(() => {
-            if (open) {
-                lastFocusedElementRef.current = document.activeElement;
-            }
-        }, [open]);
-
-        useEffect(() => {
-            if (!open && !disableRestoreFocus) {
-                if (lastFocusedElementRef.current instanceof HTMLElement) {
-                    lastFocusedElementRef.current.focus();
-                }
-            }
-        }, [open, disableRestoreFocus]);
+            const modalNode = modalRef.current;
+            if (!open || disableAutoFocus || !modalNode) return;
+            if (!modalNode.contains(document.activeElement)) modalNode.focus();
+        }, [open, disableAutoFocus]);
 
         useEffect(() => {
             if (open && !disableAutoFocus) {
@@ -267,6 +198,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         const handleKeyDown = useCallback(
             (e: ReactKeyboardEvent<HTMLDivElement>) => {
                 if (!disableEscapeKeyDown && e.key === "Escape") {
+                    e.stopPropagation();
                     onClose?.();
                 }
                 onKeyDown?.(e);
@@ -277,7 +209,11 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         if (!open && !keepMounted) return null;
 
         const modalContent = (
-            <FocusTrap active={open} disableEnforceFocus={disableEnforceFocus}>
+            <FocusTrap
+                active={open}
+                disableEnforceFocus={disableEnforceFocus}
+                disableRestoreFocus={disableRestoreFocus}
+            >
                 <ModalRoot
                     layout={layout}
                     open={open}
@@ -290,7 +226,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         if (typeof ref === "function") ref(node);
                         else if (ref) ref.current = node;
                     }}
-                    {...(props as any)}
+                    {...props}
                 >
                     {!hideBackdrop &&
                         (disableBackdropClick ? (
@@ -300,7 +236,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                         ))}
                     <ModalContainer height={height} layout={layout}>
                         {showCloseButton &&
-                            (disableBackdropClick || onClose) &&
+                            onClose &&
                             (closeButton ? (
                                 closeButton
                             ) : (
@@ -309,9 +245,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
                                     variant="plain"
                                     layout={layout}
                                     onClick={onClose}
-                                    aria-label={t("a11y.closeModal", {
-                                        defaultValue: "Close modal",
-                                    })}
+                                    aria-label={labels.closeModal}
                                 />
                             ))}
                         <ModalContent height={height} layout={layout}>

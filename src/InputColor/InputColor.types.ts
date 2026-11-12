@@ -1,11 +1,10 @@
 import type { ColorLike, ColorResult } from "@mutualzz/ui-core";
 import type { InputRootProps } from "../InputRoot/InputRoot.types";
 
-export interface InputColorProps
-    extends Omit<
-        InputRootProps,
-        "onChange" | "type" | "value" | "defaultValue"
-    > {
+export interface InputColorProps extends Omit<
+    InputRootProps,
+    "onChange" | "type" | "value" | "defaultValue"
+> {
     /**
      * The type of the input element.
      *

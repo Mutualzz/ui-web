@@ -38,13 +38,13 @@ export const resolveCheckboxStyles = (
             backgroundColor: colorTokens.base,
             color: colorTokens.on,
             border: `1px solid ${colorTokens.base}`,
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: checked
                     ? colorTokens.alpha(80)
                     : colorTokens.alpha(10),
                 borderColor: colorTokens.base,
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: checked
                     ? colorTokens.alpha(70)
                     : colorTokens.alpha(20),
@@ -54,11 +54,11 @@ export const resolveCheckboxStyles = (
             backgroundColor: checked ? colorTokens.alpha(10) : "transparent",
             color: colorTokens.base,
             border: `1px solid ${colorTokens.base}`,
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: colorTokens.alpha(20),
                 borderColor: colorTokens.base,
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: colorTokens.alpha(30),
             },
         },
@@ -66,10 +66,10 @@ export const resolveCheckboxStyles = (
             backgroundColor: colorTokens.alpha(checked ? 30 : 10),
             color: colorTokens.base,
             border: "none",
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: colorTokens.alpha(checked ? 40 : 20),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: colorTokens.alpha(checked ? 50 : 30),
             },
         },
@@ -77,10 +77,10 @@ export const resolveCheckboxStyles = (
             backgroundColor: "transparent",
             color: colorTokens.base,
             border: "none",
-            "&:hover": {
+            "label:hover &": {
                 backgroundColor: colorTokens.alpha(checked ? 20 : 10),
             },
-            "&:active": {
+            "label:active &": {
                 backgroundColor: colorTokens.alpha(checked ? 30 : 20),
             },
         },

@@ -7,7 +7,7 @@ import { ThemeContext } from "./ThemeProvider";
  */
 export const useTheme = () => {
     const context = useContext(ThemeContext);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+     
     if (!context)
         throw new Error("useTheme must be used within a ThemeProvider");
 

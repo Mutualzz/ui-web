@@ -9,7 +9,7 @@ import type { LinkProps } from "./Link.types";
  * It supports various levels, colors, variants, and weights.
  * The component can be used for headings, body text, captions, and more.
  */
-const LinkWrapper = styled("a")<LinkProps>(
+const LinkWrapper = styled("a")<LinkProps & { hasDecorators: boolean }>(
     ({
         theme,
         level = "inherit",
@@ -18,6 +18,7 @@ const LinkWrapper = styled("a")<LinkProps>(
         variant = "none",
         underline = "hover",
         weight,
+        hasDecorators,
     }) => ({
         ...resolveResponsiveMerge(
             theme,
@@ -52,11 +53,13 @@ const LinkWrapper = styled("a")<LinkProps>(
         ),
         cursor: "pointer",
         transition: "all 0.3s ease",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
         fontFamily: "inherit",
-        gap: 4,
+        ...(hasDecorators && {
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 4,
+        }),
     }),
 );
 
@@ -82,6 +85,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                 textColor={textColor}
                 variant={variant}
                 underline={underline}
+                hasDecorators={Boolean(startDecorator || endDecorator)}
             >
                 {startDecorator && (
                     <DecoratorWrapper position="start">

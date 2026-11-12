@@ -7,10 +7,9 @@ import type {
     Variant,
 } from "@mutualzz/ui-core";
 import {
-    createColor,
-    formatColor,
-    resolveColor,
+    resolveColorTokens,
     resolveSize,
+    typographyColorVar,
 } from "@mutualzz/ui-core";
 
 const baseSizeMap: Record<Size, number> = {
@@ -37,94 +36,56 @@ export const resolveOptionStyles = (
     color: Color | ColorLike,
     isSelected: boolean,
 ): Record<Variant, CSSObject> => {
-    const resolvedColor = resolveColor(color, theme);
+    const colorTokens = resolveColorTokens(color, theme);
+    const textColor = typographyColorVar("primary");
 
-    const solidTextColor = formatColor(theme.typography.colors.primary, {
-        format: "hexa",
-        negate: createColor(resolvedColor).isLight(),
+    const interactionStyles = (
+        highlightBackground: string,
+        focusRingColor: string,
+    ): CSSObject => ({
+        "&:hover": {
+            backgroundColor: highlightBackground,
+        },
+        '&[data-focused="true"]': {
+            backgroundColor: highlightBackground,
+            boxShadow: `inset 0 0 0 2px ${focusRingColor}`,
+        },
     });
 
     return {
         solid: {
             backgroundColor: isSelected
-                ? formatColor(resolvedColor, {
-                      lighten: 18,
-                  })
-                : formatColor(resolvedColor),
-            color: solidTextColor,
-            ...(!isSelected && {
-                "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        lighten: 28,
-                    }),
-                },
-            }),
+                ? colorTokens.alpha(75)
+                : colorTokens.base,
+            color: colorTokens.contrast,
+            ...interactionStyles(colorTokens.alpha(88), colorTokens.contrast),
         },
         outlined: {
             "&:not(:first-of-type)": {
-                borderTop: `1px solid ${formatColor(resolvedColor)}`,
+                borderTop: `1px solid ${colorTokens.alpha(30)}`,
             },
-            backgroundColor: isSelected
-                ? formatColor(resolvedColor, {
-                      alpha: 70,
-                      lighten: 15,
-                      format: "hexa",
-                  })
-                : "transparent",
-            color: formatColor(resolvedColor, {
-                lighten: 80,
-            }),
-            ...(!isSelected && {
-                "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        alpha: 50,
-                        lighten: 22,
-                        format: "hexa",
-                    }),
-                },
-            }),
+            backgroundColor: isSelected ? colorTokens.alpha(20) : "transparent",
+            color: textColor,
+            ...interactionStyles(
+                colorTokens.alpha(isSelected ? 28 : 12),
+                colorTokens.base,
+            ),
         },
         soft: {
-            backgroundColor: isSelected
-                ? formatColor(resolvedColor, {
-                      format: "hexa",
-                      alpha: 70,
-                      lighten: 15,
-                  })
-                : formatColor(resolvedColor, {
-                      lighten: 8,
-                  }),
-            color: formatColor(resolvedColor, {
-                lighten: 80,
-            }),
-            ...(!isSelected && {
-                "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        lighten: 18,
-                    }),
-                },
-            }),
+            backgroundColor: colorTokens.alpha(isSelected ? 25 : 10),
+            color: textColor,
+            ...interactionStyles(
+                colorTokens.alpha(isSelected ? 32 : 18),
+                colorTokens.base,
+            ),
         },
         plain: {
-            backgroundColor: isSelected
-                ? formatColor(resolvedColor, {
-                      alpha: 70,
-                      lighten: 15,
-                      format: "hexa",
-                  })
-                : "transparent",
-            color: formatColor(resolvedColor, {
-                lighten: 80,
-            }),
-            ...(!isSelected && {
-                "&:hover": {
-                    backgroundColor: formatColor(resolvedColor, {
-                        alpha: 50,
-                        lighten: 22,
-                        format: "hexa",
-                    }),
-                },
-            }),
+            backgroundColor: isSelected ? colorTokens.alpha(20) : "transparent",
+            color: textColor,
+            ...interactionStyles(
+                colorTokens.alpha(isSelected ? 28 : 12),
+                colorTokens.base,
+            ),
         },
     };
 };

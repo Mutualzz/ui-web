@@ -21,11 +21,15 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
             disabled = false,
             children,
             type = "text",
+            className,
+            style,
             ...props
         }: InputRootProps,
         ref,
     ) => (
         <InputRoot
+            className={className}
+            style={style}
             color={color}
             textColor={textColor}
             variant={variant}
@@ -33,7 +37,6 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
             fullWidth={fullWidth}
             error={error}
             disabled={disabled}
-            {...props}
         >
             {startDecorator && (
                 <InputDecoratorWrapper position="start">
@@ -45,6 +48,8 @@ const InputDefault = forwardRef<HTMLInputElement, InputRootProps>(
                 {...props}
                 size={size}
                 fullWidth={fullWidth}
+                disabled={disabled}
+                aria-invalid={error || undefined}
                 ref={ref}
                 type={type}
             />
