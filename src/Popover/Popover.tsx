@@ -126,6 +126,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
             size = "md",
             trigger,
             triggerCss,
+            fullWidth = false,
             children,
             isOpen: isOpenProp,
             onOpenChange,
@@ -313,7 +314,14 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         );
 
         return (
-            <PopoverRoot ref={ref} css={triggerCss} onKeyDown={handleKeyDown}>
+            <PopoverRoot
+                ref={ref}
+                css={[
+                    fullWidth && { display: "block", width: "100%" },
+                    triggerCss,
+                ]}
+                onKeyDown={handleKeyDown}
+            >
                 <Stack ref={triggerRef} onClick={toggleVisibility}>
                     {triggerElement}
                 </Stack>

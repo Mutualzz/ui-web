@@ -10,6 +10,7 @@ export interface PopoverProps extends Omit<PaperProps, "content"> {
     size?: Responsive<Size | SizeValue | number>;
     trigger?: ReactNode;
     triggerCss?: CSSObject;
+    fullWidth?: boolean;
 
     isOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
